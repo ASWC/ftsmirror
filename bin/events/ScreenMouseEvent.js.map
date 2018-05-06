@@ -1,0 +1,1 @@
+{"version":3,"file":"ScreenMouseEvent.js","sourceRoot":"","sources":["../../flash/events/ScreenMouseEvent.ts"],"names":[],"mappings":";;;IAGA,sBAA8B,SAAQ,aAAK;QAKvC,YAAY,IAAW,EAAE,UAAkB,KAAK,EAAE,aAAqB,KAAK,EAAE,OAAc,EAAE,EAAE,QAAc,IAAI;YAE9G,KAAK,CAAC,IAAI,EAAE,OAAO,EAAE,UAAU,CAAC,CAAC;YACjC,IAAI,CAAC,MAAM,GAAG,KAAK,CAAC;QACxB,CAAC;;IAPa,4BAAW,GAAU,YAAY,CAAA;IAFnD,4CAUC"}

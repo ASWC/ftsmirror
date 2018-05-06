@@ -1,0 +1,1 @@
+{"version":3,"file":"SampleDataEvent.js","sourceRoot":"","sources":["../../flash/events/SampleDataEvent.ts"],"names":[],"mappings":";;;IAGA,qBAA6B,SAAQ,aAAK;QAKtC,YAAY,IAAW,EAAE,UAAkB,KAAK,EAAE,aAAqB,KAAK,EAAE,OAAc,EAAE,EAAE,QAAc,IAAI;YAE9G,KAAK,CAAC,IAAI,EAAE,OAAO,EAAE,UAAU,CAAC,CAAC;YACjC,IAAI,CAAC,MAAM,GAAG,KAAK,CAAC;QACxB,CAAC;;IAPa,2BAAW,GAAU,YAAY,CAAA;IAFnD,0CAUC"}
