@@ -4,8 +4,6 @@ import { Rectangle } from "flash/geom/Rectangle";
 import { Point } from "flash/geom/Point";
 import { Vector3D } from "flash/geom/Vector3D";
 import { Matrix } from "flash/geom/Matrix";
-
-
 import { NativeWindow } from "flash/display/NativeWindow";
 import { StageVideo } from "flash/media/StageVideo";
 import { TextSnapshot } from "flash/text/TextSnapshot";
