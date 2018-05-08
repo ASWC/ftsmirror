@@ -1,0 +1,1 @@
+{"version":3,"file":"GesturePhase.js","sourceRoot":"","sources":["../../../flash/events/GesturePhase.ts"],"names":[],"mappings":";;;IAGA,kBAA0B,SAAQ,aAAK;QAKnC,YAAY,IAAW,EAAE,UAAkB,KAAK,EAAE,aAAqB,KAAK,EAAE,OAAc,EAAE,EAAE,QAAc,IAAI;YAE9G,KAAK,CAAC,IAAI,EAAE,OAAO,EAAE,UAAU,CAAC,CAAC;YACjC,IAAI,CAAC,MAAM,GAAG,KAAK,CAAC;QACxB,CAAC;;IAPa,wBAAW,GAAU,YAAY,CAAA;IAFnD,oCAUC"}

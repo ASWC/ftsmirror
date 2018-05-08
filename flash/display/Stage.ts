@@ -2,7 +2,6 @@
 import { Transform } from "flash/geom/Transform";
 import { Rectangle } from "flash/geom/Rectangle";
 import { Point } from "flash/geom/Point";
-import { Vector3D } from "flash/geom/Vector3D";
 import { Matrix } from "flash/geom/Matrix";
 import { NativeWindow } from "flash/display/NativeWindow";
 import { StageVideo } from "flash/media/StageVideo";
@@ -16,8 +15,12 @@ import { AccessibilityImplementation } from "flash/accessibility/AccessibilityIm
 import { AccessibilityProperties } from "flash/accessibility/AccessibilityProperties";
 import { StageAlign } from "flash/display/StageAlign";
 import { InteractiveObject } from "flash/display/InteractiveObject";
+import { BaseObject } from "flash/system/BaseObject";
+import { Stage3D } from "flash/webgl/Stage3D";
+import { Context3D } from "flash/webgl/Context3D";
+import { Timer } from "flash/utils/Timer";
 
-export class Stage
+export class Stage extends BaseObject
 {
     protected _z:number;
     protected _y:number;
@@ -97,9 +100,25 @@ export class Stage
     protected _colorCorrection:string;
     protected _color:number;
     protected _browserZoomFactor:number;
+    protected _context3D:Context3D;
 
     constructor()
     {
+        super();
+        Stage3D.getStages();
+        this._context3D = Stage3D.assignContext();
+        Timer.getGlobalTimer().push(this)
+
+        
+
+        
+
+        // auto assign stage
+        // auto check support < no support < no stage available
+        // let user change
+
+
+
         this._browserZoomFactor = 1;
         this._color = 0;
         this._colorCorrection = null;
@@ -175,9 +194,18 @@ export class Stage
         this._y = 0;
         this._x = 0;
         this._visible = true;
-        this._transform = new Transform();
+        this._transform = new Transform(this);
         this._stage = this;
         this._scrollRect = null;
+    }
+
+    public tickUpdate(time:number):void
+    {
+        if(this._context3D)
+        {
+            this._context3D.resize();
+        }
+        // TICKER
     }
 
     public set accessibilityImplementation(value:AccessibilityImplementation)
@@ -855,11 +883,6 @@ export class Stage
         return null
     }
         
-    public globalToLocal3D(point: Point): Vector3D
-    {
-        return null
-    }
-        
     public hitTestObject(obj: DisplayObject): boolean
     {
         return null
@@ -873,11 +896,6 @@ export class Stage
     public get loaderInfo(): LoaderInfo
     {
         return this._loaderInfo;
-    }
-        
-    public local3DToGlobal(point3d: Vector3D): Point
-    {
-        return null
     }
         
     public localToGlobal(point: Point): Point

@@ -1,0 +1,1 @@
+{"version":3,"file":"KeyboardEvent.js","sourceRoot":"","sources":["../../../flash/events/KeyboardEvent.ts"],"names":[],"mappings":";;;IAGA,mBAA2B,SAAQ,aAAK;QAKpC,YAAY,IAAW,EAAE,UAAkB,KAAK,EAAE,aAAqB,KAAK,EAAE,OAAc,EAAE,EAAE,QAAc,IAAI;YAE9G,KAAK,CAAC,IAAI,EAAE,OAAO,EAAE,UAAU,CAAC,CAAC;YACjC,IAAI,CAAC,MAAM,GAAG,KAAK,CAAC;QACxB,CAAC;;IAPa,yBAAW,GAAU,YAAY,CAAA;IAFnD,sCAUC"}
