@@ -9,6 +9,8 @@ define(["require", "exports", "flash/system/BaseObject", "flash/display/DisplayO
             super();
             this._children = [];
         }
+        render(context) {
+        }
         set parent(value) {
             this._parent = value;
         }

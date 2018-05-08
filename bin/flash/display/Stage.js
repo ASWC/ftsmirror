@@ -90,6 +90,13 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
             this._stage = this;
             this._scrollRect = null;
         }
+        tickUpdate(time) {
+            if (this._context3D) {
+                this._context3D.resize();
+                //this._innerContainer.render(this._context3D);
+            }
+            // TICKER
+        }
         get parent() {
             return this._parent;
         }
@@ -131,12 +138,6 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
         }
         addChildAt(child, index) {
             return this._innerContainer.addChildAt(child, index);
-        }
-        tickUpdate(time) {
-            if (this._context3D) {
-                this._context3D.resize();
-            }
-            // TICKER
         }
         set accessibilityImplementation(value) {
             this._accessibilityImplementation = value;

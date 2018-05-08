@@ -1,6 +1,7 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { DisplayObject } from "flash/display/DisplayObject";
 import { Error } from "flash/Error";
+import { Context3D } from "flash/webgl/Context3D";
 
 export class DisplayObjectContainer extends BaseObject
 {
@@ -16,6 +17,11 @@ export class InnerContainer extends BaseObject
     {
         super();
         this._children = [];
+    }
+
+    public render(context:Context3D):void
+    {
+        
     }
 
     public set parent(value:DisplayObjectContainer)

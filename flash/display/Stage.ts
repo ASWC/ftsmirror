@@ -200,6 +200,16 @@ export class Stage extends BaseObject
         this._scrollRect = null;
     }
 
+    public tickUpdate(time:number):void
+    {
+        if(this._context3D)
+        {
+            this._context3D.resize();
+            //this._innerContainer.render(this._context3D);
+        }
+        // TICKER
+    }
+
     public get parent(): DisplayObjectContainer
     {
         return this._parent;
@@ -270,14 +280,7 @@ export class Stage extends BaseObject
         return this._innerContainer.addChildAt(child, index);
     }
 
-    public tickUpdate(time:number):void
-    {
-        if(this._context3D)
-        {
-            this._context3D.resize();
-        }
-        // TICKER
-    }
+
 
     public set accessibilityImplementation(value:AccessibilityImplementation)
     {
