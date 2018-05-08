@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/display/DisplayObject", "Error"], function (require, exports, BaseObject_1, DisplayObject_1, Error_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/display/DisplayObject", "flash/Error"], function (require, exports, BaseObject_1, DisplayObject_1, Error_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class DisplayObjectContainer extends BaseObject_1.BaseObject {

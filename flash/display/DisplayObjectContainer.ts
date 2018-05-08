@@ -1,6 +1,6 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { DisplayObject } from "flash/display/DisplayObject";
-import { Error } from "Error";
+import { Error } from "flash/Error";
 
 export class DisplayObjectContainer extends BaseObject
 {

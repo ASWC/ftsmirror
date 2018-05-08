@@ -27,6 +27,7 @@ export class Error extends BaseObject
 
     public static GetLastError():Error
     {
+        
         if(Error._GolbalErrors.length)
         {
             return Error._GolbalErrors[Error._GolbalErrors.length - 1];
