@@ -3,14 +3,15 @@ import { DisplayObject } from "flash/display/DisplayObject";
 import { ColorTransform } from "flash/geom/ColorTransform";
 import { Matrix } from "flash/geom/Matrix";
 import { Rectangle } from "flash/geom/Rectangle";
+import { DisplayObjectContainer } from "../display/DisplayObjectContainer";
 
 export class Transform extends BaseObject
 {
-    protected _displayObject:DisplayObject;
+    protected _displayObject:DisplayObject|DisplayObjectContainer;
     protected _colorTransform:ColorTransform;
     protected _matrix:Matrix;
 
-    constructor(displayObject:DisplayObject)
+    constructor(displayObject:DisplayObject|DisplayObjectContainer)
 	{
         super();
         this._displayObject = displayObject;

@@ -19,12 +19,14 @@ import { BaseObject } from "flash/system/BaseObject";
 import { Stage3D } from "flash/webgl/Stage3D";
 import { Context3D } from "flash/webgl/Context3D";
 import { Timer } from "flash/utils/Timer";
+import { InnerContainer } from "flash/display/DisplayObjectContainer"
 
 export class Stage extends BaseObject
 {
     protected _z:number;
     protected _y:number;
     protected _x:number;
+    protected _innerContainer:InnerContainer;
     protected _scaleY:number;
     protected _visible:boolean;
     protected _transform:Transform;
@@ -40,7 +42,6 @@ export class Stage extends BaseObject
     protected _root:DisplayObject;
     protected _parent:DisplayObjectContainer;
     protected _opaqueBackground:boolean;
-    protected _name:string;
     protected _mouseY:number;
     protected _mouseX:number;
     protected _mask:DisplayObject;
@@ -82,7 +83,6 @@ export class Stage extends BaseObject
     protected _scaleMode:string;
     protected _quality:string;
     protected _orientation:string;
-    protected _numChildren:number;
     protected _nativeWindow:NativeWindow;
     protected _mouseLock:boolean;
     protected _mouseChildren:boolean;
@@ -107,7 +107,9 @@ export class Stage extends BaseObject
         super();
         Stage3D.getStages();
         this._context3D = Stage3D.assignContext();
-        Timer.getGlobalTimer().push(this)
+        Timer.getGlobalTimer().push(this);
+        this._innerContainer = new InnerContainer();
+        this._innerContainer.parent = this;
 
         
 
@@ -136,7 +138,6 @@ export class Stage extends BaseObject
         this._mouseChildren = true;
         this._mouseLock = false;
         this._nativeWindow = null;
-        this._numChildren = 0;
         this._orientation = null;
         this._quality = null;
         this._scaleMode = null;
@@ -199,6 +200,76 @@ export class Stage extends BaseObject
         this._scrollRect = null;
     }
 
+    public get parent(): DisplayObjectContainer
+    {
+        return this._parent;
+    }
+
+    public getChildIndex(child: DisplayObject): number
+    {
+        return this._innerContainer.getChildIndex(child);
+    }
+
+    public swapChildren(child1: DisplayObject, child2: DisplayObject): void
+    {
+        this._innerContainer.swapChildren(child1, child2);
+    }
+
+    public removeChild(child: DisplayObject): DisplayObject
+    {
+        return this._innerContainer.removeChild(child);
+    }
+        
+    public removeChildren(beginIndex: number = 0, endIndex: number = 2147483647): void
+    {
+        this._innerContainer.removeChildren(beginIndex, endIndex);
+    }
+
+    public contains(child: DisplayObject): boolean
+    {
+        return this._innerContainer.contains(child);
+    }
+        
+    public getChildAt(index: number): DisplayObject
+    {
+        return this._innerContainer.getChildAt(index);
+    }
+        
+    public getChildByName(name: string): DisplayObject
+    {
+        return this._innerContainer.getChildByName(name);
+    }
+
+    public swapChildrenAt(index1: number, index2: number): void
+    {
+        this._innerContainer.swapChildrenAt(index1, index2);
+    }
+
+    public setChildIndex(child:DisplayObject, index:number):void
+    {
+        this._innerContainer.setChildIndex(child, index);
+    }
+
+    public removeChildAt(index:number):DisplayObject
+    {
+        return this._innerContainer.removeChildAt(index);
+    }
+
+    public get numChildren():number
+    {
+        return this._innerContainer.numChildren;
+    }
+
+    public addChild(child:DisplayObject):DisplayObject
+    {
+        return this._innerContainer.addChild(child);
+    }
+    
+    public addChildAt(child:DisplayObject, index:number):DisplayObject
+    {
+        return this._innerContainer.addChildAt(child, index);
+    }
+
     public tickUpdate(time:number):void
     {
         if(this._context3D)
@@ -218,15 +289,7 @@ export class Stage extends BaseObject
         this._accessibilityProperties = value;
     }
     
-    public addChild(child:DisplayObject):DisplayObject
-    {
-        return null;
-    }
-    
-    public addChildAt(child:DisplayObject, index:number):DisplayObject
-    {
-        return null;
-    }
+
     
     public addEventListener(type:string, listener:Function, useCapture:boolean=false, priority:number=0, useWeakReference:boolean=false):void
     {
@@ -463,10 +526,7 @@ export class Stage extends BaseObject
         return this._nativeWindow;
     }
     
-    public get numChildren():number
-    {
-        return this._numChildren;
-    }
+
     
     public set opaqueBackground(value:boolean)
     {
@@ -488,10 +548,7 @@ export class Stage extends BaseObject
         this._quality = value;
     }
     
-    public removeChildAt(index:number):DisplayObject
-    {
-        return null
-    }
+
     
     public set rotation(value:number)
     {
@@ -553,10 +610,7 @@ export class Stage extends BaseObject
         null;
     }
     
-    public setChildIndex(child:DisplayObject, index:number):void
-    {
-        
-    }
+
     
     public setOrientation(newOrientation:string):void
     {
@@ -618,10 +672,7 @@ export class Stage extends BaseObject
         return this._supportedOrientations;
     }
         
-    public swapChildrenAt(index1: number, index2: number): void
-    {
-        null;
-    }
+
         
     public get tabChildren(): boolean
     {
@@ -708,50 +759,21 @@ export class Stage extends BaseObject
         return false;
     }
         
-    public contains(child: DisplayObject): boolean
-    {
-        return null
-    }
-        
-    public getChildAt(index: number): DisplayObject
-    {
-        return null
-    }
-        
-    public getChildByName(name: string): DisplayObject
-    {
-        return null
-    }
-        
-    public getChildIndex(child: DisplayObject): number
-    {
-        return null
-    }
+
         
     public getObjectsUnderPoint(point: Point): DisplayObject[]
     {
         return null;
     }
         
-    public removeChild(child: DisplayObject): DisplayObject
-    {
-        return null
-    }
-        
-    public removeChildren(beginIndex: number = 0, endIndex: number = 2147483647): void
-    {
-        
-    }
+
         
     public stopAllMovieClips(): void
     {
         
     }
         
-    public swapChildren(child1: DisplayObject, child2: DisplayObject): void
-    {
-        
-    }
+
         
     public get accessibilityImplementation(): AccessibilityImplementation
     {
@@ -938,10 +960,7 @@ export class Stage extends BaseObject
         return this._opaqueBackground;
     }
         
-    public get parent(): DisplayObjectContainer
-    {
-        return this._parent;
-    }
+
         
     public get root(): DisplayObject
     {

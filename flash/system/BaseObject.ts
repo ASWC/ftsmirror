@@ -15,6 +15,16 @@ export class BaseObject
         BaseObject.instanceid++;
     }
 
+    public set name(value:string)
+    {
+        this._name = value;
+    }
+
+    public get name():string
+    {
+        return this._name;
+    }
+
     public hasChanged():void
     {
         this._needUpdate = true;

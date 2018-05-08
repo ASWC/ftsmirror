@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign", "flash/system/BaseObject", "flash/webgl/Stage3D", "flash/utils/Timer"], function (require, exports, Transform_1, StageAlign_1, BaseObject_1, Stage3D_1, Timer_1) {
+define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign", "flash/system/BaseObject", "flash/webgl/Stage3D", "flash/utils/Timer", "flash/display/DisplayObjectContainer"], function (require, exports, Transform_1, StageAlign_1, BaseObject_1, Stage3D_1, Timer_1, DisplayObjectContainer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Stage extends BaseObject_1.BaseObject {
@@ -7,6 +7,8 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
             Stage3D_1.Stage3D.getStages();
             this._context3D = Stage3D_1.Stage3D.assignContext();
             Timer_1.Timer.getGlobalTimer().push(this);
+            this._innerContainer = new DisplayObjectContainer_1.InnerContainer();
+            this._innerContainer.parent = this;
             // auto assign stage
             // auto check support < no support < no stage available
             // let user change
@@ -27,7 +29,6 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
             this._mouseChildren = true;
             this._mouseLock = false;
             this._nativeWindow = null;
-            this._numChildren = 0;
             this._orientation = null;
             this._quality = null;
             this._scaleMode = null;
@@ -89,6 +90,48 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
             this._stage = this;
             this._scrollRect = null;
         }
+        get parent() {
+            return this._parent;
+        }
+        getChildIndex(child) {
+            return this._innerContainer.getChildIndex(child);
+        }
+        swapChildren(child1, child2) {
+            this._innerContainer.swapChildren(child1, child2);
+        }
+        removeChild(child) {
+            return this._innerContainer.removeChild(child);
+        }
+        removeChildren(beginIndex = 0, endIndex = 2147483647) {
+            this._innerContainer.removeChildren(beginIndex, endIndex);
+        }
+        contains(child) {
+            return this._innerContainer.contains(child);
+        }
+        getChildAt(index) {
+            return this._innerContainer.getChildAt(index);
+        }
+        getChildByName(name) {
+            return this._innerContainer.getChildByName(name);
+        }
+        swapChildrenAt(index1, index2) {
+            this._innerContainer.swapChildrenAt(index1, index2);
+        }
+        setChildIndex(child, index) {
+            this._innerContainer.setChildIndex(child, index);
+        }
+        removeChildAt(index) {
+            return this._innerContainer.removeChildAt(index);
+        }
+        get numChildren() {
+            return this._innerContainer.numChildren;
+        }
+        addChild(child) {
+            return this._innerContainer.addChild(child);
+        }
+        addChildAt(child, index) {
+            return this._innerContainer.addChildAt(child, index);
+        }
         tickUpdate(time) {
             if (this._context3D) {
                 this._context3D.resize();
@@ -100,12 +143,6 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
         }
         set accessibilityProperties(value) {
             this._accessibilityProperties = value;
-        }
-        addChild(child) {
-            return null;
-        }
-        addChildAt(child, index) {
-            return null;
         }
         addEventListener(type, listener, useCapture = false, priority = 0, useWeakReference = false) {
         }
@@ -245,9 +282,6 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
         get nativeWindow() {
             return this._nativeWindow;
         }
-        get numChildren() {
-            return this._numChildren;
-        }
         set opaqueBackground(value) {
             this._opaqueBackground = value;
         }
@@ -259,9 +293,6 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
         }
         set quality(value) {
             this._quality = value;
-        }
-        removeChildAt(index) {
-            return null;
         }
         set rotation(value) {
             this._rotation = value;
@@ -299,8 +330,6 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
         setAspectRatio(newAspectRatio) {
             null;
         }
-        setChildIndex(child, index) {
-        }
         setOrientation(newOrientation) {
         }
         get showDefaultContextMenu() {
@@ -335,9 +364,6 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
         }
         get supportedOrientations() {
             return this._supportedOrientations;
-        }
-        swapChildrenAt(index1, index2) {
-            null;
         }
         get tabChildren() {
             return this._tabChildren;
@@ -390,29 +416,10 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
         areInaccessibleObjectsUnderPoint(point) {
             return false;
         }
-        contains(child) {
-            return null;
-        }
-        getChildAt(index) {
-            return null;
-        }
-        getChildByName(name) {
-            return null;
-        }
-        getChildIndex(child) {
-            return null;
-        }
         getObjectsUnderPoint(point) {
             return null;
         }
-        removeChild(child) {
-            return null;
-        }
-        removeChildren(beginIndex = 0, endIndex = 2147483647) {
-        }
         stopAllMovieClips() {
-        }
-        swapChildren(child1, child2) {
         }
         get accessibilityImplementation() {
             return this._accessibilityImplementation;
@@ -524,9 +531,6 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
         }
         get opaqueBackground() {
             return this._opaqueBackground;
-        }
-        get parent() {
-            return this._parent;
         }
         get root() {
             return this._root;

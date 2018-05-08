@@ -7,6 +7,12 @@ define(["require", "exports", "flash/system/Tracer"], function (require, exports
             this._name = this.className + "_" + BaseObject.instanceid.toString();
             BaseObject.instanceid++;
         }
+        set name(value) {
+            this._name = value;
+        }
+        get name() {
+            return this._name;
+        }
         hasChanged() {
             this._needUpdate = true;
         }

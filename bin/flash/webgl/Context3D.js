@@ -8,17 +8,18 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
             this.reveal(this._color);
         }
         resize() {
+            if (!this._gl) {
+                return;
+            }
             var displayWidth = this._canvas.clientWidth;
             var displayHeight = this._canvas.clientHeight;
             if (this._canvas.width != displayWidth || this._canvas.height != displayHeight) {
                 this._canvas.width = displayWidth;
                 this._canvas.height = displayHeight;
-            }
-            if (this._gl) {
                 this._gl.viewport(0, 0, this._gl.canvas.width, this._gl.canvas.height);
-                this._gl.clearColor(this._color.absoluteRed, this._color.absoluteGreen, this._color.absoluteBlue, this._color.absoluteAlpha);
-                this._gl.clear(this._gl.COLOR_BUFFER_BIT);
             }
+            this._gl.clearColor(this._color.absoluteRed, this._color.absoluteGreen, this._color.absoluteBlue, this._color.absoluteAlpha);
+            this._gl.clear(this._gl.COLOR_BUFFER_BIT);
         }
         release() {
             delete this._canvas.dataset.attachedstagerender;

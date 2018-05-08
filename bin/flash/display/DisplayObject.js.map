@@ -1,1 +1,1 @@
-{"version":3,"file":"DisplayObject.js","sourceRoot":"","sources":["../../../flash/display/DisplayObject.ts"],"names":[],"mappings":";;;IAEA;KAGC;IAHD,sCAGC"}
+{"version":3,"file":"DisplayObject.js","sourceRoot":"","sources":["../../../flash/display/DisplayObject.ts"],"names":[],"mappings":";;;IAGA,mBAA2B,SAAQ,uBAAU;QAIzC,IAAW,MAAM;YAEb,OAAO,IAAI,CAAC,OAAO,CAAC;QACxB,CAAC;QAEM,MAAM,CAAC,SAAS,CAAC,KAAmB,EAAE,KAA4B;YAErE,KAAK,CAAC,OAAO,GAAG,KAAK,CAAC;QAC1B,CAAC;KACJ;IAbD,sCAaC"}

@@ -17,18 +17,180 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             this._green = (this._color >> 8) & 0xFF;
             this._blue = this._color & 0xFF;
             ;
+            this._absoluteRed = -1;
+            this._absoluteGreen = -1;
+            this._absoluteBlue = -1;
+            this._absoluteAlpha = -1;
         }
         get alpha() {
-            return (this._color >> 24) & 0xFF;
+            if (this._alpha >= 0) {
+                return this._alpha;
+            }
+            var value = (this._color >> 24) & 0xFF;
+            this._alpha = value;
+            return value;
         }
         get red() {
-            return (this._color >> 16) & 0xFF;
+            if (this._red >= 0) {
+                return this._red;
+            }
+            var value = (this._color >> 16) & 0xFF;
+            this._red = value;
+            return value;
         }
         get green() {
-            return (this._color >> 8) & 0xFF;
+            if (this._green >= 0) {
+                return this._green;
+            }
+            var value = (this._color >> 8) & 0xFF;
+            this._green = value;
+            return value;
         }
         get blue() {
-            return this._color & 0xFF;
+            if (this._blue >= 0) {
+                return this._blue;
+            }
+            var value = this._color & 0xFF;
+            this._blue = value;
+            return value;
+        }
+        get absoluteAlpha() {
+            if (this._absoluteAlpha >= 0) {
+                return this._absoluteAlpha;
+            }
+            var value = ((this._color >> 24) & 0xFF) / 255;
+            this._absoluteAlpha = value;
+            return value;
+        }
+        get absoluteRed() {
+            if (this._absoluteRed >= 0) {
+                return this._absoluteRed;
+            }
+            var value = ((this._color >> 16) & 0xFF) / 255;
+            this._absoluteRed = value;
+            return value;
+        }
+        get absoluteGreen() {
+            if (this._absoluteGreen >= 0) {
+                return this._absoluteGreen;
+            }
+            var value = ((this._color >> 8) & 0xFF) / 255;
+            this._absoluteGreen = value;
+            return value;
+        }
+        get absoluteBlue() {
+            if (this._absoluteBlue >= 0) {
+                return this._absoluteBlue;
+            }
+            var value = (this._color & 0xFF) / 255;
+            this._absoluteBlue = value;
+            return value;
+        }
+        set alpha(value) {
+            if (value < 0) {
+                value = 0;
+            }
+            else if (value > 255) {
+                value = 255;
+            }
+            this._color &= (0x00FFFFFF);
+            this._color |= (value << 24);
+            this._alpha = -1;
+        }
+        set absoluteAlpha(value) {
+            if (value < 0) {
+                value = 0;
+            }
+            else if (value > 1) {
+                value = 1;
+            }
+            value = value * 255;
+            this._color &= (0x00FFFFFF);
+            this._color |= (value << 24);
+            this._absoluteAlpha = -1;
+        }
+        set red(value) {
+            if (value < 0) {
+                value = 0;
+            }
+            else if (value > 255) {
+                value = 255;
+            }
+            this._color &= (0xFF00FFFF);
+            this._color |= (value << 16);
+            this._red = -1;
+        }
+        set absoluteRed(value) {
+            if (value < 0) {
+                value = 0;
+            }
+            else if (value > 1) {
+                value = 1;
+            }
+            value = value * 255;
+            this._color &= (0xFF00FFFF);
+            this._color |= (value << 16);
+            this.absoluteRed = -1;
+        }
+        set green(value) {
+            if (value < 0) {
+                value = 0;
+            }
+            else if (value > 255) {
+                value = 255;
+            }
+            this._color &= (0xFFFF00FF);
+            this._color |= (value << 8);
+            this._green = -1;
+        }
+        set absoluteGreen(value) {
+            if (value < 0) {
+                value = 0;
+            }
+            else if (value > 1) {
+                value = 1;
+            }
+            value = value * 255;
+            this._color &= (0xFFFF00FF);
+            this._color |= (value << 8);
+            this._absoluteGreen = -1;
+        }
+        set blue(value) {
+            if (value < 0) {
+                value = 0;
+            }
+            else if (value > 255) {
+                value = 255;
+            }
+            this._color &= (0xFFFFFF00);
+            this._color |= (value);
+            this._blue = -1;
+        }
+        set absoluteBlue(value) {
+            if (value < 0) {
+                value = 0;
+            }
+            else if (value > 1) {
+                value = 1;
+            }
+            value = value * 255;
+            this._color &= (0xFFFFFF00);
+            this._color |= (value);
+            this._absoluteBlue = -1;
+        }
+        get color() {
+            return this._color;
+        }
+        set color(value) {
+            this._color = value;
+            this._alpha = -1;
+            this._red = -1;
+            this._green = -1;
+            this._blue = -1;
+            this._absoluteAlpha = -1;
+            this._absoluteBlue = -1;
+            this._absoluteGreen = -1;
+            this._absoluteRed = -1;
         }
         getAbsolutOpposite(includeAlpha = true) {
             var color;
@@ -59,108 +221,6 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
                 this.color |= (value << 24);
             }
             return this.color;
-        }
-        get absoluteAlpha() {
-            return ((this._color >> 24) & 0xFF) / 255;
-        }
-        get absoluteRed() {
-            return ((this._color >> 16) & 0xFF) / 255;
-        }
-        get absoluteGreen() {
-            return ((this._color >> 8) & 0xFF) / 255;
-        }
-        get absoluteBlue() {
-            return (this._color & 0xFF) / 255;
-        }
-        set alpha(value) {
-            if (value < 0) {
-                value = 0;
-            }
-            else if (value > 255) {
-                value = 255;
-            }
-            this._color &= (0x00FFFFFF);
-            this._color |= (value << 24);
-        }
-        set absoluteAlpha(value) {
-            if (value < 0) {
-                value = 0;
-            }
-            else if (value > 1) {
-                value = 1;
-            }
-            value = value * 255;
-            this._color &= (0x00FFFFFF);
-            this._color |= (value << 24);
-        }
-        set red(value) {
-            if (value < 0) {
-                value = 0;
-            }
-            else if (value > 255) {
-                value = 255;
-            }
-            this._color &= (0xFF00FFFF);
-            this._color |= (value << 16);
-        }
-        set absoluteRed(value) {
-            if (value < 0) {
-                value = 0;
-            }
-            else if (value > 1) {
-                value = 1;
-            }
-            value = value * 255;
-            this._color &= (0xFF00FFFF);
-            this._color |= (value << 16);
-        }
-        set green(value) {
-            if (value < 0) {
-                value = 0;
-            }
-            else if (value > 255) {
-                value = 255;
-            }
-            this._color &= (0xFFFF00FF);
-            this._color |= (value << 8);
-        }
-        set absoluteGreen(value) {
-            if (value < 0) {
-                value = 0;
-            }
-            else if (value > 1) {
-                value = 1;
-            }
-            value = value * 255;
-            this._color &= (0xFFFF00FF);
-            this._color |= (value << 8);
-        }
-        set blue(value) {
-            if (value < 0) {
-                value = 0;
-            }
-            else if (value > 255) {
-                value = 255;
-            }
-            this._color &= (0xFFFFFF00);
-            this._color |= (value);
-        }
-        set absoluteBlue(value) {
-            if (value < 0) {
-                value = 0;
-            }
-            else if (value > 1) {
-                value = 1;
-            }
-            value = value * 255;
-            this._color &= (0xFFFFFF00);
-            this._color |= (value);
-        }
-        get color() {
-            return this._color;
-        }
-        set color(value) {
-            this._color = value;
         }
         lighten(percent) {
             if (percent < 0) {
