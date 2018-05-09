@@ -128,4 +128,15 @@ export class Event
         return this._bubbles;
     }
 
+    public static linkEvent(event:Event, currentTarget:any = null, target:any = null):void
+    {
+        if(target)
+        {
+            event._target = target;
+        }
+        if(currentTarget)
+        {
+            event._currentTarget = currentTarget;            
+        }
+    }
 }

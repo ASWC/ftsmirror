@@ -1,9 +1,12 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { ObjectUtils } from "flash/webgl/ObjectUtils";
 import { Color } from "flash/geom/Color";
+import { DisplayObjectContainer } from "flash/display/DisplayObjectContainer";
+import { Program3D } from "./Program3D";
 
 export class Context3D extends BaseObject
 {
+    protected _programTest:Program3D;
     protected _canvas:HTMLCanvasElement;
     protected _contextId:number;
     protected _context3Did:number;
@@ -19,7 +22,33 @@ export class Context3D extends BaseObject
         this.reveal(this._color)
     }
 
-    public resize():void
+    public render(container:DisplayObjectContainer)
+    {
+        this.resize();
+        if(!this._programTest)
+        {
+            this.show('Program3D')
+            this._programTest = new Program3D(); 
+            this._programTest.name = "simple_program_test";           
+            this._programTest.addAttributeToVertex("a_position", Program3D.VEC4);
+            this._programTest.addToVertexMain("gl_Position = a_position;");
+            this._programTest.setPrecision(Program3D.PRECISION_MEDIUM);
+            this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
+        }
+        if(!this._programTest.isUploaded)
+        {
+            this.show('build')
+            this._programTest.build(this._gl);
+        }
+        else
+        {
+           
+        }
+
+        
+    }
+
+    protected resize():void
     {
         if(!this._gl)
         {

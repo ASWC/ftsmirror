@@ -201,10 +201,11 @@ export class Stage extends BaseObject
     }
 
     public tickUpdate(time:number):void
-    {
+    {        
         if(this._context3D)
-        {
-            this._context3D.resize();
+        {            
+            //this._context3D.resize();
+            this._context3D.render(this);
             //this._innerContainer.render(this._context3D);
         }
         // TICKER

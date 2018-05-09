@@ -37,6 +37,14 @@ define(["require", "exports"], function (require, exports) {
         get bubbles() {
             return this._bubbles;
         }
+        static linkEvent(event, currentTarget = null, target = null) {
+            if (target) {
+                event._target = target;
+            }
+            if (currentTarget) {
+                event._currentTarget = currentTarget;
+            }
+        }
     }
     Event.ACTIVATE = "activate";
     Event.ADDED = "added";

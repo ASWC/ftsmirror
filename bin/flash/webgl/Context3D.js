@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtils", "flash/geom/Color"], function (require, exports, BaseObject_1, ObjectUtils_1, Color_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtils", "flash/geom/Color", "./Program3D"], function (require, exports, BaseObject_1, ObjectUtils_1, Color_1, Program3D_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Context3D extends BaseObject_1.BaseObject {
@@ -6,6 +6,24 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
             super();
             this._color = new Color_1.Color(0x00000000);
             this.reveal(this._color);
+        }
+        render(container) {
+            this.resize();
+            if (!this._programTest) {
+                this.show('Program3D');
+                this._programTest = new Program3D_1.Program3D();
+                this._programTest.name = "simple_program_test";
+                this._programTest.addAttributeToVertex("a_position", Program3D_1.Program3D.VEC4);
+                this._programTest.addToVertexMain("gl_Position = a_position;");
+                this._programTest.setPrecision(Program3D_1.Program3D.PRECISION_MEDIUM);
+                this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
+            }
+            if (!this._programTest.isUploaded) {
+                this.show('build');
+                this._programTest.build(this._gl);
+            }
+            else {
+            }
         }
         resize() {
             if (!this._gl) {

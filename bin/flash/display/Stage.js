@@ -92,7 +92,8 @@ define(["require", "exports", "flash/geom/Transform", "flash/display/StageAlign"
         }
         tickUpdate(time) {
             if (this._context3D) {
-                this._context3D.resize();
+                //this._context3D.resize();
+                this._context3D.render(this);
                 //this._innerContainer.render(this._context3D);
             }
             // TICKER
