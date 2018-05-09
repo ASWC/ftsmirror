@@ -10,19 +10,32 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
         render(container) {
             this.resize();
             if (!this._programTest) {
-                this.show('Program3D');
                 this._programTest = new Program3D_1.Program3D();
-                this._programTest.name = "simple_program_test";
-                this._programTest.addAttributeToVertex("a_position", Program3D_1.Program3D.VEC4);
-                this._programTest.addToVertexMain("gl_Position = a_position;");
+                this._programTest.name = "advanced_program_test";
+                this._programTest.addAttributeToVertex("a_position", Program3D_1.Program3D.VEC2);
+                this._programTest.addUniformToVertex("u_resolution", Program3D_1.Program3D.VEC2);
+                this._programTest.addToVertexMain("vec2 zeroToOne = a_position / u_resolution;");
+                this._programTest.addToVertexMain("vec2 zeroToTwo = zeroToOne * 2.0;");
+                this._programTest.addToVertexMain("vec2 clipSpace = zeroToTwo - 1.0;");
+                this._programTest.addToVertexMain("gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);");
+                // SIMPLE TEST
+                //this._programTest.name = "simple_program_test";              
+                //this._programTest.addAttributeToVertex("a_position", Program3D.VEC4);
+                //this._programTest.addToVertexMain("gl_Position = a_position;");
+                /*
+     
+     
+        
+                */
                 this._programTest.setPrecision(Program3D_1.Program3D.PRECISION_MEDIUM);
-                this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
+                this._programTest.addUniformToFragment("u_color", Program3D_1.Program3D.VEC4);
+                this._programTest.addToFragmentMain("gl_FragColor = u_color;");
             }
             if (!this._programTest.isUploaded) {
-                this.show('build');
                 this._programTest.build(this._gl);
             }
-            else {
+            if (this._programTest) {
+                this._programTest.present(this._gl);
             }
         }
         resize() {
