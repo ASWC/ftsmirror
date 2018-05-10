@@ -8,6 +8,7 @@ export class VertexUniform extends BaseObject
     public getLine():string
     {
         return "uniform " + this.dataType + " " + this.name + ";";
+        
     }
 
     public bind(context:WebGLRenderingContext, data:number[]):void

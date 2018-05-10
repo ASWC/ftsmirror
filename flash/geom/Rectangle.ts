@@ -25,6 +25,7 @@ export class Rectangle extends BaseObject
         if(!this._vertices)
         {
             this._vertices = new Float32Array(12);
+            
         }
         if(this._needUpdate)
         {

@@ -114,6 +114,7 @@ export class Program3D extends BaseObject
         {            
             vertextUniform.bind(context, data);
         }        
+        
     }
 
     public updateVertexData(context:WebGLRenderingContext, name:string, data:Float32Array):void

@@ -70,6 +70,7 @@ export class Context3D extends BaseObject
             positions[9] = 100;
             positions[10] = 300;
             positions[11] = 20;
+            
 
             var rect:Rectangle = new Rectangle(100, 25, 178, 95);
             var rect2:Rectangle = new Rectangle(150, 225, 178, 95);

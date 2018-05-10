@@ -153,9 +153,12 @@ var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to
 var offset = 0;        // start at the beginning of the buffer
 gl.vertexAttribPointer(
     positionAttributeLocation, size, type, normalize, stride, offset)
+    
 
 // set the resolution
 gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+
+
 
   for (var ii = 0; ii < 50; ++ii) {
     // Setup a random rectangle
