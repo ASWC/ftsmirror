@@ -3,6 +3,7 @@ import { ObjectUtils } from "flash/webgl/ObjectUtils";
 import { Color } from "flash/geom/Color";
 import { DisplayObjectContainer } from "flash/display/DisplayObjectContainer";
 import { Program3D } from "./Program3D";
+import { Rectangle } from "../geom/Rectangle";
 
 export class Context3D extends BaseObject
 {
@@ -27,45 +28,84 @@ export class Context3D extends BaseObject
         if(!this._programTest)
         {
             this._programTest = new Program3D(); 
-            this._programTest.name = "advanced_program_test";  
-
-
-            this._programTest.addAttributeToVertex("a_position", Program3D.VEC2);
-            this._programTest.addAttributeToVertex("a_color", Program3D.VEC4);
-            this._programTest.addUniformToVertex("u_matrix", Program3D.MAT3);
-            this._programTest.addVaryingToVertex("v_color", Program3D.VEC4);  
-            this._programTest.addToVertexMain("gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);");
-            this._programTest.addToVertexMain("v_color = a_color;");
-
-
-            // SIMPLE TEST
-            //this._programTest.name = "simple_program_test";              
-            //this._programTest.addAttributeToVertex("a_position", Program3D.VEC4);
-            //this._programTest.addToVertexMain("gl_Position = a_position;");
+            this._programTest.name = "triangle_program_flat_color_resolution";  
+            this._programTest.addAttributeToVertex("a_position", Program3D.VEC4, 2);
+            this._programTest.addUniformToVertex("u_resolution", Program3D.VEC2);
+            this._programTest.addToVertexMain("vec2 zeroToOne = a_position.xy / u_resolution;");
+            this._programTest.addToVertexMain("vec2 zeroToTwo = zeroToOne * 2.0;");
+            this._programTest.addToVertexMain("vec2 clipSpace = zeroToTwo - 1.0;");
+            this._programTest.addToVertexMain("gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);");
+            this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
 
 
             /*
- 
- 
-    
+            // simple flat color program
+            this._programTest.name = "triangle_program_flat_color_nomatrix";  
+            this._programTest.addAttributeToVertex("a_position", Program3D.VEC4, 2);
+            this._programTest.addToVertexMain("gl_Position = a_position;");
+            this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
+            */
+        }        
+        if(!this._programTest.ready)
+        {
+            this._programTest.buildProgram(this._gl);
+        }
+        if(this._programTest.ready)
+        {
+            this._programTest.bind(this._gl);
+
+            var positions:Float32Array = new Float32Array(12);
+            positions[0] = 10;
+            positions[1] = 20;
+
+            positions[2] = 300;
+            positions[3] = 20;
+
+            positions[4] = 10;
+            positions[5] = 100;
+
+            positions[6] = 10;
+            positions[7] = 100;
+            positions[8] = 300;
+            positions[9] = 100;
+            positions[10] = 300;
+            positions[11] = 20;
+
+            var rect:Rectangle = new Rectangle(100, 25, 178, 95);
+            var rect2:Rectangle = new Rectangle(150, 225, 178, 95);
+
+            var vertices1:Float32Array = rect.vertices;
+            var vertices2:Float32Array = rect2.vertices;
+
+            var vertices:Float32Array = new Float32Array(vertices1.length + vertices2.length)
+            
+            vertices.set(vertices1, 0)
+            vertices.set(vertices2, vertices1.length)
+
+
+
+            this._programTest.updateVertexData(this._gl, 'a_position', vertices);
+            this._programTest.updateVertexUniform(this._gl, "u_resolution", [this._canvas.width, this._canvas.height])
+
+
+            /*
+            // simple flat color program
+            var positions:Float32Array = new Float32Array(12)
+            positions[0] = 0;
+            positions[1] = 0;
+            positions[2] = -1;
+            positions[3] = 0;
+            positions[4] = 0;
+            positions[5] = 1;
+            positions[6] = 0;
+            positions[7] = 0;
+            positions[8] = 1;
+            positions[9] = 0;
+            positions[10] = 0;
+            positions[11] = 1;                 
+            this._programTest.updateVertexData(this._gl, 'a_position', positions);
             */
 
-
-            this._programTest.setPrecision(Program3D.PRECISION_MEDIUM);
-            this._programTest.addVaryingToFragment("v_color", Program3D.VEC4);
-            this._programTest.addToFragmentMain("gl_FragColor = v_color;");
-
-            
- 
-
-
-        }
-        if(!this._programTest.isUploaded)
-        {
-            this._programTest.build(this._gl);
-        }
-        if(this._programTest)
-        {
             this._programTest.present(this._gl);
         }
 

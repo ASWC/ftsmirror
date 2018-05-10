@@ -1,206 +1,134 @@
-define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Matrix"], function (require, exports, BaseObject_1, Error_1, Matrix_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/webgl/shadertypes/VertexAttribute", "./shadertypes/VertexUniform"], function (require, exports, BaseObject_1, Error_1, VertexAttribute_1, VertexUniform_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Program3D extends BaseObject_1.BaseObject {
         constructor() {
             super();
-            this._isUploaded = false;
-            this._isProgramBuilt = false;
-            this._fragmentVarying = [];
-            this._vertexVarying = [];
-            this._fragmentUniform = [];
+            this._invalidProgram = false;
             this._fragmentMainLines = [];
-            this._vertexAttributes = [];
-            this._vertexUniform = [];
+            this._vertexAttributes;
             this._vertexMainLines = [];
             this._precision = "precision mediump float;";
         }
-        addVaryingToFragment(value, type) {
-            var variable = new ShaderVariable();
-            variable.modifier = "varying";
-            variable.type = type;
-            variable.name = value;
-            this._fragmentVarying.push(variable);
+        addToFragmentMain(value) {
+            this._fragmentMainLines.push(value);
         }
-        addVaryingToVertex(value, type) {
-            var variable = new ShaderVariable();
-            variable.modifier = "varying";
-            variable.type = type;
-            variable.name = value;
-            this._vertexVarying.push(variable);
+        addToVertexMain(value) {
+            this._vertexMainLines.push(value);
         }
-        extractVariables(variables) {
-            var lines = '';
-            for (var i = 0; i < variables.length; i++) {
-                lines += variables[i].getLine() + this.getLineBreak();
+        addUniformToVertex(value, type) {
+            if (!this._vertexUniform) {
+                this._vertexUniform = [];
+                this._vertexUniformDic = {};
             }
-            return lines;
+            var variable = new VertexUniform_1.VertexUniform();
+            variable.dataType = type;
+            variable.name = value;
+            this._vertexUniform.push(variable);
+            this._vertexUniformDic[variable.name] = variable;
         }
-        extractLines(mainlines) {
-            var lines = '';
-            for (var i = 0; i < mainlines.length; i++) {
-                lines += mainlines[i] + this.getLineBreak();
+        addAttributeToVertex(value, type, size) {
+            if (!this._vertexAttributes) {
+                this._vertexAttributes = [];
+                this._vertextAttributesDic = {};
             }
-            return lines;
+            var variable = new VertexAttribute_1.VertexAttribute();
+            variable.size = size;
+            variable.dataType = type;
+            variable.name = value;
+            this._vertexAttributes.push(variable);
+            this._vertextAttributesDic[value] = variable;
         }
-        buildVertex() {
-            var shaderlines = '';
-            shaderlines += this.extractVariables(this._vertexAttributes);
-            shaderlines += this.extractVariables(this._vertexUniform);
-            shaderlines += this.extractVariables(this._vertexVarying);
-            shaderlines += "void main()" + this.getLineBreak();
-            shaderlines += "{" + this.getLineBreak();
-            shaderlines += this.extractLines(this._vertexMainLines);
-            shaderlines += "}" + this.getLineBreak();
-            return shaderlines;
+        setPrecision(value) {
+            this._precision = "precision " + value + " float;";
         }
-        getLineBreak() {
-            return "\n";
+        get ready() {
+            if (this._invalidProgram) {
+                return this._invalidProgram;
+            }
+            if (!this._program) {
+                return false;
+            }
+            return true;
         }
-        buildFragment() {
-            var shaderlines = '';
-            shaderlines += this._precision + this.getLineBreak();
-            shaderlines += this.extractVariables(this._fragmentUniform);
-            shaderlines += this.extractVariables(this._fragmentVarying);
-            shaderlines += "void main()" + this.getLineBreak();
-            shaderlines += "{" + this.getLineBreak();
-            shaderlines += this.extractLines(this._fragmentMainLines);
-            shaderlines += "}" + this.getLineBreak();
-            return shaderlines;
+        bind(context) {
+            if (this._invalidProgram) {
+                return;
+            }
+            context.useProgram(this._program);
+            this._vertextCount = 0;
+        }
+        updateVertexUniform(context, name, data) {
+            if (this._invalidProgram) {
+                return;
+            }
+            var vertextUniform = this._vertexUniformDic[name];
+            if (vertextUniform != undefined) {
+                vertextUniform.bind(context, data);
+            }
+        }
+        updateVertexData(context, name, data) {
+            if (this._invalidProgram) {
+                return;
+            }
+            var variable = this._vertextAttributesDic[name];
+            if (!variable) {
+                return;
+            }
+            context.enableVertexAttribArray(variable.attributeLocation);
+            context.bindBuffer(context.ARRAY_BUFFER, variable.buffer);
+            context.bufferData(context.ARRAY_BUFFER, data, context.STATIC_DRAW);
+            var type = context.FLOAT;
+            var normalize = false;
+            var stride = 0;
+            var offset = 0;
+            context.vertexAttribPointer(variable.attributeLocation, variable.size, type, normalize, stride, offset);
+            this._vertextCount += data.length / variable.size;
         }
         present(context) {
-            if (!this._shaderProgram) {
+            if (this._vertextCount == 0) {
                 return;
             }
-            var translation = [200, 150];
-            var angleInRadians = 0;
-            var scale = [1, 1];
-            context.useProgram(this._shaderProgram);
-            for (var i = 0; i < this._vertexAttributes.length; i++) {
-                context.enableVertexAttribArray(this._vertexAttributes[i].attributeLocation);
+            if (!this._program) {
+                return;
             }
-            context.bindBuffer(context.ARRAY_BUFFER, this._buffer);
-            // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
-            var size = 2; // 2 components per iteration
-            var type = context.FLOAT; // the data is 32bit floats
-            var normalize = false; // don't normalize the data
-            var stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
-            var offset = 0; // start at the beginning of the buffer
-            for (var i = 0; i < this._vertexAttributes.length; i++) {
-                context.vertexAttribPointer(this._vertexAttributes[i].attributeLocation, size, type, normalize, stride, offset);
-            }
-            context.bindBuffer(context.ARRAY_BUFFER, this._colorbuffer);
-            // Tell the color attribute how to get data out of colorBuffer (ARRAY_BUFFER)
-            var size = 4; // 4 components per iteration
-            var type = context.FLOAT; // the data is 32bit floats
-            var normalize = false; // don't normalize the data
-            var stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
-            var offset = 0; // start at the beginning of the buffer
-            //context.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset)    
-            // Compute the matrix
-            var matrix = new Matrix_1.Matrix(2 / context.canvas.clientWidth, 0, 0, 0, -2 / context.canvas.clientHeight, 0);
-            matrix.translate(translation[0], translation[1]);
-            matrix.rotate(angleInRadians);
-            matrix.scale(scale[0], scale[1]);
-            // Set the matrix.
-            context.uniformMatrix3fv(this._vertexUniform[0].uniformLocation, false, matrix.rawMatrix);
-            // Draw the geometry.
             var primitiveType = context.TRIANGLES;
             var offset = 0;
-            var count = 6;
-            context.drawArrays(primitiveType, offset, count);
+            context.drawArrays(primitiveType, offset, this._vertextCount);
         }
-        build(context) {
-            if (this._isUploaded) {
+        buildProgram(context) {
+            var vertexcode = this.buildVertexSource();
+            var fragmentcode = this.buildFragmentSource();
+            if (!vertexcode || !fragmentcode) {
+                this._invalidProgram = true;
                 return;
             }
-            var vertexcode = this.buildVertex();
-            var fragmentcode = this.buildFragment();
-            var vertexShader = this.createShader(context, context.VERTEX_SHADER, vertexcode);
-            var fragmentShader = this.createShader(context, context.FRAGMENT_SHADER, fragmentcode);
-            if (!vertexShader || !fragmentShader) {
-                this.reveal(Error_1.Error.GetLastError());
+            this._vertexShader = Program3D.createShader(context, context.VERTEX_SHADER, vertexcode);
+            this._fragmentShader = Program3D.createShader(context, context.FRAGMENT_SHADER, fragmentcode);
+            if (!this._vertexShader || !this._fragmentShader) {
+                this._invalidProgram = true;
                 return;
             }
-            var program = this.createProgram(context, vertexShader, fragmentShader);
-            if (!program) {
+            this._program = Program3D.createProgram(context, this._vertexShader, this._fragmentShader);
+            if (!this._program) {
+                this._invalidProgram = true;
                 return;
             }
-            this._shaderProgram = program;
-            this.extractAttributesLocation(context);
-            this.extractUniformLocation(context);
-            this._buffer = context.createBuffer(); // < dynamic
-            context.bindBuffer(context.ARRAY_BUFFER, this._buffer);
-            this.setGeometry(context);
-            this._colorbuffer = context.createBuffer();
-            context.bindBuffer(context.ARRAY_BUFFER, this._colorbuffer);
-            this.setColors(context);
-            this._isUploaded = true;
-        }
-        setGeometry(context) {
-            context.bufferData(context.ARRAY_BUFFER, new Float32Array([
-                -150, -100,
-                150, -100,
-                -150, 100,
-                150, -100,
-                -150, 100,
-                150, 100
-            ]), context.STATIC_DRAW);
-        }
-        // Fill the buffer with colors for the 2 triangles
-        // that make the rectangle.
-        // Note, will put the values in whatever buffer is currently
-        // bound to the ARRAY_BUFFER bind point
-        setColors(context) {
-            // Make every vertex a different color.
-            context.bufferData(context.ARRAY_BUFFER, new Float32Array([Math.random(), Math.random(), Math.random(), 1,
-                Math.random(), Math.random(), Math.random(), 1,
-                Math.random(), Math.random(), Math.random(), 1,
-                Math.random(), Math.random(), Math.random(), 1,
-                Math.random(), Math.random(), Math.random(), 1,
-                Math.random(), Math.random(), Math.random(), 1]), context.STATIC_DRAW);
-        }
-        extractUniformLocation(context) {
-            if (this._vertexUniform && this._vertexUniform.length) {
-                for (var i = 0; i < this._vertexUniform.length; i++) {
-                    var uniformLocation = context.getUniformLocation(this._shaderProgram, this._vertexUniform[i].name);
-                    this._vertexUniform[i].uniformLocation = uniformLocation;
-                }
-            }
-            if (this._fragmentUniform && this._fragmentUniform.length) {
-                for (var i = 0; i < this._fragmentUniform.length; i++) {
-                    var uniformLocation = context.getUniformLocation(this._shaderProgram, this._fragmentUniform[i].name);
-                    this._fragmentUniform[i].uniformLocation = uniformLocation;
-                }
-            }
-        }
-        extractAttributesLocation(context) {
-            if (this._vertexAttributes && this._vertexAttributes.length) {
+            if (this._vertexAttributes) {
                 for (var i = 0; i < this._vertexAttributes.length; i++) {
-                    var positionAttributeLocation = context.getAttribLocation(this._shaderProgram, this._vertexAttributes[i].name);
-                    this._vertexAttributes[i].attributeLocation = positionAttributeLocation;
+                    var vertextAttribute = this._vertexAttributes[i];
+                    vertextAttribute.attributeLocation = context.getAttribLocation(this._program, vertextAttribute.name);
+                    vertextAttribute.buffer = context.createBuffer();
+                }
+            }
+            if (this._vertexUniform) {
+                for (var i = 0; i < this._vertexUniform.length; i++) {
+                    var vertextUniform = this._vertexUniform[i];
+                    vertextUniform.location = context.getUniformLocation(this._program, vertextUniform.name);
                 }
             }
         }
-        // protected setRectangle(gl, x, y, width, height) 
-        // {
-        // var x1 = x;
-        //var x2 = x + width;
-        // var y1 = y;
-        //var y2 = y + height;
-        // NOTE: gl.bufferData(gl.ARRAY_BUFFER, ...) will affect
-        // whatever buffer is bound to the `ARRAY_BUFFER` bind point
-        // but so far we only have one buffer. If we had more than one
-        // buffer we'd want to bind that buffer to `ARRAY_BUFFER` first.
-        /*gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-           x1, y1,
-           x2, y1,
-           x1, y2,
-           x1, y2,
-           x2, y1,
-           x2, y2]), gl.STATIC_DRAW);*/
-        // }
-        createProgram(context, vertexShader, fragmentShader) {
+        static createProgram(context, vertexShader, fragmentShader) {
             var program = context.createProgram();
             context.attachShader(program, vertexShader);
             context.attachShader(program, fragmentShader);
@@ -213,7 +141,29 @@ define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Ma
             context.deleteProgram(program);
             return null;
         }
-        createShader(context, type, source) {
+        buildFragmentSource() {
+            var shaderlines = '';
+            shaderlines += this._precision + Program3D.lineBreak;
+            //shaderlines += this.extractVariables(this._fragmentUniform);     
+            //shaderlines += this.extractVariables(this._fragmentVarying); 
+            shaderlines += "void main()" + Program3D.lineBreak;
+            shaderlines += "{" + Program3D.lineBreak;
+            shaderlines += Program3D.extractProgramLines(this._fragmentMainLines);
+            shaderlines += "}" + Program3D.lineBreak;
+            return shaderlines;
+        }
+        buildVertexSource() {
+            var shaderlines = '';
+            shaderlines += Program3D.extractVeertexAttributes(this._vertexAttributes);
+            shaderlines += Program3D.extractVertexUniforms(this._vertexUniform);
+            //shaderlines += this.extractVariables(this._vertexVarying);
+            shaderlines += "void main()" + Program3D.lineBreak;
+            shaderlines += "{" + Program3D.lineBreak;
+            shaderlines += Program3D.extractProgramLines(this._vertexMainLines);
+            shaderlines += "}" + Program3D.lineBreak;
+            return shaderlines;
+        }
+        static createShader(context, type, source) {
             var shader = context.createShader(type);
             context.shaderSource(shader, source);
             context.compileShader(shader);
@@ -225,38 +175,35 @@ define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Ma
             context.deleteShader(shader);
             return null;
         }
-        get isUploaded() {
-            return this._isUploaded;
+        static extractVertexUniforms(variables) {
+            var lines = '';
+            if (!variables) {
+                return lines;
+            }
+            for (var i = 0; i < variables.length; i++) {
+                lines += variables[i].getLine() + Program3D.lineBreak;
+            }
+            return lines;
         }
-        addToFragmentMain(value) {
-            this._fragmentMainLines.push(value);
+        static extractVeertexAttributes(variables) {
+            var lines = '';
+            if (!variables) {
+                return lines;
+            }
+            for (var i = 0; i < variables.length; i++) {
+                lines += variables[i].getLine() + Program3D.lineBreak;
+            }
+            return lines;
         }
-        setPrecision(value) {
-            this._precision = "precision " + value + " float;";
+        static extractProgramLines(mainlines) {
+            var lines = '';
+            for (var i = 0; i < mainlines.length; i++) {
+                lines += mainlines[i] + Program3D.lineBreak;
+            }
+            return lines;
         }
-        addUniformToFragment(value, type) {
-            var variable = new ShaderVariable();
-            variable.modifier = "uniform";
-            variable.type = type;
-            variable.name = value;
-            this._fragmentUniform.push(variable);
-        }
-        addUniformToVertex(value, type) {
-            var variable = new ShaderVariable();
-            variable.modifier = "uniform";
-            variable.type = type;
-            variable.name = value;
-            this._vertexUniform.push(variable);
-        }
-        addAttributeToVertex(value, type) {
-            var variable = new ShaderVariable();
-            variable.modifier = "attribute";
-            variable.type = type;
-            variable.name = value;
-            this._vertexAttributes.push(variable);
-        }
-        addToVertexMain(value) {
-            this._vertexMainLines.push(value);
+        static get lineBreak() {
+            return "\n";
         }
     }
     Program3D.VEC4 = "vec4";

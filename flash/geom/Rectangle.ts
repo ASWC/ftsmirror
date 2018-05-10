@@ -7,6 +7,7 @@ export class Rectangle extends BaseObject
     protected _bottomRight:Point;
     protected _topLeft:Point;
     protected _size:Point;
+    protected _vertices:Float32Array;
 
     constructor(x:number=0, y:number=0, width:number=0, height:number=0)
 	{
@@ -16,6 +17,31 @@ export class Rectangle extends BaseObject
         this._rectangle[1] = y;
         this._rectangle[2] = width;
         this._rectangle[3] = height;
+        this._needUpdate = true;
+    }
+
+    public get vertices():Float32Array
+    {
+        if(!this._vertices)
+        {
+            this._vertices = new Float32Array(12);
+        }
+        if(this._needUpdate)
+        {
+            this._vertices[0] = this._rectangle[0];
+            this._vertices[1] = this._rectangle[1];    
+            this._vertices[2] = this._rectangle[0] + this._rectangle[2];
+            this._vertices[3] = this._rectangle[1];    
+            this._vertices[4] = this._rectangle[0];
+            this._vertices[5] = this._rectangle[1] + this._rectangle[3];    
+            this._vertices[6] = this._rectangle[0];
+            this._vertices[7] = this._rectangle[1] + this._rectangle[3];
+            this._vertices[8] = this._rectangle[0] + this._rectangle[2];
+            this._vertices[9] = this._rectangle[1] + this._rectangle[3];
+            this._vertices[10] = this._rectangle[0] + this._rectangle[2];
+            this._vertices[11] = this._rectangle[1];
+        }        
+        return this._vertices;
     }
 
     public get height():number
