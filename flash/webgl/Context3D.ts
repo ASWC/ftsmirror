@@ -19,7 +19,6 @@ export class Context3D extends BaseObject
     {
         super();
         this._color = new Color(0x00000000);
-        this.reveal(this._color)
     }
 
     public render(container:DisplayObjectContainer)
@@ -30,12 +29,13 @@ export class Context3D extends BaseObject
             this._programTest = new Program3D(); 
             this._programTest.name = "advanced_program_test";  
 
+
             this._programTest.addAttributeToVertex("a_position", Program3D.VEC2);
-            this._programTest.addUniformToVertex("u_resolution", Program3D.VEC2);
-            this._programTest.addToVertexMain("vec2 zeroToOne = a_position / u_resolution;");
-            this._programTest.addToVertexMain("vec2 zeroToTwo = zeroToOne * 2.0;");
-            this._programTest.addToVertexMain("vec2 clipSpace = zeroToTwo - 1.0;");
-            this._programTest.addToVertexMain("gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);");
+            this._programTest.addAttributeToVertex("a_color", Program3D.VEC4);
+            this._programTest.addUniformToVertex("u_matrix", Program3D.MAT3);
+            this._programTest.addVaryingToVertex("v_color", Program3D.VEC4);  
+            this._programTest.addToVertexMain("gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);");
+            this._programTest.addToVertexMain("v_color = a_color;");
 
 
             // SIMPLE TEST
@@ -52,8 +52,8 @@ export class Context3D extends BaseObject
 
 
             this._programTest.setPrecision(Program3D.PRECISION_MEDIUM);
-            this._programTest.addUniformToFragment("u_color", Program3D.VEC4);
-            this._programTest.addToFragmentMain("gl_FragColor = u_color;");
+            this._programTest.addVaryingToFragment("v_color", Program3D.VEC4);
+            this._programTest.addToFragmentMain("gl_FragColor = v_color;");
 
             
  

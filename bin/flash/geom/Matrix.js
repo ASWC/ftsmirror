@@ -13,6 +13,9 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Point"], fu
             this.tx = tx;
             this.ty = ty;
         }
+        get rawMatrix() {
+            return this._matrix;
+        }
         concat(m) {
             this.a = (m.a * this.a) + (m.b * this.c);
             this.b = (m.a * this.b) + (m.b * this.d);

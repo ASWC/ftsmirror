@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Rectangle"], function (require, exports, BaseObject_1, Error_1, Rectangle_1) {
+define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Matrix"], function (require, exports, BaseObject_1, Error_1, Matrix_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Program3D extends BaseObject_1.BaseObject {
@@ -6,12 +6,28 @@ define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Re
             super();
             this._isUploaded = false;
             this._isProgramBuilt = false;
+            this._fragmentVarying = [];
+            this._vertexVarying = [];
             this._fragmentUniform = [];
             this._fragmentMainLines = [];
             this._vertexAttributes = [];
             this._vertexUniform = [];
             this._vertexMainLines = [];
             this._precision = "precision mediump float;";
+        }
+        addVaryingToFragment(value, type) {
+            var variable = new ShaderVariable();
+            variable.modifier = "varying";
+            variable.type = type;
+            variable.name = value;
+            this._fragmentVarying.push(variable);
+        }
+        addVaryingToVertex(value, type) {
+            var variable = new ShaderVariable();
+            variable.modifier = "varying";
+            variable.type = type;
+            variable.name = value;
+            this._vertexVarying.push(variable);
         }
         extractVariables(variables) {
             var lines = '';
@@ -31,6 +47,7 @@ define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Re
             var shaderlines = '';
             shaderlines += this.extractVariables(this._vertexAttributes);
             shaderlines += this.extractVariables(this._vertexUniform);
+            shaderlines += this.extractVariables(this._vertexVarying);
             shaderlines += "void main()" + this.getLineBreak();
             shaderlines += "{" + this.getLineBreak();
             shaderlines += this.extractLines(this._vertexMainLines);
@@ -44,10 +61,7 @@ define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Re
             var shaderlines = '';
             shaderlines += this._precision + this.getLineBreak();
             shaderlines += this.extractVariables(this._fragmentUniform);
-            /*
-            shaderlines += this.extractVariables(this._vertexAttributes);
-    
-            */
+            shaderlines += this.extractVariables(this._fragmentVarying);
             shaderlines += "void main()" + this.getLineBreak();
             shaderlines += "{" + this.getLineBreak();
             shaderlines += this.extractLines(this._fragmentMainLines);
@@ -55,38 +69,42 @@ define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Re
             return shaderlines;
         }
         present(context) {
-            context.viewport(0, 0, context.canvas.width, context.canvas.height);
+            if (!this._shaderProgram) {
+                return;
+            }
+            var translation = [200, 150];
+            var angleInRadians = 0;
+            var scale = [1, 1];
             context.useProgram(this._shaderProgram);
-            if (this._fragmentUniform && this._fragmentUniform.length) {
-                for (var i = 0; i < this._fragmentUniform.length; i++) {
-                    //context.enableVertexAttribArray(this._vertexUniform[i].attributeLocation);
-                    context.uniform4f(this._fragmentUniform[i].uniformLocation, 0.5, 0.0, 0.0, 1);
-                }
+            for (var i = 0; i < this._vertexAttributes.length; i++) {
+                context.enableVertexAttribArray(this._vertexAttributes[i].attributeLocation);
             }
-            if (this._vertexUniform && this._vertexUniform.length) {
-                for (var i = 0; i < this._vertexUniform.length; i++) {
-                    //context.enableVertexAttribArray(this._vertexUniform[i].attributeLocation);
-                    context.uniform2f(this._vertexUniform[i].uniformLocation, context.canvas.width, context.canvas.height);
-                }
-            }
-            if (this._vertexAttributes && this._vertexAttributes.length) {
-                for (var i = 0; i < this._vertexAttributes.length; i++) {
-                    context.enableVertexAttribArray(this._vertexAttributes[i].attributeLocation);
-                }
-            }
-            // Bind the position buffer.
             context.bindBuffer(context.ARRAY_BUFFER, this._buffer);
-            // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+            // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
             var size = 2; // 2 components per iteration
             var type = context.FLOAT; // the data is 32bit floats
             var normalize = false; // don't normalize the data
             var stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
             var offset = 0; // start at the beginning of the buffer
-            if (this._vertexAttributes && this._vertexAttributes.length) {
-                for (var i = 0; i < this._vertexAttributes.length; i++) {
-                    context.vertexAttribPointer(this._vertexAttributes[i].attributeLocation, size, type, normalize, stride, offset);
-                }
+            for (var i = 0; i < this._vertexAttributes.length; i++) {
+                context.vertexAttribPointer(this._vertexAttributes[i].attributeLocation, size, type, normalize, stride, offset);
             }
+            context.bindBuffer(context.ARRAY_BUFFER, this._colorbuffer);
+            // Tell the color attribute how to get data out of colorBuffer (ARRAY_BUFFER)
+            var size = 4; // 4 components per iteration
+            var type = context.FLOAT; // the data is 32bit floats
+            var normalize = false; // don't normalize the data
+            var stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
+            var offset = 0; // start at the beginning of the buffer
+            //context.vertexAttribPointer(colorLocation, size, type, normalize, stride, offset)    
+            // Compute the matrix
+            var matrix = new Matrix_1.Matrix(2 / context.canvas.clientWidth, 0, 0, 0, -2 / context.canvas.clientHeight, 0);
+            matrix.translate(translation[0], translation[1]);
+            matrix.rotate(angleInRadians);
+            matrix.scale(scale[0], scale[1]);
+            // Set the matrix.
+            context.uniformMatrix3fv(this._vertexUniform[0].uniformLocation, false, matrix.rawMatrix);
+            // Draw the geometry.
             var primitiveType = context.TRIANGLES;
             var offset = 0;
             var count = 6;
@@ -98,73 +116,71 @@ define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Re
             }
             var vertexcode = this.buildVertex();
             var fragmentcode = this.buildFragment();
-            this.show(vertexcode);
-            this.show(fragmentcode);
             var vertexShader = this.createShader(context, context.VERTEX_SHADER, vertexcode);
             var fragmentShader = this.createShader(context, context.FRAGMENT_SHADER, fragmentcode);
-            if (vertexShader && fragmentShader) {
-                this.show("shaders are ready");
-            }
-            else {
-                this.show("shader creation failed");
+            if (!vertexShader || !fragmentShader) {
+                this.reveal(Error_1.Error.GetLastError());
+                return;
             }
             var program = this.createProgram(context, vertexShader, fragmentShader);
-            if (program) {
-                this._shaderProgram = program;
-                if (this._vertexAttributes && this._vertexAttributes.length) {
-                    for (var i = 0; i < this._vertexAttributes.length; i++) {
-                        var positionAttributeLocation = context.getAttribLocation(program, this._vertexAttributes[i].name);
-                        this._vertexAttributes[i].attributeLocation = positionAttributeLocation;
-                        this.show('got attribute location of : ' + positionAttributeLocation);
-                    }
-                }
-                if (this._vertexUniform && this._vertexUniform.length) {
-                    for (var i = 0; i < this._vertexUniform.length; i++) {
-                        var uniformLocation = context.getUniformLocation(program, this._vertexUniform[i].name);
-                        this._vertexUniform[i].uniformLocation = uniformLocation;
-                    }
-                }
-                if (this._fragmentUniform && this._fragmentUniform.length) {
-                    for (var i = 0; i < this._fragmentUniform.length; i++) {
-                        var uniformLocation = context.getUniformLocation(program, this._fragmentUniform[i].name);
-                        this._fragmentUniform[i].uniformLocation = uniformLocation;
-                    }
-                }
-                this._rectangles = [];
-                //for (var ii:number = 0; ii < 50; ++ii) 
-                // {
-                var rect = new Rectangle_1.Rectangle(100, 100, 100, 100);
-                this._rectangles.push(rect);
-                //context.uniform4f(uniformLocation, Math.random(), Math.random(), Math.random(), 1);
-                //context.drawArrays(context.TRIANGLES, 0, 6);
-                // }
-                /*
-                
-    
-                */
-                this.show("attribute: " + positionAttributeLocation);
-                var positionBuffer = context.createBuffer();
-                this._buffer = positionBuffer;
-                // present ?
-                context.bindBuffer(context.ARRAY_BUFFER, positionBuffer);
-                var data = new Float32Array(4);
-                var rect = this._rectangles[0];
-                data[i] = rect.x;
-                data[i + 1] = rect.x + rect.width;
-                data[i + 2] = rect.y;
-                data[i + 3] = rect.y + rect.height;
-                /*
-            for(var i:number = 0; i < this._rectangles.length; i++)
-            {
-                var rect:Rectangle = this._rectangles[i];
-                data[i] = rect.x;
-                data[i + 1] = rect.x + rect.width;
-                data[i + 2] = rect.y;
-                data[i + 3] = rect.y + rect.height
-            }*/
-                context.bufferData(context.ARRAY_BUFFER, data, context.STATIC_DRAW);
+            if (!program) {
+                return;
             }
+            this._shaderProgram = program;
+            this.extractAttributesLocation(context);
+            this.extractUniformLocation(context);
+            this._buffer = context.createBuffer(); // < dynamic
+            context.bindBuffer(context.ARRAY_BUFFER, this._buffer);
+            this.setGeometry(context);
+            this._colorbuffer = context.createBuffer();
+            context.bindBuffer(context.ARRAY_BUFFER, this._colorbuffer);
+            this.setColors(context);
             this._isUploaded = true;
+        }
+        setGeometry(context) {
+            context.bufferData(context.ARRAY_BUFFER, new Float32Array([
+                -150, -100,
+                150, -100,
+                -150, 100,
+                150, -100,
+                -150, 100,
+                150, 100
+            ]), context.STATIC_DRAW);
+        }
+        // Fill the buffer with colors for the 2 triangles
+        // that make the rectangle.
+        // Note, will put the values in whatever buffer is currently
+        // bound to the ARRAY_BUFFER bind point
+        setColors(context) {
+            // Make every vertex a different color.
+            context.bufferData(context.ARRAY_BUFFER, new Float32Array([Math.random(), Math.random(), Math.random(), 1,
+                Math.random(), Math.random(), Math.random(), 1,
+                Math.random(), Math.random(), Math.random(), 1,
+                Math.random(), Math.random(), Math.random(), 1,
+                Math.random(), Math.random(), Math.random(), 1,
+                Math.random(), Math.random(), Math.random(), 1]), context.STATIC_DRAW);
+        }
+        extractUniformLocation(context) {
+            if (this._vertexUniform && this._vertexUniform.length) {
+                for (var i = 0; i < this._vertexUniform.length; i++) {
+                    var uniformLocation = context.getUniformLocation(this._shaderProgram, this._vertexUniform[i].name);
+                    this._vertexUniform[i].uniformLocation = uniformLocation;
+                }
+            }
+            if (this._fragmentUniform && this._fragmentUniform.length) {
+                for (var i = 0; i < this._fragmentUniform.length; i++) {
+                    var uniformLocation = context.getUniformLocation(this._shaderProgram, this._fragmentUniform[i].name);
+                    this._fragmentUniform[i].uniformLocation = uniformLocation;
+                }
+            }
+        }
+        extractAttributesLocation(context) {
+            if (this._vertexAttributes && this._vertexAttributes.length) {
+                for (var i = 0; i < this._vertexAttributes.length; i++) {
+                    var positionAttributeLocation = context.getAttribLocation(this._shaderProgram, this._vertexAttributes[i].name);
+                    this._vertexAttributes[i].attributeLocation = positionAttributeLocation;
+                }
+            }
         }
         // protected setRectangle(gl, x, y, width, height) 
         // {
@@ -245,6 +261,7 @@ define(["require", "exports", "flash/system/BaseObject", "../Error", "../geom/Re
     }
     Program3D.VEC4 = "vec4";
     Program3D.VEC2 = "vec2";
+    Program3D.MAT3 = "mat3";
     Program3D.PRECISION_MEDIUM = "mediump";
     exports.Program3D = Program3D;
     class ShaderVariable {

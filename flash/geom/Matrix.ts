@@ -17,6 +17,11 @@ export class Matrix extends BaseObject
         this.tx = tx;
         this.ty = ty;
     }
+
+    public get rawMatrix():Float32Array
+    {
+        return this._matrix;
+    }
 		
 	public concat(m:Matrix):void
 	{
