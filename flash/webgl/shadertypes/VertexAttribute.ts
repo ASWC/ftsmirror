@@ -11,8 +11,7 @@ export class VertexAttribute extends BaseObject
 
     public getLine():string
     {
-        return "attribute " + this.dataType + " " + this.name + ";";
-        
+        return "attribute " + this.dataType + " " + this.name + ";";        
     }
 }
 

@@ -1,8 +1,8 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { Stage } from "flash/display/Stage";
 
-import { Stage3D } from "flash/webgl/Stage3D";
-import { Context3D } from "flash/webgl/Context3D";
+import { Stage3D } from "flash/display3D/Stage3D";
+import { Context3D } from "flash/display3D/Context3D";
 import { StageAlign } from "flash/display/StageAlign";
 import { StageScaleMode } from "flash/display/StageScaleMode";
 
@@ -14,7 +14,7 @@ export class Test extends Stage
 
         this.align = StageAlign.TOP_LEFT;
         this.scaleMode = StageScaleMode.NO_SCALE;
-        this._context3D.setCanvas(-1, -1, 0x33000000);
+        this._context3D.setCanvas(-1, -1);
 
 
        // this._context3D = Stage3D.createContext();

@@ -1,7 +1,7 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { DisplayObject } from "flash/display/DisplayObject";
 import { Error } from "flash/Error";
-import { Context3D } from "flash/webgl/Context3D";
+import { Context3D } from "flash/display3D/Context3D";
 
 export class DisplayObjectContainer extends BaseObject
 {

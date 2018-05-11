@@ -3,7 +3,9 @@ import { ObjectUtils } from "flash/webgl/ObjectUtils";
 import { Color } from "flash/geom/Color";
 import { DisplayObjectContainer } from "flash/display/DisplayObjectContainer";
 import { Program3D } from "./Program3D";
-import { Rectangle } from "../geom/Rectangle";
+import { Rectangle } from "flash/geom/Rectangle";
+import { Context3DVertexBufferFormat } from "flash/display3D/Context3DVertexBufferFormat";
+import { VerticeBuffer } from "../webgl/shadertypes/VerticeBuffer";
 
 export class Context3D extends BaseObject
 {
@@ -16,10 +18,24 @@ export class Context3D extends BaseObject
     protected _gl:WebGLRenderingContext;
     protected _color:Color;
 
+    protected verticetest:VerticeBuffer;
+    protected recttest:Rectangle;
+    protected drawcount:number;
+
     constructor()
     {
         super();
-        this._color = new Color(0x00000000);
+        this._color = new Color(0x00FFFFFF);
+
+
+        this.drawcount = 0;
+        this.recttest = new Rectangle(100 + Math.random() * 100, 100 + Math.random() * 100, 50, 50)
+        this.verticetest = new VerticeBuffer();
+        this.verticetest.addVertices(new Rectangle(300, 150, 50, 50));
+        this.verticetest.addVertices(new Rectangle(150, 300, 50, 50));
+        this.verticetest.addVertices(new Rectangle(100 + Math.random() * 100, 100 + Math.random() * 100, 50, 50));
+        this.verticetest.addVertices(new Rectangle(100 + Math.random() * 100, 100 + Math.random() * 100, 50, 50));
+        this.verticetest.addVertices(this.recttest);
     }
 
     public render(container:DisplayObjectContainer)
@@ -29,13 +45,26 @@ export class Context3D extends BaseObject
         {
             this._programTest = new Program3D(); 
             this._programTest.name = "triangle_program_flat_color_resolution";  
-            this._programTest.addAttributeToVertex("a_position", Program3D.VEC4, 2);
-            this._programTest.addUniformToVertex("u_resolution", Program3D.VEC2);
+            this._programTest.addAttributeToVertex("a_position", Context3DVertexBufferFormat.VEC4, 2);
+            this._programTest.addUniformToVertex("u_resolution", Context3DVertexBufferFormat.VEC2);
             this._programTest.addToVertexMain("vec2 zeroToOne = a_position.xy / u_resolution;");
             this._programTest.addToVertexMain("vec2 zeroToTwo = zeroToOne * 2.0;");
             this._programTest.addToVertexMain("vec2 clipSpace = zeroToTwo - 1.0;");
             this._programTest.addToVertexMain("gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);");
-            this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
+
+      
+      
+      
+      
+           
+
+
+
+
+            this._programTest.addUniformToFragment("u_color", Context3DVertexBufferFormat.VEC4);
+            this._programTest.addToFragmentMain("gl_FragColor = u_color;");
+
+         
 
 
             /*
@@ -49,45 +78,39 @@ export class Context3D extends BaseObject
         if(!this._programTest.ready)
         {
             this._programTest.buildProgram(this._gl);
+
+            
+
+
         }
         if(this._programTest.ready)
         {
             this._programTest.bind(this._gl);
 
-            var positions:Float32Array = new Float32Array(12);
-            positions[0] = 10;
-            positions[1] = 20;
-
-            positions[2] = 300;
-            positions[3] = 20;
-
-            positions[4] = 10;
-            positions[5] = 100;
-
-            positions[6] = 10;
-            positions[7] = 100;
-            positions[8] = 300;
-            positions[9] = 100;
-            positions[10] = 300;
-            positions[11] = 20;
-            
-
-            var rect:Rectangle = new Rectangle(100, 25, 178, 95);
-            var rect2:Rectangle = new Rectangle(150, 225, 178, 95);
-
+            //var rect:Rectangle = new Rectangle(300, 150, 178, 95);
+            //var rect2:Rectangle = new Rectangle(150, 300, 178, 95);
+            /*
             var vertices1:Float32Array = rect.vertices;
             var vertices2:Float32Array = rect2.vertices;
-
-            var vertices:Float32Array = new Float32Array(vertices1.length + vertices2.length)
-            
+            var vertices:Float32Array = new Float32Array(vertices1.length + vertices2.length)            
             vertices.set(vertices1, 0)
-            vertices.set(vertices2, vertices1.length)
+            vertices.set(vertices2, vertices1.length) */  
 
 
+            
+            
 
-            this._programTest.updateVertexData(this._gl, 'a_position', vertices);
-            this._programTest.updateVertexUniform(this._gl, "u_resolution", [this._canvas.width, this._canvas.height])
 
+            
+
+
+            this._programTest.updateVertexData(this._gl, 'a_position', this.verticetest);
+            this._programTest.updateVertexUniform(this._gl, "u_resolution", [this._canvas.width, this._canvas.height])            
+            this._programTest.updateFragmentUniform(this._gl, "u_color", [0.5, 0.2, 0.2, 0.5]);
+
+            
+
+            
 
             /*
             // simple flat color program
@@ -108,6 +131,12 @@ export class Context3D extends BaseObject
             */
 
             this._programTest.present(this._gl);
+        }
+
+        this.drawcount++;
+        if(this.drawcount == 2000)
+        {
+            this.recttest.width = 400;
         }
 
         
@@ -160,24 +189,8 @@ export class Context3D extends BaseObject
             }            
             if(canvasColor >= 0)
             {
-                var styleattribute:string = this._canvas.getAttribute("style");
-                if(styleattribute && styleattribute.length)
-                {
-                    var attributes:string[] = styleattribute.split(";");
-                    var newattributes:string[] = [];
-                    for(var i:number = 0; i < attributes.length; i++)
-                    {
-                        if(attributes[i].indexOf("background-color") < 0)
-                        {
-                            newattributes.push(attributes[i]);      
-                        }
-                    }
-                    this._color = new Color(canvasColor);               
-                    var backgroundcolor:string = 'background-color:rgba(' + this._color.red + ", " + this._color.green + ", " + this._color.blue + ", " + this._color.absoluteAlpha + ")";
-                    newattributes.push(backgroundcolor);
-                    this._canvas.setAttribute("style", newattributes.join(";"));
-                }
-            }            
+                this._color = new Color(canvasColor);  
+            }          
         }
     }
 

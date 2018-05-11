@@ -16,8 +16,8 @@ import { AccessibilityProperties } from "flash/accessibility/AccessibilityProper
 import { StageAlign } from "flash/display/StageAlign";
 import { InteractiveObject } from "flash/display/InteractiveObject";
 import { BaseObject } from "flash/system/BaseObject";
-import { Stage3D } from "flash/webgl/Stage3D";
-import { Context3D } from "flash/webgl/Context3D";
+import { Stage3D } from "flash/display3D/Stage3D";
+import { Context3D } from "flash/display3D/Context3D";
 import { Timer } from "flash/utils/Timer";
 import { InnerContainer } from "flash/display/DisplayObjectContainer"
 

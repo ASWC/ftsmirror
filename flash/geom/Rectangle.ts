@@ -1,13 +1,18 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { Point } from "flash/geom/Point";
+import { IVerticeIndex } from "../webgl/shadertypes/IVerticeIndex";
+import { VerticeBuffer } from "../webgl/shadertypes/VerticeBuffer";
+import { IVerticeBufferDelegate } from "../webgl/shadertypes/IVerticeBufferDelegate";
 
-export class Rectangle extends BaseObject
+export class Rectangle extends BaseObject implements IVerticeIndex
 {
     protected _rectangle:Float32Array;
     protected _bottomRight:Point;
     protected _topLeft:Point;
     protected _size:Point;
     protected _vertices:Float32Array;
+    protected _index:number;
+    protected _delegate:IVerticeBufferDelegate;
 
     constructor(x:number=0, y:number=0, width:number=0, height:number=0)
 	{
@@ -20,12 +25,50 @@ export class Rectangle extends BaseObject
         this._needUpdate = true;
     }
 
+    public hasChanged():void
+    {
+        this._needUpdate = true;
+        if(this._delegate)
+        {
+            this._delegate.onVerticeChanged(this);
+        }
+    }
+
+    public set delegate(value:IVerticeBufferDelegate)
+    {
+        this._delegate = value;
+    }
+
+    public get rawVertices():Float32Array
+    {
+        return this.vertices;
+    }
+
+    public set index(value:number)
+    {
+        this._index = value;
+    }
+
+    public get index():number
+    {
+        return this._index;
+    }
+
+    public get length():number
+    {
+        return this.vertices.length;
+    }
+
+    public get needUpdate():boolean
+    {
+        return this._needUpdate;
+    }
+
     public get vertices():Float32Array
     {
         if(!this._vertices)
         {
-            this._vertices = new Float32Array(12);
-            
+            this._vertices = new Float32Array(12);            
         }
         if(this._needUpdate)
         {
