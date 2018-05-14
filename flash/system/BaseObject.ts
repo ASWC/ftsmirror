@@ -57,6 +57,6 @@ export class BaseObject
 
     public toString():String
 	{
-		return this.toString();
+		return this._name;
 	}
 }

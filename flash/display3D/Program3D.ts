@@ -5,12 +5,22 @@ import { Matrix } from "flash/geom/Matrix";
 import { VertexAttribute, VertexAttributeDictionary } from "flash/webgl/shadertypes/VertexAttribute";
 import { VertexUniform, VertexUniformDictionary } from "flash/webgl/shadertypes/VertexUniform";
 import { VerticeBuffer } from "../webgl/shadertypes/VerticeBuffer";
+import { VertexVarying, VertexVaryingDictionary } from "../webgl/shadertypes/VertexVarying";
+import { BitmapData } from "../display/BitmapData";
+import { TextureDataDictionary, TextureData } from "../webgl/shadertypes/TextureData";
 
 export class Program3D extends BaseObject
 {
     public static PRECISION_MEDIUM:string = "mediump";
+    protected static PROGRAMS:Program3DDictionary = {};
+    protected static UNREGISTERED_PROGRAMS:Program3D[] = [];
 
     protected _precision:string;
+    protected _textures:TextureDataDictionary;
+    protected _vertexVarying:VertexVarying[];
+    protected _vertexVaryingDic:VertexVaryingDictionary;
+    protected _fragmentVarying:VertexVarying[];
+    protected _fragmentVaryingDic:VertexVaryingDictionary;
     protected _vertexUniform:VertexUniform[];
     protected _vertexUniformDic:VertexUniformDictionary;
     protected _fragmentUniform:VertexUniform[];
@@ -21,18 +31,58 @@ export class Program3D extends BaseObject
     protected _fragmentMainLines:string[];
     protected _vertexShader:WebGLShader;
     protected _fragmentShader:WebGLShader;
-    protected _invalidProgram:boolean;
+    
     protected _program:WebGLProgram;
     protected _vertextCount:number;
+
+    protected _invalidProgram:boolean;
+    protected _programBuilt:boolean;
 
     constructor()
     {
         super();
+        this._textures = {};
+        this._programBuilt = false;
         this._invalidProgram = false;
         this._fragmentMainLines = [];
         this._vertexAttributes;
         this._vertexMainLines = [];
         this._precision = "precision mediump float;";
+        Program3D.UNREGISTERED_PROGRAMS.push(this)
+    }
+
+    public static getProgram(name:string):Program3D
+    {
+        return Program3D.PROGRAMS[name];
+    }
+
+    public static registerPrograms(gl:WebGLRenderingContext):void
+    {
+        while(Program3D.UNREGISTERED_PROGRAMS.length)
+        {
+            var program:Program3D = Program3D.UNREGISTERED_PROGRAMS.shift();
+            program.buildProgram(gl);
+        }
+    }
+
+    public static get hasUnregisteredPrograms():boolean
+    {
+        if(Program3D.UNREGISTERED_PROGRAMS.length)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public set name(value:string)
+    {
+        this._name = value;
+        Program3D.PROGRAMS[value] = this;
+    }
+
+    public get name():string
+    {
+        return this._name;
     }
 
     public addToFragmentMain(value:string):void
@@ -57,6 +107,34 @@ export class Program3D extends BaseObject
         variable.name = value;
         this._fragmentUniform.push(variable);
         this._fragmentUniformDic[variable.name] = variable;
+    }
+    
+    public addVaryingToFragment(value:string, type:string):void
+    {
+        if(!this._fragmentVarying)
+        {
+            this._fragmentVarying = [];
+            this._fragmentVaryingDic = {};
+        }
+        var variable:VertexVarying = new VertexVarying();   
+        variable.dataType = type;
+        variable.name = value;
+        this._fragmentVarying.push(variable);
+        this._fragmentVaryingDic[variable.name] = variable;
+    }
+
+    public addVaryingToVertex(value:string, type:string):void
+    {
+        if(!this._vertexVarying)
+        {
+            this._vertexVarying = [];
+            this._vertexVaryingDic = {};
+        }
+        var variable:VertexVarying = new VertexVarying();   
+        variable.dataType = type;
+        variable.name = value;
+        this._vertexVarying.push(variable);
+        this._vertexVaryingDic[variable.name] = variable;
     }
 
     public addUniformToVertex(value:string, type:string):void
@@ -129,12 +207,17 @@ export class Program3D extends BaseObject
         }   
     }
 
+    public use(context:WebGLRenderingContext)
+    {
+        context.useProgram(this._program);
+    }
+
     public updateVertexUniform(context:WebGLRenderingContext, name:string, data:number[]):void
     {
         if(this._invalidProgram)
         {
             return;
-        }
+        }        
         var vertextUniform:VertexUniform = this._vertexUniformDic[name];
         if(vertextUniform != undefined)
         {            
@@ -155,22 +238,10 @@ export class Program3D extends BaseObject
         }
         context.enableVertexAttribArray(variable.attributeLocation);
         context.bindBuffer(context.ARRAY_BUFFER, variable.buffer);  
-
         if(data.needUpdate)
         {
-            this.show("changed")
             context.bufferData(context.ARRAY_BUFFER, data.vertices, context.STATIC_DRAW);
-        }
-
-        
-        
-       
-
-
-        
-
-        
-
+        }     
         var type = context.FLOAT;
         var normalize = false;
         var stride = 0;
@@ -181,6 +252,7 @@ export class Program3D extends BaseObject
 
     public present(context:WebGLRenderingContext):void
     {
+        context.useProgram(this._program);
         if(this._vertextCount == 0)
         {   
             return;
@@ -192,6 +264,33 @@ export class Program3D extends BaseObject
         var primitiveType = context.TRIANGLES;
         var offset = 0;
         context.drawArrays(primitiveType, offset, this._vertextCount);        
+    }
+
+    public registerTexture(context:WebGLRenderingContext, data:BitmapData):void
+    {
+        var image:HTMLImageElement = BitmapData.getNativeImage(data);
+        if(!image)
+        {
+            return;
+        }
+        if(this._textures[image.src] == undefined)
+        {
+            var texture:TextureData = new TextureData();
+            texture.image = image;
+            var webgltexture:WebGLTexture = context.createTexture();
+            context.bindTexture(context.TEXTURE_2D, webgltexture);
+            context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_S, context.CLAMP_TO_EDGE);
+            context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_T, context.CLAMP_TO_EDGE);
+            context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MIN_FILTER, context.NEAREST);
+            context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MAG_FILTER, context.NEAREST);
+            context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, context.RGBA, context.UNSIGNED_BYTE, image);
+            texture.webgltexture = webgltexture;
+            this._textures[image.src] = texture;
+        }
+        else
+        {
+            context.activeTexture(context.TEXTURE0)
+        }
     }
 
     public buildProgram(context:WebGLRenderingContext):void
@@ -206,7 +305,7 @@ export class Program3D extends BaseObject
         this._vertexShader = Program3D.createShader(context, context.VERTEX_SHADER, vertexcode);
         this._fragmentShader = Program3D.createShader(context, context.FRAGMENT_SHADER, fragmentcode);
         if(!this._vertexShader || !this._fragmentShader)
-        {
+        {            
             this._invalidProgram = true;
             return;
         }
@@ -231,6 +330,7 @@ export class Program3D extends BaseObject
             {
                 var vertextUniform:VertexUniform = this._vertexUniform[i];
                 vertextUniform.location = context.getUniformLocation(this._program, vertextUniform.name);
+                this.show(vertextUniform.name + " vertex u: " + vertextUniform.location)
             }
         }
         if(this._fragmentUniform)
@@ -239,6 +339,7 @@ export class Program3D extends BaseObject
             {
                 var vertextUniform:VertexUniform = this._fragmentUniform[i];
                 vertextUniform.location = context.getUniformLocation(this._program, vertextUniform.name);
+                this.show(vertextUniform.name + " fragment u: " + vertextUniform.location)
             }
         }
     }
@@ -269,7 +370,7 @@ export class Program3D extends BaseObject
         var shaderlines:string = '';
         shaderlines += this._precision + Program3D.lineBreak;        
         shaderlines += Program3D.extractUniforms(this._fragmentUniform);     
-        //shaderlines += this.extractVariables(this._fragmentVarying); 
+        shaderlines += Program3D.extractVarying(this._fragmentVarying); 
         shaderlines += "void main()" + Program3D.lineBreak;
         shaderlines += "{" + Program3D.lineBreak;      
         shaderlines += Program3D.extractProgramLines(this._fragmentMainLines);
@@ -282,7 +383,7 @@ export class Program3D extends BaseObject
         var shaderlines:string = '';
         shaderlines += Program3D.extractVeertexAttributes(this._vertexAttributes);
         shaderlines += Program3D.extractUniforms(this._vertexUniform);
-        //shaderlines += this.extractVariables(this._vertexVarying);
+        shaderlines += Program3D.extractVarying(this._vertexVarying);
         shaderlines += "void main()" + Program3D.lineBreak;
         shaderlines += "{" + Program3D.lineBreak;
         shaderlines += Program3D.extractProgramLines(this._vertexMainLines);
@@ -303,6 +404,20 @@ export class Program3D extends BaseObject
         var error:Error = new Error(context.getShaderInfoLog(shader));
         context.deleteShader(shader);
         return null;
+      }
+
+      protected static extractVarying(variables:VertexVarying[]):string
+      {
+          var lines:string = '';
+          if(!variables)
+          {
+              return lines;
+          }
+          for(var i:number = 0; i < variables.length; i++)        
+          {
+              lines += variables[i].getLine() + Program3D.lineBreak;
+          }
+          return lines;
       }
 
       protected static extractUniforms(variables:VertexUniform[]):string
@@ -611,4 +726,10 @@ class ShaderVariable
     {
         return this.modifier + " " + this.type + " " + this.name + ";";
     }
+}
+
+
+export interface Program3DDictionary
+{
+    [name:string]:Program3D;
 }

@@ -1,7 +1,5 @@
-import { VerticeBuffer } from "./VerticeBuffer";
-import { IVerticeBufferDelegate } from "./IVerticeBufferDelegate";
-
-
+import { VerticeBuffer } from "flash/webgl/shadertypes/VerticeBuffer";
+import { IVerticeBufferDelegate } from "flash/webgl/shadertypes/IVerticeBufferDelegate";
 
 export interface IVerticeIndex
 {

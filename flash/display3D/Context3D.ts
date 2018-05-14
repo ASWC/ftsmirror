@@ -6,6 +6,11 @@ import { Program3D } from "./Program3D";
 import { Rectangle } from "flash/geom/Rectangle";
 import { Context3DVertexBufferFormat } from "flash/display3D/Context3DVertexBufferFormat";
 import { VerticeBuffer } from "../webgl/shadertypes/VerticeBuffer";
+import { IDisplayObjectContainer } from "../display/types/IDisplayObjectContainer";
+import { IDisplayObject } from "../display/types/IDisplayObject";
+import { Bitmap } from "../display/Bitmap";
+import { TextureUvs } from "../geom/TextureUvs";
+import { Polygon } from "../geom/Polygon";
 
 export class Context3D extends BaseObject
 {
@@ -38,12 +43,74 @@ export class Context3D extends BaseObject
         this.verticetest.addVertices(this.recttest);
     }
 
-    public render(container:DisplayObjectContainer)
+    public render(container:IDisplayObjectContainer)
     {
         this.resize();
+        if(Program3D.hasUnregisteredPrograms)
+        {
+            Program3D.registerPrograms(this._gl);
+        }
+        
+
+        if(container.numChildren)
+        {
+            if(!this._gl)
+            {
+                return;
+            }
+            var child:Bitmap = <Bitmap> container.getChildAt(0);
+            var program:Program3D = Program3D.getProgram("texture_program_nomatrix_test");
+            if(program)
+            {
+                program.use(this._gl);
+                
+                program.registerTexture(this._gl, child.bitmapData);
+
+                var rect:Rectangle = new Rectangle(300, 150, 178, 95);
+
+                //this.reveal(rect.vertices);
+
+
+                var vbuffer:VerticeBuffer = new VerticeBuffer()
+                vbuffer.addVertices(rect);
+
+                program.updateVertexData(this._gl, 'a_position', vbuffer);
+
+
+             
+
+                var uvs:Polygon = new Polygon();
+                //this.reveal(uvs.vertices);
+                var vbuffer:VerticeBuffer = new VerticeBuffer()
+                vbuffer.addVertices(uvs);
+
+                program.updateVertexData(this._gl, 'a_texCoord', vbuffer);
+
+                program.updateVertexUniform(this._gl, "u_resolution", [this._canvas.width, this._canvas.height])        
+
+                //program.updateFragmentUniform(this._gl, "u_color", [0.5, 0.2, 0.2, 0.5]);
+                //program.present(this._gl);
+
+
+                /*var positions:Float32Array = new Float32Array(12)
+                positions[0] = 0;
+                positions[1] = 0;
+                positions[2] = -1;
+                positions[3] = 0;
+                positions[4] = 0;
+                positions[5] = 1;
+                positions[6] = 0;
+                positions[7] = 0;
+                positions[8] = 1;
+                positions[9] = 0;
+                positions[10] = 0;
+                positions[11] = 1;   */              
+            }
+        }
+        
         if(!this._programTest)
         {
-            this._programTest = new Program3D(); 
+            /*this._programTest = new Program3D(); 
             this._programTest.name = "triangle_program_flat_color_resolution";  
             this._programTest.addAttributeToVertex("a_position", Context3DVertexBufferFormat.VEC4, 2);
             this._programTest.addUniformToVertex("u_resolution", Context3DVertexBufferFormat.VEC2);
@@ -51,22 +118,8 @@ export class Context3D extends BaseObject
             this._programTest.addToVertexMain("vec2 zeroToTwo = zeroToOne * 2.0;");
             this._programTest.addToVertexMain("vec2 clipSpace = zeroToTwo - 1.0;");
             this._programTest.addToVertexMain("gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);");
-
-      
-      
-      
-      
-           
-
-
-
-
             this._programTest.addUniformToFragment("u_color", Context3DVertexBufferFormat.VEC4);
-            this._programTest.addToFragmentMain("gl_FragColor = u_color;");
-
-         
-
-
+            this._programTest.addToFragmentMain("gl_FragColor = u_color;");   */      
             /*
             // simple flat color program
             this._programTest.name = "triangle_program_flat_color_nomatrix";  
@@ -75,19 +128,14 @@ export class Context3D extends BaseObject
             this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
             */
         }        
-        if(!this._programTest.ready)
-        {
-            this._programTest.buildProgram(this._gl);
-
-            
-
-
-        }
-        if(this._programTest.ready)
-        {
-            this._programTest.bind(this._gl);
-
-            //var rect:Rectangle = new Rectangle(300, 150, 178, 95);
+        //if(!this._programTest.ready)
+        //{
+            /*this._programTest.buildProgram(this._gl);*/
+        //}
+        //if(this._programTest.ready)
+       // {
+            //this._programTest.bind(this._gl);
+            //
             //var rect2:Rectangle = new Rectangle(150, 300, 178, 95);
             /*
             var vertices1:Float32Array = rect.vertices;
@@ -95,23 +143,7 @@ export class Context3D extends BaseObject
             var vertices:Float32Array = new Float32Array(vertices1.length + vertices2.length)            
             vertices.set(vertices1, 0)
             vertices.set(vertices2, vertices1.length) */  
-
-
             
-            
-
-
-            
-
-
-            this._programTest.updateVertexData(this._gl, 'a_position', this.verticetest);
-            this._programTest.updateVertexUniform(this._gl, "u_resolution", [this._canvas.width, this._canvas.height])            
-            this._programTest.updateFragmentUniform(this._gl, "u_color", [0.5, 0.2, 0.2, 0.5]);
-
-            
-
-            
-
             /*
             // simple flat color program
             var positions:Float32Array = new Float32Array(12)
@@ -129,17 +161,18 @@ export class Context3D extends BaseObject
             positions[11] = 1;                 
             this._programTest.updateVertexData(this._gl, 'a_position', positions);
             */
-
-            this._programTest.present(this._gl);
-        }
-
-        this.drawcount++;
+            //this._programTest.present(this._gl);
+        //}
+        /*this.drawcount++;
         if(this.drawcount == 2000)
         {
             this.recttest.width = 400;
-        }
+        }*/
+    }
 
-        
+    protected renderGraphic(graphic:IDisplayObject):void
+    {
+        this.show('rendering: ' + graphic)
     }
 
     protected resize():void

@@ -59,6 +59,8 @@ export class Event
     public static CLEAR:string = "clear";
     public static CHANNEL_STATE:string = "channelState";
 
+    protected static EventCache:EventDictionary = {};
+
     protected _bubbles:boolean;
     protected _type:string;
     protected _target:any;
@@ -71,6 +73,15 @@ export class Event
         this._type = type;
         this._bubbles = bubbles;
         this._cancelable = cancelable;
+    }
+
+    public static getEvent(type:string):Event
+    {
+        if(Event.EventCache[type] == undefined)
+        {
+            Event.EventCache[type] = new Event(type);
+        }
+        return Event.EventCache[type];
     }
 
     public stopPropagation():void
@@ -139,4 +150,9 @@ export class Event
             event._currentTarget = currentTarget;            
         }
     }
+}
+
+export interface EventDictionary
+{
+    [name : string]:Event;
 }
