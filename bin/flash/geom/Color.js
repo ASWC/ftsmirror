@@ -4,87 +4,42 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
     class Color extends BaseObject_1.BaseObject {
         constructor(color = 0xFFFFFFFF) {
             super();
-            this._color = color;
-            if (color == 0) {
-                this._color = 0x00000000;
-            }
-            var alphacheck = (color >> 24) & 0xFF;
-            if (alphacheck == null) {
-                this.alpha = 255;
-            }
+            this.color = color;
+        }
+        set color(value) {
+            this._color = value;
             this._alpha = (this._color >> 24) & 0xFF;
             this._red = (this._color >> 16) & 0xFF;
             this._green = (this._color >> 8) & 0xFF;
             this._blue = this._color & 0xFF;
-            ;
-            this._absoluteRed = -1;
-            this._absoluteGreen = -1;
-            this._absoluteBlue = -1;
-            this._absoluteAlpha = -1;
+            this._absoluteAlpha = ((this._color >> 24) & 0xFF) / 255;
+            this._absoluteRed = ((this._color >> 16) & 0xFF) / 255;
+            this._absoluteGreen = ((this._color >> 8) & 0xFF) / 255;
+            this._absoluteBlue = (this._color & 0xFF) / 255;
         }
         get alpha() {
-            if (this._alpha >= 0) {
-                return this._alpha;
-            }
-            var value = (this._color >> 24) & 0xFF;
-            this._alpha = value;
-            return value;
+            return this._alpha;
         }
         get red() {
-            if (this._red >= 0) {
-                return this._red;
-            }
-            var value = (this._color >> 16) & 0xFF;
-            this._red = value;
-            return value;
+            return this._red;
         }
         get green() {
-            if (this._green >= 0) {
-                return this._green;
-            }
-            var value = (this._color >> 8) & 0xFF;
-            this._green = value;
-            return value;
+            return this._green;
         }
         get blue() {
-            if (this._blue >= 0) {
-                return this._blue;
-            }
-            var value = this._color & 0xFF;
-            this._blue = value;
-            return value;
+            return this._blue;
         }
         get absoluteAlpha() {
-            if (this._absoluteAlpha >= 0) {
-                return this._absoluteAlpha;
-            }
-            var value = ((this._color >> 24) & 0xFF) / 255;
-            this._absoluteAlpha = value;
-            return value;
+            return this._absoluteAlpha;
         }
         get absoluteRed() {
-            if (this._absoluteRed >= 0) {
-                return this._absoluteRed;
-            }
-            var value = ((this._color >> 16) & 0xFF) / 255;
-            this._absoluteRed = value;
-            return value;
+            return this._absoluteRed;
         }
         get absoluteGreen() {
-            if (this._absoluteGreen >= 0) {
-                return this._absoluteGreen;
-            }
-            var value = ((this._color >> 8) & 0xFF) / 255;
-            this._absoluteGreen = value;
-            return value;
+            return this._absoluteGreen;
         }
         get absoluteBlue() {
-            if (this._absoluteBlue >= 0) {
-                return this._absoluteBlue;
-            }
-            var value = (this._color & 0xFF) / 255;
-            this._absoluteBlue = value;
-            return value;
+            return this._absoluteBlue;
         }
         set alpha(value) {
             if (value < 0) {
@@ -180,17 +135,6 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
         }
         get color() {
             return this._color;
-        }
-        set color(value) {
-            this._color = value;
-            this._alpha = -1;
-            this._red = -1;
-            this._green = -1;
-            this._blue = -1;
-            this._absoluteAlpha = -1;
-            this._absoluteBlue = -1;
-            this._absoluteGreen = -1;
-            this._absoluteRed = -1;
         }
         getAbsolutOpposite(includeAlpha = true) {
             var color;

@@ -22,7 +22,6 @@ export class Context3D extends BaseObject
     protected _defaultContext:boolean;
     protected _gl:WebGLRenderingContext;
     protected _color:Color;
-
     protected verticetest:VerticeBuffer;
     protected recttest:Rectangle;
     protected drawcount:number;
@@ -30,18 +29,72 @@ export class Context3D extends BaseObject
     constructor()
     {
         super();
-        this._color = new Color(0x00FFFFFF);
-
-
-        this.drawcount = 0;
-        this.recttest = new Rectangle(100 + Math.random() * 100, 100 + Math.random() * 100, 50, 50)
-        this.verticetest = new VerticeBuffer();
-        this.verticetest.addVertices(new Rectangle(300, 150, 50, 50));
-        this.verticetest.addVertices(new Rectangle(150, 300, 50, 50));
-        this.verticetest.addVertices(new Rectangle(100 + Math.random() * 100, 100 + Math.random() * 100, 50, 50));
-        this.verticetest.addVertices(new Rectangle(100 + Math.random() * 100, 100 + Math.random() * 100, 50, 50));
-        this.verticetest.addVertices(this.recttest);
     }
+
+    protected resize():void
+    {
+        if(!this._gl)
+        {
+            return;
+        }
+        var displayWidth:number  = this._canvas.clientWidth;
+        var displayHeight:number = this._canvas.clientHeight;
+        if (this._canvas.width  != displayWidth || this._canvas.height != displayHeight) 
+        {
+            this._canvas.width  = displayWidth;
+            this._canvas.height = displayHeight;
+            this._gl.viewport(0, 0, this._gl.canvas.width, this._gl.canvas.height);
+        }            
+        this._gl.clearColor(this._color.absoluteRed, this._color.absoluteGreen, this._color.absoluteBlue, this._color.absoluteAlpha);
+        this._gl.clear(this._gl.COLOR_BUFFER_BIT);        
+    }
+
+    public set color(value:Color)
+    {
+        this._color = value;
+    }
+
+    public initRendering():void
+    {
+        this.resize();
+    }
+
+    public isValid():boolean
+    {
+        if(this._gl)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public validate():void
+    {        
+        this._gl = this._canvas.getContext("webgl") || this._canvas.getContext("experimental-webgl");     
+    }
+
+    public set canvas(value:HTMLCanvasElement)
+    {
+        if(this._canvas)
+        {
+            return;
+        }
+        this._canvas = value;      
+    }
+
+    public get canvas():HTMLCanvasElement
+    {
+        return this._canvas;
+    }
+
+
+
+
+
+
+
+
+
 
     public render(container:IDisplayObjectContainer)
     {
@@ -175,23 +228,7 @@ export class Context3D extends BaseObject
         this.show('rendering: ' + graphic)
     }
 
-    protected resize():void
-    {
-        if(!this._gl)
-        {
-            return;
-        }
-        var displayWidth:number  = this._canvas.clientWidth;
-        var displayHeight:number = this._canvas.clientHeight;
-        if (this._canvas.width  != displayWidth || this._canvas.height != displayHeight) 
-        {
-            this._canvas.width  = displayWidth;
-            this._canvas.height = displayHeight;
-            this._gl.viewport(0, 0, this._gl.canvas.width, this._gl.canvas.height);
-        }            
-        this._gl.clearColor(this._color.absoluteRed, this._color.absoluteGreen, this._color.absoluteBlue, this._color.absoluteAlpha);
-        this._gl.clear(this._gl.COLOR_BUFFER_BIT);        
-    }
+
 
     public release():void
     {
@@ -242,13 +279,9 @@ export class Context3D extends BaseObject
         return this._context3DName;
     }
 
-    public validate():void
-    {        
-        ObjectUtils.setProperty(this._canvas, "attachedstagerender", this._context3Did);
-        ObjectUtils.setProperty(this._canvas, "context3did", this._contextId);
-        ObjectUtils.setProperty(this._canvas, "context3dname", this._contextId);
-        this._gl = this._canvas.getContext("webgl");
-    }
+
+
+
 
     public get hasContextAvailable():boolean
     {
@@ -265,18 +298,5 @@ export class Context3D extends BaseObject
         return true;
     }
 
-    public set canvas(value:HTMLCanvasElement)
-    {
-        if(this._canvas)
-        {
-            return;
-        }
-        this._canvas = value;
-        this._context3Did = ObjectUtils.getProperty(this._canvas, "context3did");
-        this._context3DName = ObjectUtils.getProperty(this._canvas, "context3dname");        
-        if(!this._context3Did)
-        {
-            this._context3Did = this._contextId;
-        }        
-    }
+
 }

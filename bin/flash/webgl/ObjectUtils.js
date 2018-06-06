@@ -21,6 +21,15 @@ define(["require", "exports"], function (require, exports) {
                 target[key] = value;
             }
         }
+        static getParameter(target, key) {
+            if (target['dataset'] != undefined) {
+                var parameters = target['dataset'];
+                if (parameters[key] != undefined) {
+                    return parameters[key];
+                }
+            }
+            return null;
+        }
     }
     exports.ObjectUtils = ObjectUtils;
 });

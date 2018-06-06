@@ -4,6 +4,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
     class Program3D extends BaseObject_1.BaseObject {
         constructor() {
             super();
+            this.quicktest = false;
             this._invalidProgram = false;
             this._fragmentMainLines = [];
             this._vertexAttributes;
@@ -15,6 +16,17 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
         }
         addToVertexMain(value) {
             this._vertexMainLines.push(value);
+        }
+        addUniformToFragment(value, type) {
+            if (!this._fragmentUniform) {
+                this._fragmentUniform = [];
+                this._fragmentUniformDic = {};
+            }
+            var variable = new VertexUniform_1.VertexUniform();
+            variable.dataType = type;
+            variable.name = value;
+            this._fragmentUniform.push(variable);
+            this._fragmentUniformDic[variable.name] = variable;
         }
         addUniformToVertex(value, type) {
             if (!this._vertexUniform) {
@@ -58,6 +70,15 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
             context.useProgram(this._program);
             this._vertextCount = 0;
         }
+        updateFragmentUniform(context, name, data) {
+            if (this._invalidProgram) {
+                return;
+            }
+            var vertextUniform = this._fragmentUniformDic[name];
+            if (vertextUniform != undefined) {
+                vertextUniform.bind(context, data);
+            }
+        }
         updateVertexUniform(context, name, data) {
             if (this._invalidProgram) {
                 return;
@@ -77,7 +98,10 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
             }
             context.enableVertexAttribArray(variable.attributeLocation);
             context.bindBuffer(context.ARRAY_BUFFER, variable.buffer);
-            context.bufferData(context.ARRAY_BUFFER, data, context.STATIC_DRAW);
+            if (!this.quicktest) {
+                this.quicktest = true;
+                context.bufferData(context.ARRAY_BUFFER, data, context.STATIC_DRAW);
+            }
             var type = context.FLOAT;
             var normalize = false;
             var stride = 0;
@@ -127,6 +151,12 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
                     vertextUniform.location = context.getUniformLocation(this._program, vertextUniform.name);
                 }
             }
+            if (this._fragmentUniform) {
+                for (var i = 0; i < this._fragmentUniform.length; i++) {
+                    var vertextUniform = this._fragmentUniform[i];
+                    vertextUniform.location = context.getUniformLocation(this._program, vertextUniform.name);
+                }
+            }
         }
         static createProgram(context, vertexShader, fragmentShader) {
             var program = context.createProgram();
@@ -144,7 +174,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
         buildFragmentSource() {
             var shaderlines = '';
             shaderlines += this._precision + Program3D.lineBreak;
-            //shaderlines += this.extractVariables(this._fragmentUniform);     
+            shaderlines += Program3D.extractUniforms(this._fragmentUniform);
             //shaderlines += this.extractVariables(this._fragmentVarying); 
             shaderlines += "void main()" + Program3D.lineBreak;
             shaderlines += "{" + Program3D.lineBreak;
@@ -155,7 +185,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
         buildVertexSource() {
             var shaderlines = '';
             shaderlines += Program3D.extractVeertexAttributes(this._vertexAttributes);
-            shaderlines += Program3D.extractVertexUniforms(this._vertexUniform);
+            shaderlines += Program3D.extractUniforms(this._vertexUniform);
             //shaderlines += this.extractVariables(this._vertexVarying);
             shaderlines += "void main()" + Program3D.lineBreak;
             shaderlines += "{" + Program3D.lineBreak;
@@ -175,7 +205,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
             context.deleteShader(shader);
             return null;
         }
-        static extractVertexUniforms(variables) {
+        static extractUniforms(variables) {
             var lines = '';
             if (!variables) {
                 return lines;
@@ -206,9 +236,6 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
             return "\n";
         }
     }
-    Program3D.VEC4 = "vec4";
-    Program3D.VEC2 = "vec2";
-    Program3D.MAT3 = "mat3";
     Program3D.PRECISION_MEDIUM = "mediump";
     exports.Program3D = Program3D;
     class ShaderVariable {

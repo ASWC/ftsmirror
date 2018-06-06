@@ -22,6 +22,7 @@ import { Timer } from "flash/utils/Timer";
 import { Program3D } from "../display3D/Program3D";
 import { IStage } from "./types/IStage";
 import { IInteractiveObject } from "./types/IInteractiveObject";
+import { Color } from "flash/geom/Color";
 
 export class Stage extends DisplayObjectContainer implements IStage
 {
@@ -56,27 +57,99 @@ export class Stage extends DisplayObjectContainer implements IStage
     protected _mouseLock:boolean;
     protected _quality:string;
     protected _autoOrients:boolean;
-    protected _color:number;
-    protected _scaleMode:string;
+    protected _scaleMode:string;    
     protected _displayState:string;
     protected _colorCorrection:string;
     protected _height:number;
     protected _mouseChildren:boolean;
     protected _context3D:Context3D;
+    protected _canvasColor:Color;
+    protected _enterFrameID:number;
+    protected isPaused:boolean;
 
     constructor()
     {
         super();
         Stage3D.getStages();
-        this._context3D = Stage3D.assignContext();
-        Timer.getGlobalTimer().push(this);
-        //this._innerContainer = new InnerContainer();
-        //this._innerContainer.parent = this;           
-        // auto assign stage
-        // auto check support < no support < no stage available
-        // let user change
+        this._canvasColor = new Color(0xFFFFFFFF);
         this._name = "stage";
+        this.isPaused = false;
     }
+
+    public set color(value:number)
+    {
+        this._canvasColor.color = value;
+    }
+
+    public get color():number
+    {
+        return this._canvasColor.color;
+    }
+
+    public start():void
+    {
+        this._enterFrameID = requestAnimationFrame(this._enterFrame);
+    }
+
+    public stop():void
+    {
+        this.isPaused = true;
+    }
+
+    private _enterFrame = (time) =>
+    {
+        if(this.isPaused)
+        {
+            return;
+        }
+        this._enterFrameID = requestAnimationFrame(this._enterFrame);
+
+
+        // framerate control
+
+
+
+        this.show(time);
+        if(time > 20000)
+        {
+            this.stop();
+        }
+    }
+
+    public validateContext():void
+    {
+        this._context3D.validate();
+        if(this._context3D.isValid())
+        {
+            this._context3D.color = this._canvasColor;
+            this._context3D.initRendering();
+            this.start();
+        }
+    }
+
+    public createContextById(id:number):void
+    {
+        this._context3D = Stage3D.assignContextByid(id);
+        if(this._context3D)
+        {
+            this.validateContext();
+        }
+    }
+
+    public createContextAtIndex(index:number):void
+    {
+
+    }
+
+    public createContext():void
+    {
+
+    }
+
+
+
+
+
 
     public tickUpdate(time:number):void
     {        
@@ -374,15 +447,7 @@ export class Stage extends DisplayObjectContainer implements IStage
         return this._autoOrients;
     }
 
-    public set color(value:number)
-    {
-        this._color = value;
-    }
 
-    public get color():number
-    {
-        return this._color;
-    }
 
     public set scaleMode(value:string)
     {

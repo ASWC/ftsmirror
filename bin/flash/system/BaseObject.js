@@ -32,7 +32,7 @@ define(["require", "exports", "flash/system/Tracer"], function (require, exports
             Tracer_1.Tracer.revealMethods(value);
         }
         toString() {
-            return this.toString();
+            return this._name;
         }
     }
     BaseObject.instanceid = 0;

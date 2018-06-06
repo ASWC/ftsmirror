@@ -36,7 +36,7 @@ export class Tracer
 		return result;	
 	}
 
-	public static reveal(value:Object):string
+	public static reveal(value:any):string
 	{
 		var result:string = 'reveal';
 		if(!value)

@@ -7,6 +7,12 @@ define(["require", "exports"], function (require, exports) {
             this._bubbles = bubbles;
             this._cancelable = cancelable;
         }
+        static getEvent(type) {
+            if (Event.EventCache[type] == undefined) {
+                Event.EventCache[type] = new Event(type);
+            }
+            return Event.EventCache[type];
+        }
         stopPropagation() {
         }
         stopImmediatePropagation() {
@@ -103,6 +109,7 @@ define(["require", "exports"], function (require, exports) {
     Event.HTML_BOUNDS_CHANGE = "htmlBoundsChange";
     Event.CLEAR = "clear";
     Event.CHANNEL_STATE = "channelState";
+    Event.EventCache = {};
     exports.Event = Event;
 });
 //# sourceMappingURL=Event.js.map

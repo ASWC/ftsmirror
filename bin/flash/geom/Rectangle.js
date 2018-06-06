@@ -11,6 +11,30 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Point"], fu
             this._rectangle[3] = height;
             this._needUpdate = true;
         }
+        hasChanged() {
+            this._needUpdate = true;
+            if (this._delegate) {
+                this._delegate.onVerticeChanged(this);
+            }
+        }
+        set delegate(value) {
+            this._delegate = value;
+        }
+        get rawVertices() {
+            return this.vertices;
+        }
+        set index(value) {
+            this._index = value;
+        }
+        get index() {
+            return this._index;
+        }
+        get length() {
+            return this.vertices.length;
+        }
+        get needUpdate() {
+            return this._needUpdate;
+        }
         get vertices() {
             if (!this._vertices) {
                 this._vertices = new Float32Array(12);

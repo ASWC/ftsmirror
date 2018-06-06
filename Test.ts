@@ -16,19 +16,24 @@ import { BitmapData } from "flash/display/BitmapData";
 
 export class Test extends Stage
 {
-    private loader:Loader;
+    //private loader:Loader;
     
     constructor()
     {
         super();
-
         this.align = StageAlign.TOP_LEFT;
         this.scaleMode = StageScaleMode.NO_SCALE;
-        this._context3D.setCanvas(-1, -1);
+        this.color = 0x99333333;
+        this.createContextById(0);
 
-        this.loader = new Loader();
-        this.loader.contentLoaderInfo.addEventListener(Event.COMPLETE, this.handleComplete);
-        this.loader.load(new URLRequest("20170818_120214.jpg"));
+
+
+
+        //this._context3D.setCanvas(-1, -1);
+
+        //this.loader = new Loader();
+        //this.loader.contentLoaderInfo.addEventListener(Event.COMPLETE, this.handleComplete);
+        //this.loader.load(new URLRequest("20170818_120214.jpg"));
 
         //this.loader.contentLoaderInfo.addEventListener(ProgressEvent.pr, this.handleComplete);
 
@@ -54,6 +59,7 @@ export class Test extends Stage
 
     private handleComplete = (event)=>
     {
+        /*
         var program:Program3D = new Program3D();
         program.name = "texture_program_nomatrix_test"; 
         program.addAttributeToVertex("a_position", Context3DVertexBufferFormat.VEC2, 2) // not sure about size
@@ -76,7 +82,7 @@ export class Test extends Stage
 
         //this._context3D.registerTexture(this.loader.content);
 
-
+*/
         /*         
       void main() 
       {

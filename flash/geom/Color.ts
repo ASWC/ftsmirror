@@ -15,112 +15,60 @@ export class Color extends BaseObject
 	constructor(color:number = 0xFFFFFFFF)
 	{
 		super();		  
-        this._color = color;        
-        if(color == 0)
-        {
-            this._color = 0x00000000;
-		}
-		var alphacheck:number =  (color >> 24) & 0xFF; 
-        if(alphacheck == null)
-        {
-            this.alpha = 255;
-        }      
+		this.color = color;          
+	}
+
+	public set color(value:number)
+	{				
+		this._color = value;
 		this._alpha = (this._color >> 24) & 0xFF;
-        this._red = (this._color >> 16) & 0xFF;
-        this._green = (this._color >> 8) & 0xFF;
-		this._blue = this._color & 0xFF;;
-		this._absoluteRed = -1;
-		this._absoluteGreen = -1;
-		this._absoluteBlue = -1;
-		this._absoluteAlpha = -1;
+		this._red = (this._color >> 16) & 0xFF;
+		this._green = (this._color >> 8) & 0xFF;
+		this._blue = this._color & 0xFF;
+		this._absoluteAlpha = ((this._color >> 24) & 0xFF) / 255;
+		this._absoluteRed = ((this._color >> 16) & 0xFF) / 255;
+		this._absoluteGreen = ((this._color >> 8) & 0xFF) / 255;
+		this._absoluteBlue = (this._color & 0xFF) / 255;
 	}
 
 	public get alpha():number
 	{
-		if(this._alpha >= 0)
-		{
-			return this._alpha;
-		}
-		var value:number = (this._color >> 24) & 0xFF;
-		this._alpha = value;
-		return value;
+		return this._alpha;
 	}
 
 	public get red():number
 	{
-		if(this._red >= 0)
-		{
-			return this._red;
-		}
-		var value:number = (this._color >> 16) & 0xFF;
-		this._red = value;
-		return value;
+		return this._red;
 	}
 
 	public get green():number
 	{
-		if(this._green >= 0)
-		{
-			return this._green;
-		}
-		var value:number = (this._color >> 8) & 0xFF;
-		this._green = value;
-		return value;
+		return this._green;
 	}
 
 	public get blue():number
 	{
-		if(this._blue >= 0)
-		{
-			return this._blue;
-		}
-		var value:number = this._color & 0xFF;
-		this._blue = value;
-		return value;
+		return this._blue;
 	}
 
 	public get absoluteAlpha():number
 	{
-		if(this._absoluteAlpha >= 0)
-		{
-			return this._absoluteAlpha;
-		}
-		var value:number = ((this._color >> 24) & 0xFF) / 255;
-		this._absoluteAlpha = value;
-		return value;
+		return this._absoluteAlpha;
 	}
 
 	public get absoluteRed():number
 	{
-		if(this._absoluteRed >= 0)
-		{
-			return this._absoluteRed;
-		}
-		var value:number = ((this._color >> 16) & 0xFF) / 255;
-		this._absoluteRed = value;
-		return value;
+		return this._absoluteRed;
 	}
 
 	public get absoluteGreen():number
 	{
-		if(this._absoluteGreen >= 0)
-		{
-			return this._absoluteGreen;
-		}
-		var value:number = ((this._color >> 8) & 0xFF) / 255;
-		this._absoluteGreen = value;
-		return value
+		return this._absoluteGreen;
 	}
 
 	public get absoluteBlue():number
 	{
-		if(this._absoluteBlue >= 0)
-		{
-			return this._absoluteBlue;
-		}
-		var value:number = (this._color & 0xFF) / 255;
-		this._absoluteBlue = value;
-		return value;
+		return this._absoluteBlue;
 	}
 
 	public set alpha(value:number)
@@ -252,18 +200,7 @@ export class Color extends BaseObject
 		return this._color;
 	}
 
-	public set color(value:number)
-	{
-		this._color = value;
-		this._alpha = -1;
-		this._red = -1;
-		this._green = -1;
-		this._blue = -1;
-		this._absoluteAlpha = -1;
-		this._absoluteBlue = -1;
-		this._absoluteGreen = -1;
-		this._absoluteRed = -1;
-	}
+
 
 	public getAbsolutOpposite(includeAlpha:boolean = true):number
 	{

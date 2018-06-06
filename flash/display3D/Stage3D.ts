@@ -2,6 +2,7 @@ import { BaseObject } from "flash/system/BaseObject";
 import { DisplayObject } from "flash/display/DisplayObject";
 import { ObjectUtils } from "flash/webgl/ObjectUtils";
 import { Context3D } from "flash/display3D/Context3D";
+import { Tracer } from "../system/Tracer";
 
 export class Stage3D extends BaseObject
 {
@@ -10,6 +11,20 @@ export class Stage3D extends BaseObject
     protected static _stageDictionaries:Context3DDictionary;
     protected static _hasStages:boolean;
     protected static _defaultContext:Context3D;
+
+    public static assignContextByid(id:number):Context3D
+    {
+        if(Stage3D._stageDictionaries[id] != undefined)
+        {
+            var context:Context3D = Stage3D._stageDictionaries[id];
+            if(context)
+            {
+                ObjectUtils.setProperty(context.canvas, "contextid", true);
+                return context;
+            }            
+        }
+        return null;
+    }
 
     public static createContext():Context3D
     {
@@ -58,28 +73,7 @@ export class Stage3D extends BaseObject
         return null;
     }
 
-    public static assignContextByid(id:number):Context3D
-    {
-        if(Stage3D._defaultContext)
-        {
-            Stage3D._defaultContext.release();
-            Stage3D._defaultContext = null;
-        }
-        if(Stage3D._stage3ds && Stage3D._stage3ds.length)
-        {
-            if(id < Stage3D._stage3ds.length)
-            {
-                var context3d:Context3D = Stage3D._stage3ds[id];                
-                var contextid:number = context3d.context3Did;
-                if(context3d.hasContextAvailable)
-                {
-                    context3d.validate();
-                    return context3d;
-                }
-            }
-        }
-        return null;
-    }
+
 
     public static assignContext():Context3D
     {
@@ -116,16 +110,27 @@ export class Stage3D extends BaseObject
         var elements:HTMLCollectionOf<Element> = document.getElementsByClassName("Stage3D");        
         Stage3D._stage3ds = [];
         Stage3D._stageDictionaries = {};
+        var currentContextid:number = 0;
         for(var i:number = 0; i < elements.length; i++)
-        {
+        {            
             var element = elements[i];
             if(element instanceof HTMLCanvasElement)
             {
-                var context:Context3D = new Context3D();
-                context.contextId = i;
-                context.canvas = element;
-                Stage3D._stage3ds.push(context);
-                Stage3D._stageDictionaries[element.id] = context;
+                var hasContext:boolean = ObjectUtils.getProperty(element, 'hasContext') || false;
+                if(!hasContext)
+                {
+                    var context:Context3D = new Context3D();
+                    context.contextId = currentContextid;
+                    context.canvas = element;
+                    Stage3D._stage3ds.push(context);
+                    var stageid:number = parseInt(ObjectUtils.getParameter(element, "contextid"));                    
+                    if(!isNaN(stageid))
+                    {
+                        context.contextId = stageid;
+                        Stage3D._stageDictionaries[stageid] = context;
+                    }
+                    currentContextid++;
+                }
             }
         }
         if(!Stage3D._stage3ds.length)

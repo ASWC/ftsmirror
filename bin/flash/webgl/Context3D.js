@@ -1,23 +1,24 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtils", "flash/geom/Color", "./Program3D", "../geom/Rectangle"], function (require, exports, BaseObject_1, ObjectUtils_1, Color_1, Program3D_1, Rectangle_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtils", "flash/geom/Color", "./Program3D", "flash/geom/Rectangle", "flash/display3D/Context3DVertexBufferFormat"], function (require, exports, BaseObject_1, ObjectUtils_1, Color_1, Program3D_1, Rectangle_1, Context3DVertexBufferFormat_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Context3D extends BaseObject_1.BaseObject {
         constructor() {
             super();
-            this._color = new Color_1.Color(0x00000000);
+            this._color = new Color_1.Color(0x00FFFFFF);
         }
         render(container) {
             this.resize();
             if (!this._programTest) {
                 this._programTest = new Program3D_1.Program3D();
                 this._programTest.name = "triangle_program_flat_color_resolution";
-                this._programTest.addAttributeToVertex("a_position", Program3D_1.Program3D.VEC4, 2);
-                this._programTest.addUniformToVertex("u_resolution", Program3D_1.Program3D.VEC2);
+                this._programTest.addAttributeToVertex("a_position", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4, 2);
+                this._programTest.addUniformToVertex("u_resolution", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC2);
                 this._programTest.addToVertexMain("vec2 zeroToOne = a_position.xy / u_resolution;");
                 this._programTest.addToVertexMain("vec2 zeroToTwo = zeroToOne * 2.0;");
                 this._programTest.addToVertexMain("vec2 clipSpace = zeroToTwo - 1.0;");
                 this._programTest.addToVertexMain("gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);");
-                this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
+                this._programTest.addUniformToFragment("u_color", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
+                this._programTest.addToFragmentMain("gl_FragColor = u_color;");
                 /*
                 // simple flat color program
                 this._programTest.name = "triangle_program_flat_color_nomatrix";
@@ -31,21 +32,8 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
             }
             if (this._programTest.ready) {
                 this._programTest.bind(this._gl);
-                var positions = new Float32Array(12);
-                positions[0] = 10;
-                positions[1] = 20;
-                positions[2] = 300;
-                positions[3] = 20;
-                positions[4] = 10;
-                positions[5] = 100;
-                positions[6] = 10;
-                positions[7] = 100;
-                positions[8] = 300;
-                positions[9] = 100;
-                positions[10] = 300;
-                positions[11] = 20;
-                var rect = new Rectangle_1.Rectangle(100, 25, 178, 95);
-                var rect2 = new Rectangle_1.Rectangle(150, 225, 178, 95);
+                var rect = new Rectangle_1.Rectangle(300, 150, 178, 95);
+                var rect2 = new Rectangle_1.Rectangle(150, 300, 178, 95);
                 var vertices1 = rect.vertices;
                 var vertices2 = rect2.vertices;
                 var vertices = new Float32Array(vertices1.length + vertices2.length);
@@ -53,6 +41,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
                 vertices.set(vertices2, vertices1.length);
                 this._programTest.updateVertexData(this._gl, 'a_position', vertices);
                 this._programTest.updateVertexUniform(this._gl, "u_resolution", [this._canvas.width, this._canvas.height]);
+                this._programTest.updateFragmentUniform(this._gl, "u_color", [0.5, 0.2, 0.2, 0.5]);
                 /*
                 // simple flat color program
                 var positions:Float32Array = new Float32Array(12)
@@ -105,20 +94,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
                     this._canvas.height = canvasHeight;
                 }
                 if (canvasColor >= 0) {
-                    var styleattribute = this._canvas.getAttribute("style");
-                    if (styleattribute && styleattribute.length) {
-                        var attributes = styleattribute.split(";");
-                        var newattributes = [];
-                        for (var i = 0; i < attributes.length; i++) {
-                            if (attributes[i].indexOf("background-color") < 0) {
-                                newattributes.push(attributes[i]);
-                            }
-                        }
-                        this._color = new Color_1.Color(canvasColor);
-                        var backgroundcolor = 'background-color:rgba(' + this._color.red + ", " + this._color.green + ", " + this._color.blue + ", " + this._color.absoluteAlpha + ")";
-                        newattributes.push(backgroundcolor);
-                        this._canvas.setAttribute("style", newattributes.join(";"));
-                    }
+                    this._color = new Color_1.Color(canvasColor);
                 }
             }
         }

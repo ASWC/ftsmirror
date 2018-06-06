@@ -1,3 +1,4 @@
+import { Tracer } from "../system/Tracer";
 
 
 export class ObjectUtils
@@ -28,5 +29,18 @@ export class ObjectUtils
         {
             target[key] = value;
         }        
+    }
+
+    public static getParameter(target:any, key:string):any
+    {
+        if(target['dataset'] != undefined)
+		{
+            var parameters:any = target['dataset'];
+            if(parameters[key] != undefined)
+            {
+                return parameters[key];
+            }        
+        }
+        return null;
     }
 }
