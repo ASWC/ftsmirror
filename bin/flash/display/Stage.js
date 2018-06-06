@@ -9,16 +9,19 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
                     return;
                 }
                 this._enterFrameID = requestAnimationFrame(this._enterFrame);
-                // framerate control
-                this.show(time);
-                if (time > 20000) {
-                    this.stop();
+                var currentRate = time - this._lastUpdate;
+                if (currentRate > this._rateIncrement) {
+                    this._lastUpdate = time;
+                    this.render(currentRate);
+                    // dispatch enterframe event
                 }
             };
             Stage3D_1.Stage3D.getStages();
             this._canvasColor = new Color_1.Color(0xFFFFFFFF);
             this._name = "stage";
             this.isPaused = false;
+            this.frameRate = 60;
+            this._lastUpdate = 0;
         }
         set color(value) {
             this._canvasColor.color = value;
@@ -31,6 +34,11 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
         }
         stop() {
             this.isPaused = true;
+        }
+        render(elapsedTime) {
+            if (this._context3D) {
+                this._context3D.render(elapsedTime);
+            }
         }
         validateContext() {
             this._context3D.validate();
@@ -53,7 +61,7 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
         tickUpdate(time) {
             if (this._context3D) {
                 //this._context3D.resize();
-                this._context3D.render(this);
+                //this._context3D.render(this);
                 //this._innerContainer.render(this._context3D);
             }
             // TICKER
@@ -114,6 +122,7 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
         }
         set frameRate(value) {
             this._frameRate = value;
+            this._rateIncrement = 1000 / this._frameRate;
         }
         get frameRate() {
             return this._frameRate;

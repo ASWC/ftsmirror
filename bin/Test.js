@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign", "flash/display/StageScaleMode"], function (require, exports, Stage_1, StageAlign_1, StageScaleMode_1) {
+define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign", "flash/display/StageScaleMode", "flash/display3D/Program3D", "flash/display3D/Context3DVertexBufferFormat"], function (require, exports, Stage_1, StageAlign_1, StageScaleMode_1, Program3D_1, Context3DVertexBufferFormat_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Test extends Stage_1.Stage {
@@ -41,8 +41,14 @@ define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign",
             };
             this.align = StageAlign_1.StageAlign.TOP_LEFT;
             this.scaleMode = StageScaleMode_1.StageScaleMode.NO_SCALE;
-            this.color = 0x99333333;
+            this.color = 0x33FF3333;
             this.createContextById(0);
+            var program = new Program3D_1.Program3D();
+            program.addAttributeToVertex("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC3, 3);
+            program.addToVertexMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
+            program.addToFragmentMain("gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);");
+            program.name = "simple_square_test";
+            //program.buildProgram(this._context3D._);
             //this._context3D.setCanvas(-1, -1);
             //this.loader = new Loader();
             //this.loader.contentLoaderInfo.addEventListener(Event.COMPLETE, this.handleComplete);

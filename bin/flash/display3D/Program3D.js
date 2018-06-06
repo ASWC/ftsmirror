@@ -230,6 +230,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
                     this.show(vertextUniform.name + " fragment u: " + vertextUniform.location);
                 }
             }
+            this.show(this.name + " built and ready");
         }
         static createProgram(context, vertexShader, fragmentShader) {
             var program = context.createProgram();

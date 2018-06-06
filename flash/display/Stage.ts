@@ -100,6 +100,14 @@ export class Stage extends DisplayObjectContainer implements IStage
         this.isPaused = true;
     }
 
+    protected render(elapsedTime:number):void
+    {
+        if(this._context3D)
+        {
+            this._context3D.render(elapsedTime)
+        }
+    }
+
     private _enterFrame = (time:number) =>
     {
         if(this.isPaused)
@@ -111,6 +119,7 @@ export class Stage extends DisplayObjectContainer implements IStage
         if(currentRate > this._rateIncrement)
         {
             this._lastUpdate = time;
+            this.render(currentRate);
 
             // dispatch enterframe event
         }
@@ -143,7 +152,7 @@ export class Stage extends DisplayObjectContainer implements IStage
 
     public createContext():void
     {
-
+        
     }
 
 
@@ -156,7 +165,7 @@ export class Stage extends DisplayObjectContainer implements IStage
         if(this._context3D)
         {            
             //this._context3D.resize();
-            this._context3D.render(this);
+            //this._context3D.render(this);
             //this._innerContainer.render(this._context3D);
         }
         // TICKER

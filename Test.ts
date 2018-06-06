@@ -23,8 +23,18 @@ export class Test extends Stage
         super();
         this.align = StageAlign.TOP_LEFT;
         this.scaleMode = StageScaleMode.NO_SCALE;
-        this.color = 0x99333333;
+        this.color = 0x33FF3333;
         this.createContextById(0);
+
+
+        var program:Program3D = new Program3D();
+        program.addAttributeToVertex("aSquareVertexPosition", Context3DVertexBufferFormat.VEC3, 3);
+        program.addToVertexMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
+        program.addToFragmentMain("gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);");
+        program.name = "simple_square_test";
+        //program.buildProgram(this._context3D._);
+
+
 
 
 

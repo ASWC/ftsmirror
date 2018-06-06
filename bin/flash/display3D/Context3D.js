@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtils", "flash/geom/Color", "./Program3D", "flash/geom/Rectangle", "../webgl/shadertypes/VerticeBuffer", "../geom/Polygon"], function (require, exports, BaseObject_1, ObjectUtils_1, Color_1, Program3D_1, Rectangle_1, VerticeBuffer_1, Polygon_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtils", "flash/geom/Color", "./Program3D"], function (require, exports, BaseObject_1, ObjectUtils_1, Color_1, Program3D_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Context3D extends BaseObject_1.BaseObject {
@@ -33,6 +33,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
         }
         validate() {
             this._gl = this._canvas.getContext("webgl") || this._canvas.getContext("experimental-webgl");
+            this._canvas.style.backgroundColor = "transparent";
         }
         set canvas(value) {
             if (this._canvas) {
@@ -43,48 +44,67 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
         get canvas() {
             return this._canvas;
         }
-        render(container) {
+        render(elapsedTime) {
             this.resize();
             if (Program3D_1.Program3D.hasUnregisteredPrograms) {
                 Program3D_1.Program3D.registerPrograms(this._gl);
             }
-            if (container.numChildren) {
-                if (!this._gl) {
-                    return;
-                }
-                var child = container.getChildAt(0);
-                var program = Program3D_1.Program3D.getProgram("texture_program_nomatrix_test");
-                if (program) {
-                    program.use(this._gl);
-                    program.registerTexture(this._gl, child.bitmapData);
-                    var rect = new Rectangle_1.Rectangle(300, 150, 178, 95);
-                    //this.reveal(rect.vertices);
-                    var vbuffer = new VerticeBuffer_1.VerticeBuffer();
-                    vbuffer.addVertices(rect);
-                    program.updateVertexData(this._gl, 'a_position', vbuffer);
-                    var uvs = new Polygon_1.Polygon();
-                    //this.reveal(uvs.vertices);
-                    var vbuffer = new VerticeBuffer_1.VerticeBuffer();
-                    vbuffer.addVertices(uvs);
-                    program.updateVertexData(this._gl, 'a_texCoord', vbuffer);
-                    program.updateVertexUniform(this._gl, "u_resolution", [this._canvas.width, this._canvas.height]);
-                    //program.updateFragmentUniform(this._gl, "u_color", [0.5, 0.2, 0.2, 0.5]);
-                    //program.present(this._gl);
-                    /*var positions:Float32Array = new Float32Array(12)
-                    positions[0] = 0;
-                    positions[1] = 0;
-                    positions[2] = -1;
-                    positions[3] = 0;
-                    positions[4] = 0;
-                    positions[5] = 1;
-                    positions[6] = 0;
-                    positions[7] = 0;
-                    positions[8] = 1;
-                    positions[9] = 0;
-                    positions[10] = 0;
-                    positions[11] = 1;   */
-                }
-            }
+            return;
+            /*  if(container.numChildren)
+              {
+                  if(!this._gl)
+                  {
+                      return;
+                  }
+                  var child:Bitmap = <Bitmap> container.getChildAt(0);
+                  var program:Program3D = Program3D.getProgram("texture_program_nomatrix_test");
+                  if(program)
+                  {
+                      program.use(this._gl);
+                      
+                      program.registerTexture(this._gl, child.bitmapData);
+      
+                      var rect:Rectangle = new Rectangle(300, 150, 178, 95);
+      
+                      //this.reveal(rect.vertices);
+      
+      
+                      var vbuffer:VerticeBuffer = new VerticeBuffer()
+                      vbuffer.addVertices(rect);
+      
+                      program.updateVertexData(this._gl, 'a_position', vbuffer);
+      
+      
+                   
+      
+                      var uvs:Polygon = new Polygon();
+                      //this.reveal(uvs.vertices);
+                      var vbuffer:VerticeBuffer = new VerticeBuffer()
+                      vbuffer.addVertices(uvs);
+      
+                      program.updateVertexData(this._gl, 'a_texCoord', vbuffer);
+      
+                      program.updateVertexUniform(this._gl, "u_resolution", [this._canvas.width, this._canvas.height])
+      
+                      //program.updateFragmentUniform(this._gl, "u_color", [0.5, 0.2, 0.2, 0.5]);
+                      //program.present(this._gl);
+      
+      
+                     *var positions:Float32Array = new Float32Array(12)
+                      positions[0] = 0;
+                      positions[1] = 0;
+                      positions[2] = -1;
+                      positions[3] = 0;
+                      positions[4] = 0;
+                      positions[5] = 1;
+                      positions[6] = 0;
+                      positions[7] = 0;
+                      positions[8] = 1;
+                      positions[9] = 0;
+                      positions[10] = 0;
+                      positions[11] = 1;
+                  }
+              }*/
             if (!this._programTest) {
                 /*this._programTest = new Program3D();
                 this._programTest.name = "triangle_program_flat_color_resolution";

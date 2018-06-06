@@ -44,7 +44,7 @@ export class Context3D extends BaseObject
             this._canvas.width  = displayWidth;
             this._canvas.height = displayHeight;
             this._gl.viewport(0, 0, this._gl.canvas.width, this._gl.canvas.height);
-        }            
+        }           
         this._gl.clearColor(this._color.absoluteRed, this._color.absoluteGreen, this._color.absoluteBlue, this._color.absoluteAlpha);
         this._gl.clear(this._gl.COLOR_BUFFER_BIT);        
     }
@@ -70,7 +70,8 @@ export class Context3D extends BaseObject
 
     public validate():void
     {        
-        this._gl = this._canvas.getContext("webgl") || this._canvas.getContext("experimental-webgl");     
+        this._gl = this._canvas.getContext("webgl") || this._canvas.getContext("experimental-webgl");    
+        this._canvas.style.backgroundColor = "transparent"; 
     }
 
     public set canvas(value:HTMLCanvasElement)
@@ -79,7 +80,7 @@ export class Context3D extends BaseObject
         {
             return;
         }
-        this._canvas = value;      
+        this._canvas = value;     
     }
 
     public get canvas():HTMLCanvasElement
@@ -96,16 +97,21 @@ export class Context3D extends BaseObject
 
 
 
-    public render(container:IDisplayObjectContainer)
+    public render(elapsedTime:number)
     {
         this.resize();
+
         if(Program3D.hasUnregisteredPrograms)
         {
             Program3D.registerPrograms(this._gl);
         }
+
+
+        return;
+        
         
 
-        if(container.numChildren)
+      /*  if(container.numChildren)
         {
             if(!this._gl)
             {
@@ -145,7 +151,7 @@ export class Context3D extends BaseObject
                 //program.present(this._gl);
 
 
-                /*var positions:Float32Array = new Float32Array(12)
+               *var positions:Float32Array = new Float32Array(12)
                 positions[0] = 0;
                 positions[1] = 0;
                 positions[2] = -1;
@@ -157,9 +163,9 @@ export class Context3D extends BaseObject
                 positions[8] = 1;
                 positions[9] = 0;
                 positions[10] = 0;
-                positions[11] = 1;   */              
+                positions[11] = 1;           
             }
-        }
+        }*/
         
         if(!this._programTest)
         {

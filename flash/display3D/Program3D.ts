@@ -342,6 +342,7 @@ export class Program3D extends BaseObject
                 this.show(vertextUniform.name + " fragment u: " + vertextUniform.location)
             }
         }
+        this.show(this.name + " built and ready")
     }
 
     protected static createProgram(context:WebGLRenderingContext, vertexShader:WebGLShader, fragmentShader:WebGLShader):WebGLProgram
