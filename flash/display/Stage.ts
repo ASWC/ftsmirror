@@ -66,6 +66,8 @@ export class Stage extends DisplayObjectContainer implements IStage
     protected _canvasColor:Color;
     protected _enterFrameID:number;
     protected isPaused:boolean;
+    protected _rateIncrement:number;
+    protected _lastUpdate:number;
 
     constructor()
     {
@@ -74,6 +76,8 @@ export class Stage extends DisplayObjectContainer implements IStage
         this._canvasColor = new Color(0xFFFFFFFF);
         this._name = "stage";
         this.isPaused = false;
+        this.frameRate = 60;   
+        this._lastUpdate = 0;     
     }
 
     public set color(value:number)
@@ -96,23 +100,19 @@ export class Stage extends DisplayObjectContainer implements IStage
         this.isPaused = true;
     }
 
-    private _enterFrame = (time) =>
+    private _enterFrame = (time:number) =>
     {
         if(this.isPaused)
         {
             return;
         }
         this._enterFrameID = requestAnimationFrame(this._enterFrame);
-
-
-        // framerate control
-
-
-
-        this.show(time);
-        if(time > 20000)
+        var currentRate:number = time - this._lastUpdate;
+        if(currentRate > this._rateIncrement)
         {
-            this.stop();
+            this._lastUpdate = time;
+
+            // dispatch enterframe event
         }
     }
 
@@ -255,6 +255,7 @@ export class Stage extends DisplayObjectContainer implements IStage
     public set frameRate(value:number)
     {
         this._frameRate = value;
+        this._rateIncrement = 1000 / this._frameRate;
     }
 
     public get frameRate():number
