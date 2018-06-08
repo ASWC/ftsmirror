@@ -23,6 +23,7 @@ import { Program3D } from "../display3D/Program3D";
 import { IStage } from "./types/IStage";
 import { IInteractiveObject } from "./types/IInteractiveObject";
 import { Color } from "flash/geom/Color";
+import { IDisplayObject } from "./types/IDisplayObject";
 
 export class Stage extends DisplayObjectContainer implements IStage
 {
@@ -80,6 +81,16 @@ export class Stage extends DisplayObjectContainer implements IStage
         this._lastUpdate = 0;     
     }
 
+    public get children():DisplayObject[]
+    {
+        var currentChildren:DisplayObject[] = [];
+        for(var i:number = 0; i < this._children.length; i++)
+        {
+            currentChildren.push(<DisplayObject> this._children[i]);
+        }
+        return currentChildren;
+    }
+
     public set color(value:number)
     {
         this._canvasColor.color = value;
@@ -132,6 +143,7 @@ export class Stage extends DisplayObjectContainer implements IStage
         {
             this._context3D.color = this._canvasColor;
             this._context3D.initRendering();
+            this._context3D.stage = this;
             this.start();
         }
     }
@@ -158,18 +170,6 @@ export class Stage extends DisplayObjectContainer implements IStage
 
 
 
-
-
-    public tickUpdate(time:number):void
-    {        
-        if(this._context3D)
-        {            
-            //this._context3D.resize();
-            //this._context3D.render(this);
-            //this._innerContainer.render(this._context3D);
-        }
-        // TICKER
-    }
 
     public set align(value:string)
     {

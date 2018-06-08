@@ -1,9 +1,10 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/webgl/shadertypes/VertexAttribute", "flash/webgl/shadertypes/VertexUniform", "../webgl/shadertypes/VertexVarying", "../display/BitmapData", "../webgl/shadertypes/TextureData"], function (require, exports, BaseObject_1, Error_1, VertexAttribute_1, VertexUniform_1, VertexVarying_1, BitmapData_1, TextureData_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/webgl/shadertypes/VertexAttribute", "flash/webgl/shadertypes/VertexUniform", "../webgl/shadertypes/VertexVarying", "../display/BitmapData", "../webgl/shadertypes/TextureData", "./Context3DDrawTypes"], function (require, exports, BaseObject_1, Error_1, VertexAttribute_1, VertexUniform_1, VertexVarying_1, BitmapData_1, TextureData_1, Context3DDrawTypes_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Program3D extends BaseObject_1.BaseObject {
         constructor() {
             super();
+            this._drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLES;
             this._textures = {};
             this._programBuilt = false;
             this._invalidProgram = false;
@@ -109,35 +110,48 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
             }
             return true;
         }
+        set drawType(value) {
+            this._drawType = value;
+        }
+        flush() {
+            if (!this._bindedContext) {
+                return;
+            }
+            var offset = 0;
+            this._bindedContext.drawArrays(this._drawType, offset, this._vertextCount);
+            //this.show('count: ' + this._vertextCount)   
+        }
         bind(context) {
             if (this._invalidProgram) {
                 return;
             }
+            this._bindedContext = context;
             context.useProgram(this._program);
             this._vertextCount = 0;
         }
-        updateFragmentUniform(context, name, data) {
+        updateFragmentUniform(name, data) {
             if (this._invalidProgram) {
                 return;
             }
             var vertextUniform = this._fragmentUniformDic[name];
             if (vertextUniform != undefined) {
-                vertextUniform.bind(context, data);
+                vertextUniform.bind(this._bindedContext, data);
             }
         }
-        use(context) {
+        /*public use(context:WebGLRenderingContext)
+        {
             context.useProgram(this._program);
-        }
-        updateVertexUniform(context, name, data) {
+        }*/
+        updateVertexUniform(name, data) {
             if (this._invalidProgram) {
                 return;
             }
             var vertextUniform = this._vertexUniformDic[name];
             if (vertextUniform != undefined) {
-                vertextUniform.bind(context, data);
+                vertextUniform.bind(this._bindedContext, data);
             }
         }
-        updateVertexData(context, name, data) {
+        updateVertexData(name, data) {
             if (this._invalidProgram) {
                 return;
             }
@@ -145,29 +159,32 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/w
             if (!variable) {
                 return;
             }
-            context.enableVertexAttribArray(variable.attributeLocation);
-            context.bindBuffer(context.ARRAY_BUFFER, variable.buffer);
+            this._bindedContext.enableVertexAttribArray(variable.attributeLocation);
+            this._bindedContext.bindBuffer(this._bindedContext.ARRAY_BUFFER, variable.buffer);
             if (data.needUpdate) {
-                context.bufferData(context.ARRAY_BUFFER, data.vertices, context.STATIC_DRAW);
+                this._bindedContext.bufferData(this._bindedContext.ARRAY_BUFFER, data.vertices, this._bindedContext.STATIC_DRAW);
             }
-            var type = context.FLOAT;
+            var type = this._bindedContext.FLOAT;
             var normalize = false;
             var stride = 0;
             var offset = 0;
-            context.vertexAttribPointer(variable.attributeLocation, variable.size, type, normalize, stride, offset);
+            this._bindedContext.vertexAttribPointer(variable.attributeLocation, variable.size, type, normalize, stride, offset);
             this._vertextCount += data.length / variable.size;
         }
         present(context) {
             context.useProgram(this._program);
-            if (this._vertextCount == 0) {
+            /*
+            if(this._vertextCount == 0)
+            {
                 return;
             }
-            if (!this._program) {
+            if(!this._program)
+            {
                 return;
             }
             var primitiveType = context.TRIANGLES;
             var offset = 0;
-            context.drawArrays(primitiveType, offset, this._vertextCount);
+            context.drawArrays(primitiveType, offset, this._vertextCount);   */
         }
         registerTexture(context, data) {
             var image = BitmapData_1.BitmapData.getNativeImage(data);

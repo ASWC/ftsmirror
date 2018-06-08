@@ -1,5 +1,6 @@
-import { IVerticeIndex } from "flash/webgl/shadertypes/IVerticeIndex";
-import { IVerticeBufferDelegate } from "../webgl/shadertypes/IVerticeBufferDelegate";
+import { IVerticeIndex } from "../webgl/geom/IVerticeIndex";
+import { IVerticeBufferDelegate } from "../webgl/geom/IVerticeBufferDelegate";
+
 
 
 export class Polygon implements IVerticeIndex

@@ -11,7 +11,7 @@ export class VertexUniform extends BaseObject
         return "uniform " + this.dataType + " " + this.name + ";";        
     }
 
-    public bind(context:WebGLRenderingContext, data:number[]):void
+    public bind(context:WebGLRenderingContext, data:Float32Array|Int32Array|number[]):void
     {
         if(this.dataType == Context3DVertexBufferFormat.VEC2)
         {
@@ -63,7 +63,10 @@ export class VertexUniform extends BaseObject
         }
         else if(this.dataType == Context3DVertexBufferFormat.INT_A)
         {
-            context.uniform1iv(this.location, data);
+            if(data instanceof Int32Array)
+            {
+                context.uniform1iv(this.location, data);
+            }            
         }
         else if(this.dataType == Context3DVertexBufferFormat.INT_VEC2)
         {
@@ -79,15 +82,15 @@ export class VertexUniform extends BaseObject
         }
         else if(this.dataType == Context3DVertexBufferFormat.INT_VEC4_A)
         {
-            context.uniform4iv(this.location, new Float32Array(data));
+            context.uniform4iv(this.location, new Int32Array(data));
         }
         else if(this.dataType == Context3DVertexBufferFormat.INT_VEC3_A)
         {
-            context.uniform3iv(this.location, new Float32Array(data));
+            context.uniform3iv(this.location, new Int32Array(data));
         }
         else if(this.dataType == Context3DVertexBufferFormat.INT_VEC2_A)
         {
-            context.uniform2iv(this.location, new Float32Array(data));
+            context.uniform2iv(this.location, new Int32Array(data));
         }
         else if(this.dataType == Context3DVertexBufferFormat.SAMPLER2D)
         {
@@ -95,7 +98,7 @@ export class VertexUniform extends BaseObject
         }
         else if(this.dataType == Context3DVertexBufferFormat.SAMPLER2D_A)
         {
-            context.uniform1iv(this.location, new Float32Array(data));
+            context.uniform1iv(this.location, new Int32Array(data));
         }
         else if(this.dataType == Context3DVertexBufferFormat.SAMPLERCUBE)
         {
@@ -103,7 +106,7 @@ export class VertexUniform extends BaseObject
         }
         else if(this.dataType == Context3DVertexBufferFormat.SAMPLERCUBE_A)
         {
-            context.uniform1iv(this.location, new Float32Array(data));
+            context.uniform1iv(this.location, new Int32Array(data));
         }        
     }
 }

@@ -5,6 +5,9 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
         constructor() {
             super();
         }
+        set stage(value) {
+            this._stage = value;
+        }
         resize() {
             if (!this._gl) {
                 return;
@@ -44,11 +47,34 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
         get canvas() {
             return this._canvas;
         }
+        get currentProgram() {
+            return null;
+        }
+        bind(program) {
+            if (!this._gl) {
+                return;
+            }
+            if (this._currentProgram) {
+                this._currentProgram.flush();
+            }
+            this._currentProgram = program;
+            program.bind(this._gl);
+        }
         render(elapsedTime) {
             this.resize();
             if (Program3D_1.Program3D.hasUnregisteredPrograms) {
                 Program3D_1.Program3D.registerPrograms(this._gl);
             }
+            if (this._stage && this._stage.numChildren) {
+                var children = this._stage.children;
+                for (var i = 0; i < children.length; i++) {
+                    children[i].present(this);
+                }
+            }
+            if (this._currentProgram) {
+                this._currentProgram.flush();
+            }
+            this._currentProgram = null;
             return;
             /*  if(container.numChildren)
               {
@@ -105,25 +131,26 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
                       positions[11] = 1;
                   }
               }*/
-            if (!this._programTest) {
-                /*this._programTest = new Program3D();
-                this._programTest.name = "triangle_program_flat_color_resolution";
-                this._programTest.addAttributeToVertex("a_position", Context3DVertexBufferFormat.VEC4, 2);
-                this._programTest.addUniformToVertex("u_resolution", Context3DVertexBufferFormat.VEC2);
-                this._programTest.addToVertexMain("vec2 zeroToOne = a_position.xy / u_resolution;");
-                this._programTest.addToVertexMain("vec2 zeroToTwo = zeroToOne * 2.0;");
-                this._programTest.addToVertexMain("vec2 clipSpace = zeroToTwo - 1.0;");
-                this._programTest.addToVertexMain("gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);");
-                this._programTest.addUniformToFragment("u_color", Context3DVertexBufferFormat.VEC4);
-                this._programTest.addToFragmentMain("gl_FragColor = u_color;");   */
-                /*
-                // simple flat color program
-                this._programTest.name = "triangle_program_flat_color_nomatrix";
-                this._programTest.addAttributeToVertex("a_position", Program3D.VEC4, 2);
-                this._programTest.addToVertexMain("gl_Position = a_position;");
-                this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
-                */
-            }
+            //if(!this._programTest)
+            // {
+            /*this._programTest = new Program3D();
+            this._programTest.name = "triangle_program_flat_color_resolution";
+            this._programTest.addAttributeToVertex("a_position", Context3DVertexBufferFormat.VEC4, 2);
+            this._programTest.addUniformToVertex("u_resolution", Context3DVertexBufferFormat.VEC2);
+            this._programTest.addToVertexMain("vec2 zeroToOne = a_position.xy / u_resolution;");
+            this._programTest.addToVertexMain("vec2 zeroToTwo = zeroToOne * 2.0;");
+            this._programTest.addToVertexMain("vec2 clipSpace = zeroToTwo - 1.0;");
+            this._programTest.addToVertexMain("gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);");
+            this._programTest.addUniformToFragment("u_color", Context3DVertexBufferFormat.VEC4);
+            this._programTest.addToFragmentMain("gl_FragColor = u_color;");   */
+            /*
+            // simple flat color program
+            this._programTest.name = "triangle_program_flat_color_nomatrix";
+            this._programTest.addAttributeToVertex("a_position", Program3D.VEC4, 2);
+            this._programTest.addToVertexMain("gl_Position = a_position;");
+            this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
+            */
+            // }        
             //if(!this._programTest.ready)
             //{
             /*this._programTest.buildProgram(this._gl);*/

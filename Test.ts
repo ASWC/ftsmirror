@@ -13,6 +13,10 @@ import { Program3D } from "flash/display3D/Program3D";
 import { Context3DVertexBufferFormat } from "flash/display3D/Context3DVertexBufferFormat";
 import { Bitmap } from "flash/display/Bitmap";
 import { BitmapData } from "flash/display/BitmapData";
+import { SpriteTest } from "SpriteTest";
+import { Context3DDrawTypes } from "flash/display3D/Context3DDrawTypes";
+import { SpriteTestColor } from "SpriteTestColor";
+import { SpriteMatrixtest } from "SpriteMatrixtest";
 
 export class Test extends Stage
 {
@@ -21,9 +25,10 @@ export class Test extends Stage
     constructor()
     {
         super();
+        this.frameRate = 3;
         this.align = StageAlign.TOP_LEFT;
         this.scaleMode = StageScaleMode.NO_SCALE;
-        this.color = 0x33FF3333;
+        this.color = 0xAAFF3333;
         this.createContextById(0);
 
 
@@ -31,7 +36,37 @@ export class Test extends Stage
         program.addAttributeToVertex("aSquareVertexPosition", Context3DVertexBufferFormat.VEC3, 3);
         program.addToVertexMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
         program.addToFragmentMain("gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);");
+        program.drawType = Context3DDrawTypes.TRIANGLE_STRIP
         program.name = "simple_square_test";
+        var testsprite:SpriteTest = new SpriteTest();
+        this.addChild(testsprite);
+
+        var program:Program3D = new Program3D();
+        program.addAttributeToVertex("aSquareVertexPosition", Context3DVertexBufferFormat.VEC3, 3);
+        program.addUniformToFragment("uPixelColor", Context3DVertexBufferFormat.VEC4);
+        program.addToVertexMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
+        program.addToFragmentMain("gl_FragColor = uPixelColor;");
+        program.drawType = Context3DDrawTypes.TRIANGLE_STRIP
+        program.name = "simple_square_test_color";
+        var testspritecolor:SpriteTestColor = new SpriteTestColor();
+        this.addChild(testspritecolor);
+
+
+        var program:Program3D = new Program3D();
+        program.addAttributeToVertex("aSquareVertexPosition", Context3DVertexBufferFormat.VEC3, 3);
+        program.addUniformToVertex("uModelTransform", Context3DVertexBufferFormat.MAT4);
+        program.addUniformToFragment("uPixelColor", Context3DVertexBufferFormat.VEC4);
+        program.addToVertexMain("gl_Position = uModelTransform * vec4(aSquareVertexPosition, 1.0);");
+        program.addToFragmentMain("gl_FragColor = uPixelColor;");
+        program.drawType = Context3DDrawTypes.TRIANGLE_STRIP
+        program.name = "simple_square_test_matrix4";
+
+        var spritematrix:SpriteMatrixtest = new SpriteMatrixtest();
+        this.addChild(spritematrix);
+        
+
+
+
         //program.buildProgram(this._context3D._);
 
 

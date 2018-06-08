@@ -43,7 +43,9 @@ define(["require", "exports", "flash/system/BaseObject", "flash/display3D/Contex
                 context.uniform1i(this.location, data[0]);
             }
             else if (this.dataType == Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.INT_A) {
-                context.uniform1iv(this.location, data);
+                if (data instanceof Int32Array) {
+                    context.uniform1iv(this.location, data);
+                }
             }
             else if (this.dataType == Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.INT_VEC2) {
                 context.uniform2i(this.location, data[0], data[1]);
@@ -55,25 +57,25 @@ define(["require", "exports", "flash/system/BaseObject", "flash/display3D/Contex
                 context.uniform4i(this.location, data[0], data[1], data[2], data[3]);
             }
             else if (this.dataType == Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.INT_VEC4_A) {
-                context.uniform4iv(this.location, new Float32Array(data));
+                context.uniform4iv(this.location, new Int32Array(data));
             }
             else if (this.dataType == Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.INT_VEC3_A) {
-                context.uniform3iv(this.location, new Float32Array(data));
+                context.uniform3iv(this.location, new Int32Array(data));
             }
             else if (this.dataType == Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.INT_VEC2_A) {
-                context.uniform2iv(this.location, new Float32Array(data));
+                context.uniform2iv(this.location, new Int32Array(data));
             }
             else if (this.dataType == Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.SAMPLER2D) {
                 context.uniform1i(this.location, data[0]);
             }
             else if (this.dataType == Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.SAMPLER2D_A) {
-                context.uniform1iv(this.location, new Float32Array(data));
+                context.uniform1iv(this.location, new Int32Array(data));
             }
             else if (this.dataType == Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.SAMPLERCUBE) {
                 context.uniform1i(this.location, data[0]);
             }
             else if (this.dataType == Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.SAMPLERCUBE_A) {
-                context.uniform1iv(this.location, new Float32Array(data));
+                context.uniform1iv(this.location, new Int32Array(data));
             }
         }
     }

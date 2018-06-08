@@ -5,16 +5,18 @@ import { DisplayObjectContainer } from "flash/display/DisplayObjectContainer";
 import { Program3D } from "./Program3D";
 import { Rectangle } from "flash/geom/Rectangle";
 import { Context3DVertexBufferFormat } from "flash/display3D/Context3DVertexBufferFormat";
-import { VerticeBuffer } from "../webgl/shadertypes/VerticeBuffer";
 import { IDisplayObjectContainer } from "../display/types/IDisplayObjectContainer";
 import { IDisplayObject } from "../display/types/IDisplayObject";
 import { Bitmap } from "../display/Bitmap";
 import { TextureUvs } from "../geom/TextureUvs";
 import { Polygon } from "../geom/Polygon";
+import { Stage } from "../display/Stage";
+import { DisplayObject } from "../display/DisplayObject";
+import { VerticeBuffer } from "../webgl/geom/VerticeBuffer";
 
 export class Context3D extends BaseObject
 {
-    protected _programTest:Program3D;
+    //protected _programTest:Program3D;
     protected _canvas:HTMLCanvasElement;
     protected _contextId:number;
     protected _context3Did:number;
@@ -25,10 +27,17 @@ export class Context3D extends BaseObject
     protected verticetest:VerticeBuffer;
     protected recttest:Rectangle;
     protected drawcount:number;
+    protected _stage:Stage;
+    protected _currentProgram:Program3D;
 
     constructor()
     {
         super();
+    }
+
+    public set stage(value:Stage)
+    {
+        this._stage = value;
     }
 
     protected resize():void
@@ -88,7 +97,24 @@ export class Context3D extends BaseObject
         return this._canvas;
     }
 
+    public get currentProgram():Program3D
+    {
+        return null;
+    }
 
+    public bind(program:Program3D):void
+    {
+        if(!this._gl)
+        {
+            return;
+        }
+        if(this._currentProgram)
+        {
+            this._currentProgram.flush();
+        }
+        this._currentProgram = program;
+        program.bind(this._gl);
+    }
 
 
 
@@ -105,6 +131,20 @@ export class Context3D extends BaseObject
         {
             Program3D.registerPrograms(this._gl);
         }
+
+        if(this._stage && this._stage.numChildren)
+        {
+            var children:DisplayObject[] = this._stage.children;
+            for(var i:number = 0; i < children.length; i++)
+            {
+                children[i].present(this);
+            }
+        }
+        if(this._currentProgram)
+        {
+            this._currentProgram.flush();
+        }
+        this._currentProgram = null;
 
 
         return;
@@ -167,8 +207,8 @@ export class Context3D extends BaseObject
             }
         }*/
         
-        if(!this._programTest)
-        {
+        //if(!this._programTest)
+       // {
             /*this._programTest = new Program3D(); 
             this._programTest.name = "triangle_program_flat_color_resolution";  
             this._programTest.addAttributeToVertex("a_position", Context3DVertexBufferFormat.VEC4, 2);
@@ -186,7 +226,7 @@ export class Context3D extends BaseObject
             this._programTest.addToVertexMain("gl_Position = a_position;");
             this._programTest.addToFragmentMain("gl_FragColor = vec4(1, 0, 0.5, 1);");
             */
-        }        
+       // }        
         //if(!this._programTest.ready)
         //{
             /*this._programTest.buildProgram(this._gl);*/

@@ -24,6 +24,10 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Transform"]
             this._x = 0;
             this._y = 0;
         }
+        present(context) {
+        }
+        render(elapsedTime) {
+        }
         static setParent(child, parent) {
             var childtarget = child;
             childtarget._parent = parent;

@@ -4,10 +4,11 @@ import { Rectangle } from "flash/geom/Rectangle";
 import { Matrix } from "flash/geom/Matrix";
 import { VertexAttribute, VertexAttributeDictionary } from "flash/webgl/shadertypes/VertexAttribute";
 import { VertexUniform, VertexUniformDictionary } from "flash/webgl/shadertypes/VertexUniform";
-import { VerticeBuffer } from "../webgl/shadertypes/VerticeBuffer";
 import { VertexVarying, VertexVaryingDictionary } from "../webgl/shadertypes/VertexVarying";
 import { BitmapData } from "../display/BitmapData";
 import { TextureDataDictionary, TextureData } from "../webgl/shadertypes/TextureData";
+import { Context3DDrawTypes } from "./Context3DDrawTypes";
+import { VerticeBuffer } from "../webgl/geom/VerticeBuffer";
 
 export class Program3D extends BaseObject
 {
@@ -34,13 +35,15 @@ export class Program3D extends BaseObject
     
     protected _program:WebGLProgram;
     protected _vertextCount:number;
-
+    protected _drawType:number;
     protected _invalidProgram:boolean;
     protected _programBuilt:boolean;
+    protected _bindedContext:WebGLRenderingContext;
 
     constructor()
     {
         super();
+        this._drawType = Context3DDrawTypes.TRIANGLES;
         this._textures = {};
         this._programBuilt = false;
         this._invalidProgram = false;
@@ -184,17 +187,34 @@ export class Program3D extends BaseObject
         return true;
     }
 
+    public set drawType(value:number)
+    {
+        this._drawType = value;
+    }
+
+    public flush():void
+    {
+        if(!this._bindedContext)
+        {
+            return;
+        }
+        var offset = 0;
+        this._bindedContext.drawArrays(this._drawType, offset, this._vertextCount);     
+        //this.show('count: ' + this._vertextCount)   
+    }
+
     public bind(context:WebGLRenderingContext):void
     {
         if(this._invalidProgram)
         {
             return;
         }
+        this._bindedContext = context;
         context.useProgram(this._program);
         this._vertextCount = 0;
     }
     
-    public updateFragmentUniform(context:WebGLRenderingContext, name:string, data:number[]):void
+    public updateFragmentUniform(name:string, data:number[]):void
     {        
         if(this._invalidProgram)
         {
@@ -203,16 +223,16 @@ export class Program3D extends BaseObject
         var vertextUniform:VertexUniform = this._fragmentUniformDic[name];
         if(vertextUniform != undefined)
         {            
-            vertextUniform.bind(context, data);
+            vertextUniform.bind(this._bindedContext, data);
         }   
     }
 
-    public use(context:WebGLRenderingContext)
+    /*public use(context:WebGLRenderingContext)
     {
         context.useProgram(this._program);
-    }
+    }*/
 
-    public updateVertexUniform(context:WebGLRenderingContext, name:string, data:number[]):void
+    public updateVertexUniform(name:string, data:Float32Array):void
     {
         if(this._invalidProgram)
         {
@@ -221,11 +241,11 @@ export class Program3D extends BaseObject
         var vertextUniform:VertexUniform = this._vertexUniformDic[name];
         if(vertextUniform != undefined)
         {            
-            vertextUniform.bind(context, data);
+            vertextUniform.bind(this._bindedContext, data);
         }   
     }
 
-    public updateVertexData(context:WebGLRenderingContext, name:string, data:VerticeBuffer):void
+    public updateVertexData(name:string, data:VerticeBuffer):void
     {
         if(this._invalidProgram)
         {
@@ -236,23 +256,25 @@ export class Program3D extends BaseObject
         {
             return;
         }
-        context.enableVertexAttribArray(variable.attributeLocation);
-        context.bindBuffer(context.ARRAY_BUFFER, variable.buffer);  
+        this._bindedContext.enableVertexAttribArray(variable.attributeLocation);
+        this._bindedContext.bindBuffer(this._bindedContext.ARRAY_BUFFER, variable.buffer);  
         if(data.needUpdate)
         {
-            context.bufferData(context.ARRAY_BUFFER, data.vertices, context.STATIC_DRAW);
+            this._bindedContext.bufferData(this._bindedContext.ARRAY_BUFFER, data.vertices, this._bindedContext.STATIC_DRAW);
         }     
-        var type = context.FLOAT;
+        var type = this._bindedContext.FLOAT;
         var normalize = false;
         var stride = 0;
         var offset = 0;
-        context.vertexAttribPointer(variable.attributeLocation, variable.size, type, normalize, stride, offset);
-        this._vertextCount += data.length / variable.size;
+        this._bindedContext.vertexAttribPointer(variable.attributeLocation, variable.size, type, normalize, stride, offset);
+        this._vertextCount += data.length / variable.size;        
     }
 
     public present(context:WebGLRenderingContext):void
     {
         context.useProgram(this._program);
+
+        /*
         if(this._vertextCount == 0)
         {   
             return;
@@ -263,7 +285,7 @@ export class Program3D extends BaseObject
         }
         var primitiveType = context.TRIANGLES;
         var offset = 0;
-        context.drawArrays(primitiveType, offset, this._vertextCount);        
+        context.drawArrays(primitiveType, offset, this._vertextCount);   */     
     }
 
     public registerTexture(context:WebGLRenderingContext, data:BitmapData):void

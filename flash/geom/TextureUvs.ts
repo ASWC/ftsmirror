@@ -7,4 +7,22 @@ export class TextureUvs extends Rectangle
     {
         super(0, 0, 1, 1)
     }
+
+    public get vertices():Float32Array
+    {
+        if(!this._vertices)
+        {
+            this._vertices = new Float32Array(12);            
+        }
+        return this._vertices;
+    }
+
+    public setUv(index:number, value:number):void
+    {
+        if(!this._vertices)
+        {
+            this._vertices = new Float32Array(12);            
+        }
+        this._vertices[index] = value;
+    }
 }

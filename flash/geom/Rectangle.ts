@@ -1,8 +1,7 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { Point } from "flash/geom/Point";
-import { IVerticeIndex } from "../webgl/shadertypes/IVerticeIndex";
-import { VerticeBuffer } from "../webgl/shadertypes/VerticeBuffer";
-import { IVerticeBufferDelegate } from "../webgl/shadertypes/IVerticeBufferDelegate";
+import { IVerticeIndex } from "../webgl/geom/IVerticeIndex";
+import { IVerticeBufferDelegate } from "../webgl/geom/IVerticeBufferDelegate";
 
 export class Rectangle extends BaseObject implements IVerticeIndex
 {

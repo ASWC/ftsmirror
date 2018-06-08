@@ -23,6 +23,13 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
             this.frameRate = 60;
             this._lastUpdate = 0;
         }
+        get children() {
+            var currentChildren = [];
+            for (var i = 0; i < this._children.length; i++) {
+                currentChildren.push(this._children[i]);
+            }
+            return currentChildren;
+        }
         set color(value) {
             this._canvasColor.color = value;
         }
@@ -45,6 +52,7 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
             if (this._context3D.isValid()) {
                 this._context3D.color = this._canvasColor;
                 this._context3D.initRendering();
+                this._context3D.stage = this;
                 this.start();
             }
         }
@@ -57,14 +65,6 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
         createContextAtIndex(index) {
         }
         createContext() {
-        }
-        tickUpdate(time) {
-            if (this._context3D) {
-                //this._context3D.resize();
-                //this._context3D.render(this);
-                //this._innerContainer.render(this._context3D);
-            }
-            // TICKER
         }
         set align(value) {
             this._align = value;

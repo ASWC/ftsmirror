@@ -11,10 +11,17 @@ export class Transform extends BaseObject
     protected _colorTransform:ColorTransform;
     protected _matrix:Matrix;
 
+
+
     constructor(displayObject:DisplayObject|DisplayObjectContainer)
 	{
         super();
         this._displayObject = displayObject;
+    }
+
+    public static toRadians(angle:number):number
+    {
+        return angle * (Math.PI / 180);
     }
 
     public get concatenatedMatrix():Matrix

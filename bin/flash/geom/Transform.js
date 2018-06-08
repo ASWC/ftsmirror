@@ -6,6 +6,9 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/ColorTransf
             super();
             this._displayObject = displayObject;
         }
+        static toRadians(angle) {
+            return angle * (Math.PI / 180);
+        }
         get concatenatedMatrix() {
             // GET ALL matrix OBJECT FROM PARENTS
             return null;

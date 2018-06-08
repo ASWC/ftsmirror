@@ -11,6 +11,7 @@ import { Rectangle } from "flash/geom/Rectangle";
 import { Transform } from "flash/geom/Transform";
 import { Point } from "flash/geom/Point";
 import { Vector3D } from "flash/geom/Vector3D";
+import { Context3D } from "../display3D/Context3D";
 
 export class DisplayObject extends BaseObject implements IDisplayObject
 {
@@ -57,6 +58,16 @@ export class DisplayObject extends BaseObject implements IDisplayObject
         this._x = 0;
         this._y = 0;
     }    
+
+    public present(context:Context3D):void
+    {
+
+    }
+
+    protected render(elapsedTime:number):void
+    {
+
+    }
 
     public static setParent(child:IDisplayObject, parent:IDisplayObjectContainer):void
     {
