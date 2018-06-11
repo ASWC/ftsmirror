@@ -6,6 +6,6 @@ export interface IVerticeIndex
     needUpdate:boolean;
     length:number;
     index:number;
-    rawVertices:Float32Array;
+    rawVertices:Float32Array|Int32Array;
     delegate:IVerticeBufferDelegate;
 }

@@ -1,14 +1,40 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { Context3DVertexBufferFormat } from "flash/display3D/Context3DVertexBufferFormat";
+import { VerticeBuffer } from "flash/webgl/geom/VerticeBuffer";
+import { IVerticeIndex } from "flash/webgl/geom/IVerticeIndex";
 
 export class VertexUniform extends BaseObject
 {
+    protected verticeManager:VerticeBuffer;
     public dataType:string;
     public location:WebGLUniformLocation;
+
+    constructor(name:string, type:string)
+    {
+        super();
+        this.name = name;
+        this.dataType = type;
+        this.verticeManager = new VerticeBuffer();
+    }
+
+    public reset():void
+    {
+        this.verticeManager = new VerticeBuffer();
+    }
+
+    public setData(data:IVerticeIndex):void
+    {
+        this.verticeManager.addVertices(data);
+    }
 
     public getLine():string
     {
         return "uniform " + this.dataType + " " + this.name + ";";        
+    }
+
+    public get vertices():Float32Array
+    {
+        return this.verticeManager.vertices;
     }
 
     public bind(context:WebGLRenderingContext, data:Float32Array|Int32Array|number[]):void

@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign", "flash/display/StageScaleMode", "flash/display3D/Program3D", "flash/display3D/Context3DVertexBufferFormat", "SpriteTest", "flash/display3D/Context3DDrawTypes", "SpriteTestColor", "SpriteMatrixtest"], function (require, exports, Stage_1, StageAlign_1, StageScaleMode_1, Program3D_1, Context3DVertexBufferFormat_1, SpriteTest_1, Context3DDrawTypes_1, SpriteTestColor_1, SpriteMatrixtest_1) {
+define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign", "flash/display/StageScaleMode", "flash/display3D/Program3D", "flash/display3D/Context3DVertexBufferFormat", "SpriteTest", "flash/display3D/Context3DDrawTypes", "SpriteTestColor", "SpriteTestTriangle"], function (require, exports, Stage_1, StageAlign_1, StageScaleMode_1, Program3D_1, Context3DVertexBufferFormat_1, SpriteTest_1, Context3DDrawTypes_1, SpriteTestColor_1, SpriteTestTriangle_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Test extends Stage_1.Stage {
@@ -39,38 +39,85 @@ define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign",
         
                 */
             };
-            this.frameRate = 3;
+            this.frameRate = 1;
             this.align = StageAlign_1.StageAlign.TOP_LEFT;
             this.scaleMode = StageScaleMode_1.StageScaleMode.NO_SCALE;
             this.color = 0xAAFF3333;
             this.createContextById(0);
             var program = new Program3D_1.Program3D();
-            program.addAttributeToVertex("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC3, 3);
-            program.addToVertexMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
-            program.addToFragmentMain("gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);");
+            program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC3);
+            program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
+            program.fragmentShader.addToMain("gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);");
             program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLE_STRIP;
+            program.verticeCount = 4; // < define 
             program.name = "simple_square_test";
-            var testsprite = new SpriteTest_1.SpriteTest();
+            var testsprite = new SpriteTest_1.SpriteTest(-0.5);
+            this.addChild(testsprite);
+            var testsprite = new SpriteTest_1.SpriteTest(-0.2);
             this.addChild(testsprite);
             var program = new Program3D_1.Program3D();
-            program.addAttributeToVertex("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC3, 3);
-            program.addUniformToFragment("uPixelColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
-            program.addToVertexMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
-            program.addToFragmentMain("gl_FragColor = uPixelColor;");
-            program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLE_STRIP;
-            program.name = "simple_square_test_color";
-            var testspritecolor = new SpriteTestColor_1.SpriteTestColor();
-            this.addChild(testspritecolor);
+            program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC2);
+            program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 0.0, 1.0);");
+            program.fragmentShader.addToMain("gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);");
+            program.verticeCount = 6;
+            program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLES;
+            program.name = "simple_square_test_triangles";
+            var testtriangles = new SpriteTestTriangle_1.SpriteTestTriangle(-0.3);
+            this.addChild(testtriangles);
+            var testtriangles = new SpriteTestTriangle_1.SpriteTestTriangle(0.1);
+            this.addChild(testtriangles);
             var program = new Program3D_1.Program3D();
-            program.addAttributeToVertex("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC3, 3);
-            program.addUniformToVertex("uModelTransform", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.MAT4);
-            program.addUniformToFragment("uPixelColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
+            program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC2);
+            program.vertexShader.addAttribute("uTriangleColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
+            program.vertexShader.addVarying("uPixelColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
+            program.verticeCount = 6; // CALCULATE LENGTH OF DATA
+            program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 0.0, 1.0);");
+            program.vertexShader.addToMain("uPixelColor = uTriangleColor;");
+            program.fragmentShader.addVarying("uPixelColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
+            program.fragmentShader.addToMain("gl_FragColor = uPixelColor;");
+            program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLES;
+            program.name = "simple_square_test_color";
+            var testspritecolor = new SpriteTestColor_1.SpriteTestColor(-0.2, [0.0, 1.0, 0.4, 1.0]);
+            this.addChild(testspritecolor);
+            var testspritecolor = new SpriteTestColor_1.SpriteTestColor(-0.4, [0.0, 0.6, 1.0, 1.0]);
+            this.addChild(testspritecolor);
+            // p: vertex
+            // p: fragment
+            // p: set vertex values
+            // p: set fragment values
+            // p: drawing
+            /*
+            */
+            //program.addAttributeToVertex("aSquareVertexPosition", Context3DVertexBufferFormat.VEC3, 3);
+            //program.addUniformToFragment("uPixelColor", Context3DVertexBufferFormat.VEC4);
+            //program.addToVertexMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
+            //program.addToFragmentMain("gl_FragColor = uPixelColor;");
+            //program.vertexShader.addUniform("uPixelColor", Context3DVertexBufferFormat.VEC4)
+            /*
+             var testspritecolor:SpriteTestColor = new SpriteTestColor(0.5, [1.0, 0.3, 0.4, 1.0]);
+             this.addChild(testspritecolor);
+     
+             var testspritecolor:SpriteTestColor = new SpriteTestColor(-0.5, [0.5, 0.8, 0.4, 1.0]);
+             this.addChild(testspritecolor);
+     
+             var testspritecolor:SpriteTestColor = new SpriteTestColor(-0.3, [0.5, 0.8, 1, 1.0]);
+             this.addChild(testspritecolor);*/
+            /*
+            var program:Program3D = new Program3D();
+            program.addAttributeToVertex("aSquareVertexPosition", Context3DVertexBufferFormat.VEC3, 3);
+            program.addUniformToVertex("uModelTransform", Context3DVertexBufferFormat.MAT4);
+            program.addUniformToFragment("uPixelColor", Context3DVertexBufferFormat.VEC4);
             program.addToVertexMain("gl_Position = uModelTransform * vec4(aSquareVertexPosition, 1.0);");
             program.addToFragmentMain("gl_FragColor = uPixelColor;");
-            program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLE_STRIP;
+            program.drawType = Context3DDrawTypes.TRIANGLE_STRIP
             program.name = "simple_square_test_matrix4";
-            var spritematrix = new SpriteMatrixtest_1.SpriteMatrixtest();
+    
+    
+            var spritematrix:SpriteMatrixtest = new SpriteMatrixtest(0.25, 0.25);
             this.addChild(spritematrix);
+    
+            var spritematrix:SpriteMatrixtest = new SpriteMatrixtest(0.5, 0.75);
+            this.addChild(spritematrix);*/
             //program.buildProgram(this._context3D._);
             //this._context3D.setCanvas(-1, -1);
             //this.loader = new Loader();

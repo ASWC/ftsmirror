@@ -1,9 +1,24 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/display3D/Context3DVertexBufferFormat"], function (require, exports, BaseObject_1, Context3DVertexBufferFormat_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/display3D/Context3DVertexBufferFormat", "flash/webgl/geom/VerticeBuffer"], function (require, exports, BaseObject_1, Context3DVertexBufferFormat_1, VerticeBuffer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class VertexUniform extends BaseObject_1.BaseObject {
+        constructor(name, type) {
+            super();
+            this.name = name;
+            this.dataType = type;
+            this.verticeManager = new VerticeBuffer_1.VerticeBuffer();
+        }
+        reset() {
+            this.verticeManager = new VerticeBuffer_1.VerticeBuffer();
+        }
+        setData(data) {
+            this.verticeManager.addVertices(data);
+        }
         getLine() {
             return "uniform " + this.dataType + " " + this.name + ";";
+        }
+        get vertices() {
+            return this.verticeManager.vertices;
         }
         bind(context, data) {
             if (this.dataType == Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC2) {

@@ -14,17 +14,19 @@ export class SpriteMatrixtest extends Sprite
     private programName:string;
     private _uniformColor:number[];
     private _matrix:Matrix4D;
+    private _posVector:Vector3D;
 
     private angle:number;
 
-    constructor()
+    constructor(x:number = 0, y:number = 0)
     {
         super();
+        this._posVector = new Vector3D(x, y);
         this._matrix = new Matrix4D();
 
-        this.angle = 45;
+        this.angle = 0;
 
-        this._matrix.translate(new Vector3D(-0.25, 0.25))
+        this._matrix.translate(this._posVector)
         
         
         this._matrix.rotateZ(Transform.toRadians(this.angle));
@@ -55,32 +57,29 @@ export class SpriteMatrixtest extends Sprite
                     rectangle.setUv(0, 0.2);
                     rectangle.setUv(1, 0.2);
                     rectangle.setUv(2, 0);
-
                     rectangle.setUv(3, -0.2);
                     rectangle.setUv(4, 0.2);
                     rectangle.setUv(5, 0);
-
                     rectangle.setUv(6, 0.2);
                     rectangle.setUv(7, -0.2);
                     rectangle.setUv(8, 0);
-                    
                     rectangle.setUv(9, -0.2);
                     rectangle.setUv(10, -0.2);
                     rectangle.setUv(11, 0);
                     this.verticeData = new VerticeBuffer();
-                    this.verticeData.addVertices(rectangle);
-                    
+                    this.verticeData.addVertices(rectangle);                    
                 }
+                this._matrix.identity()
+                this._matrix.translate(this._posVector)        
+                this._matrix.rotateZ(Transform.toRadians(this.angle));
+                this.angle++;
+
+
+               // program.updateVertexUniform("uModelTransform", this._matrix.vertices);
+               // program.updateVertexData("aSquareVertexPosition", this.verticeData)
+               // program.updateFragmentUniform("uPixelColor", this._uniformColor);
 
                 
-
-                //this.angle++;
-                this.show('angle: ' + this.angle)
-
-
-                program.updateVertexUniform("uModelTransform", this._matrix.vertices);
-                program.updateVertexData("aSquareVertexPosition", this.verticeData)
-                program.updateFragmentUniform("uPixelColor", this._uniformColor);
                 //program.flush();
             }
         }        

@@ -54,8 +54,13 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
             if (!this._gl) {
                 return;
             }
+            if (!program.ready) {
+                return;
+            }
             if (this._currentProgram) {
-                this._currentProgram.flush();
+                if (this._currentProgram != program) {
+                    this._currentProgram.flush();
+                }
             }
             this._currentProgram = program;
             program.bind(this._gl);
@@ -75,6 +80,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
                 this._currentProgram.flush();
             }
             this._currentProgram = null;
+            //this.show('end render')
             return;
             /*  if(container.numChildren)
               {

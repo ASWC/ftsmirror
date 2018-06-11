@@ -33,6 +33,11 @@ export class VerticeBuffer extends BaseObject implements IVerticeBufferDelegate
         value.delegate = this;
     }
 
+    public get indexedVertices():number
+    {
+        return this._verticeIndexes.length;
+    }
+
     public get vertices():Float32Array
     {
         if(!this._vertices)

@@ -2,6 +2,38 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Context3DVertexBufferFormat {
+        static getSize(type) {
+            if (type == "vec3" || type == "vec3_a") {
+                return 3;
+            }
+            if (type == "vec4" || type == "vec4_a") {
+                return 4;
+            }
+            if (type == "vec2" || type == "vec2_a" || type == "MAT2" || type == "MAT2_A") {
+                return 2;
+            }
+            if (type == "FLOAT" || type == "FLOAT_A") {
+                return 1;
+            }
+            /*
+                public static MAT3:string = "mat3";
+                public static MAT3_A:string = "mat3_a";
+                public static MAT4:string = "mat4";
+                public static MAT4_A:string = "mat4_a";
+                public static INT:string = "int";
+                public static INT_A:string = "int_a";
+                public static INT_VEC4:string = "ivec4";
+                public static INT_VEC4_A:string = "ivec4_a";
+                public static INT_VEC3:string = "ivec3";
+                public static INT_VEC3_A:string = "ivec3_a";
+                public static INT_VEC2:string = "ivec2";
+                public static INT_VEC2_A:string = "ivec2_a";
+                public static SAMPLER2D:string = "sampler2D";
+                public static SAMPLER2D_A:string = "sampler2D_a";
+                public static SAMPLERCUBE:string = "samplerCube";
+                public static SAMPLERCUBE_A:string = "samplerCube_a";*/
+            return 0;
+        }
     }
     Context3DVertexBufferFormat.VEC4 = "vec4";
     Context3DVertexBufferFormat.VEC4_A = "vec4_a";

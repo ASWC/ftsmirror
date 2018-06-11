@@ -18,6 +18,9 @@ define(["require", "exports", "../../system/BaseObject"], function (require, exp
             this._verticeLength += value.length;
             value.delegate = this;
         }
+        get indexedVertices() {
+            return this._verticeIndexes.length;
+        }
         get vertices() {
             if (!this._vertices) {
                 this._vertices = new Float32Array(this._verticeLength);

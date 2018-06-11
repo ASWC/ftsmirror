@@ -7,12 +7,14 @@ export class BaseObject
     protected _instanceName:string;
     protected _name:string;
     protected _needUpdate:boolean;
+    protected _verbose:boolean;
 
     constructor()
     {
         this._instanceName = "instance_" + BaseObject.instanceid.toString();
         this._name = this.className + "_" + BaseObject.instanceid.toString();
         BaseObject.instanceid++;
+        this._verbose = true;
     }
 
     public set name(value:string)
@@ -42,16 +44,28 @@ export class BaseObject
 
     public show(value:any):void
     {
+        if(!this._verbose)
+        {
+            return;
+        }
         Tracer.show(value);
     }
 
     public reveal(value:any):void
     {
+        if(!this._verbose)
+        {
+            return;
+        }
         Tracer.reveal(value);
     }
 
     public revealMethods(value:any):void
     {
+        if(!this._verbose)
+        {
+            return;
+        }
         Tracer.revealMethods(value);
     }
 

@@ -2,11 +2,12 @@ define(["require", "exports", "flash/display/Sprite", "flash/webgl/geom/VerticeB
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class SpriteMatrixtest extends Sprite_1.Sprite {
-        constructor() {
+        constructor(x = 0, y = 0) {
             super();
+            this._posVector = new Vector3D_1.Vector3D(x, y);
             this._matrix = new Matrix4D_1.Matrix4D();
-            this.angle = 45;
-            this._matrix.translate(new Vector3D_1.Vector3D(-0.25, 0.25));
+            this.angle = 0;
+            this._matrix.translate(this._posVector);
             this._matrix.rotateZ(Transform_1.Transform.toRadians(this.angle));
             this._uniformColor = [];
             this._uniformColor.push(0.1);
@@ -39,11 +40,13 @@ define(["require", "exports", "flash/display/Sprite", "flash/webgl/geom/VerticeB
                         this.verticeData = new VerticeBuffer_1.VerticeBuffer();
                         this.verticeData.addVertices(rectangle);
                     }
-                    //this.angle++;
-                    this.show('angle: ' + this.angle);
-                    program.updateVertexUniform("uModelTransform", this._matrix.vertices);
-                    program.updateVertexData("aSquareVertexPosition", this.verticeData);
-                    program.updateFragmentUniform("uPixelColor", this._uniformColor);
+                    this._matrix.identity();
+                    this._matrix.translate(this._posVector);
+                    this._matrix.rotateZ(Transform_1.Transform.toRadians(this.angle));
+                    this.angle++;
+                    // program.updateVertexUniform("uModelTransform", this._matrix.vertices);
+                    // program.updateVertexData("aSquareVertexPosition", this.verticeData)
+                    // program.updateFragmentUniform("uPixelColor", this._uniformColor);
                     //program.flush();
                 }
             }

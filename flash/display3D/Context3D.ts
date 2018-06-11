@@ -108,9 +108,16 @@ export class Context3D extends BaseObject
         {
             return;
         }
+        if(!program.ready)
+        {
+            return;
+        }
         if(this._currentProgram)
         {
-            this._currentProgram.flush();
+            if(this._currentProgram != program)
+            {
+                this._currentProgram.flush();
+            }
         }
         this._currentProgram = program;
         program.bind(this._gl);
@@ -130,8 +137,7 @@ export class Context3D extends BaseObject
         if(Program3D.hasUnregisteredPrograms)
         {
             Program3D.registerPrograms(this._gl);
-        }
-
+        }        
         if(this._stage && this._stage.numChildren)
         {
             var children:DisplayObject[] = this._stage.children;
@@ -145,6 +151,9 @@ export class Context3D extends BaseObject
             this._currentProgram.flush();
         }
         this._currentProgram = null;
+
+
+        //this.show('end render')
 
 
         return;

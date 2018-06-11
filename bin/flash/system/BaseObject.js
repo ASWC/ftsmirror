@@ -6,6 +6,7 @@ define(["require", "exports", "flash/system/Tracer"], function (require, exports
             this._instanceName = "instance_" + BaseObject.instanceid.toString();
             this._name = this.className + "_" + BaseObject.instanceid.toString();
             BaseObject.instanceid++;
+            this._verbose = true;
         }
         set name(value) {
             this._name = value;
@@ -23,12 +24,21 @@ define(["require", "exports", "flash/system/Tracer"], function (require, exports
             return this.constructor.name;
         }
         show(value) {
+            if (!this._verbose) {
+                return;
+            }
             Tracer_1.Tracer.show(value);
         }
         reveal(value) {
+            if (!this._verbose) {
+                return;
+            }
             Tracer_1.Tracer.reveal(value);
         }
         revealMethods(value) {
+            if (!this._verbose) {
+                return;
+            }
             Tracer_1.Tracer.revealMethods(value);
         }
         toString() {
