@@ -4,7 +4,7 @@ define(["require", "exports", "../../system/BaseObject"], function (require, exp
     class Matrix4D extends BaseObject_1.BaseObject {
         constructor() {
             super();
-            this._vertices = new Float32Array(16);
+            this._vertices = new Float32Array(9);
             this.identity();
         }
         translate(vector) {
@@ -41,18 +41,11 @@ define(["require", "exports", "../../system/BaseObject"], function (require, exp
             this._vertices[1] = 0;
             this._vertices[2] = 0;
             this._vertices[3] = 0;
-            this._vertices[4] = 0;
-            this._vertices[5] = 1;
+            this._vertices[4] = 1;
+            this._vertices[5] = 0;
             this._vertices[6] = 0;
             this._vertices[7] = 0;
-            this._vertices[8] = 0;
-            this._vertices[9] = 0;
-            this._vertices[10] = 1;
-            this._vertices[11] = 0;
-            this._vertices[12] = 0;
-            this._vertices[13] = 0;
-            this._vertices[14] = 0;
-            this._vertices[15] = 1;
+            this._vertices[8] = 1;
             this.hasChanged();
         }
         get vertices() {

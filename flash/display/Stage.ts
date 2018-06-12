@@ -19,14 +19,16 @@ import { BaseObject } from "flash/system/BaseObject";
 import { Stage3D } from "flash/display3D/Stage3D";
 import { Context3D } from "flash/display3D/Context3D";
 import { Timer } from "flash/utils/Timer";
-import { Program3D } from "../display3D/Program3D";
-import { IStage } from "./types/IStage";
-import { IInteractiveObject } from "./types/IInteractiveObject";
+import { Program3D } from "flash/display3D/Program3D";
+import { IStage } from "flash/display/types/IStage";
+import { IInteractiveObject } from "flash/display/types/IInteractiveObject";
 import { Color } from "flash/geom/Color";
-import { IDisplayObject } from "./types/IDisplayObject";
+import { IDisplayObject } from "flash/display/types/IDisplayObject";
+import { IRunnable } from "flash/display/types/IRunnable";
 
 export class Stage extends DisplayObjectContainer implements IStage
 {
+    private static runnables:IRunnable[] = [];
     protected _align:string;
     protected _allowsFullScreen:boolean;
     protected _browserZoomFactor:number;
@@ -38,7 +40,7 @@ export class Stage extends DisplayObjectContainer implements IStage
     protected _deviceOrientation:string;
     protected _frameRate:number;
     protected _fullScreenSourceRect:Rectangle;
-    protected _stageHeight:number;
+    //protected _stageHeight:number;
     protected _textSnapshot:TextSnapshot;
     protected _stageVideos:StageVideo[];
     protected _width:number;
@@ -51,7 +53,7 @@ export class Stage extends DisplayObjectContainer implements IStage
     protected _showDefaultContextMenu:boolean;
     protected _stage3Ds:Stage3D[];
     protected _stageFocusRect:boolean;
-    protected _stageWidth:number;
+    //protected _stageWidth:number;
     protected _softKeyboardRect:Rectangle;
     protected _numChildren:number;
     protected _nativeWindow:NativeWindow;
@@ -116,6 +118,10 @@ export class Stage extends DisplayObjectContainer implements IStage
         if(this._context3D)
         {
             this._context3D.render(elapsedTime)
+        }
+        for(var i:number = 0; i < Stage.runnables.length; i++)
+        {
+            Stage.runnables[i].run(elapsedTime);
         }
     }
 
@@ -282,14 +288,13 @@ export class Stage extends DisplayObjectContainer implements IStage
         return this._fullScreenSourceRect;
     }
 
-    public set stageHeight(value:number)
-    {
-        this._stageHeight = value;
-    }
-
     public get stageHeight():number
     {
-        return this._stageHeight;
+        if(this._context3D)
+        {
+            return this._context3D.canvasHeight;
+        }
+        return 0;
     }
 
     public set textSnapshot(value:TextSnapshot)
@@ -397,14 +402,13 @@ export class Stage extends DisplayObjectContainer implements IStage
         return this._stageFocusRect;
     }
 
-    public set stageWidth(value:number)
-    {
-        this._stageWidth = value;
-    }
-
     public get stageWidth():number
     {
-        return this._stageWidth;
+        if(this._context3D)
+        {
+            return this._context3D.canvasWidth
+        }
+        return 0;
     }
 
     public set softKeyboardRect(value:Rectangle)
@@ -534,7 +538,23 @@ export class Stage extends DisplayObjectContainer implements IStage
 
     }
 
+    public static registerRunnable(value:IRunnable):void
+    {
+        var index:number = Stage.runnables.indexOf(value);
+        if(index < 0)
+        {
+            Stage.runnables.push(value);
+        }
+    }
 
+    public static unRegisterRunnable(value:IRunnable):void
+    {
+        var index:number = Stage.runnables.indexOf(value);
+        if(index >= 0)
+        {
+            Stage.runnables.splice(index, 1);
+        }
+    }
   
     
    

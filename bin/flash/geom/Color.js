@@ -1,9 +1,10 @@
-define(["require", "exports", "flash/system/BaseObject"], function (require, exports, BaseObject_1) {
+define(["require", "exports", "flash/system/BaseObject", "../webgl/geom/IndexedVertice", "../display3D/Context3DVertexBufferFormat"], function (require, exports, BaseObject_1, IndexedVertice_1, Context3DVertexBufferFormat_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Color extends BaseObject_1.BaseObject {
         constructor(color = 0xFFFFFFFF) {
             super();
+            this._colorVertices = new IndexedVertice_1.IndexedVertice(4, Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.FLOAT);
             this.color = color;
         }
         set color(value) {
@@ -16,6 +17,13 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             this._absoluteRed = ((this._color >> 16) & 0xFF) / 255;
             this._absoluteGreen = ((this._color >> 8) & 0xFF) / 255;
             this._absoluteBlue = (this._color & 0xFF) / 255;
+            this._colorVertices.rawVertices[0] = this._absoluteRed;
+            this._colorVertices.rawVertices[1] = this._absoluteGreen;
+            this._colorVertices.rawVertices[2] = this._absoluteBlue;
+            this._colorVertices.rawVertices[3] = this._absoluteAlpha;
+        }
+        get vertices() {
+            return this._colorVertices;
         }
         get alpha() {
             return this._alpha;
@@ -50,7 +58,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             }
             this._color &= (0x00FFFFFF);
             this._color |= (value << 24);
-            this._alpha = -1;
+            this._alpha = (this._color >> 24) & 0xFF;
+            this._absoluteAlpha = ((this._color >> 24) & 0xFF) / 255;
+            this._colorVertices.rawVertices[3] = this._absoluteAlpha;
         }
         set absoluteAlpha(value) {
             if (value < 0) {
@@ -62,7 +72,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             value = value * 255;
             this._color &= (0x00FFFFFF);
             this._color |= (value << 24);
-            this._absoluteAlpha = -1;
+            this._alpha = (this._color >> 24) & 0xFF;
+            this._absoluteAlpha = ((this._color >> 24) & 0xFF) / 255;
+            this._colorVertices.rawVertices[3] = this._absoluteAlpha;
         }
         set red(value) {
             if (value < 0) {
@@ -73,7 +85,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             }
             this._color &= (0xFF00FFFF);
             this._color |= (value << 16);
-            this._red = -1;
+            this._red = (this._color >> 16) & 0xFF;
+            this._absoluteRed = ((this._color >> 16) & 0xFF) / 255;
+            this._colorVertices.rawVertices[0] = this._absoluteRed;
         }
         set absoluteRed(value) {
             if (value < 0) {
@@ -85,7 +99,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             value = value * 255;
             this._color &= (0xFF00FFFF);
             this._color |= (value << 16);
-            this.absoluteRed = -1;
+            this._red = (this._color >> 16) & 0xFF;
+            this._absoluteRed = ((this._color >> 16) & 0xFF) / 255;
+            this._colorVertices.rawVertices[0] = this._absoluteRed;
         }
         set green(value) {
             if (value < 0) {
@@ -96,7 +112,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             }
             this._color &= (0xFFFF00FF);
             this._color |= (value << 8);
-            this._green = -1;
+            this._green = (this._color >> 8) & 0xFF;
+            this._absoluteGreen = ((this._color >> 8) & 0xFF) / 255;
+            this._colorVertices.rawVertices[1] = this._absoluteGreen;
         }
         set absoluteGreen(value) {
             if (value < 0) {
@@ -108,7 +126,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             value = value * 255;
             this._color &= (0xFFFF00FF);
             this._color |= (value << 8);
-            this._absoluteGreen = -1;
+            this._green = (this._color >> 8) & 0xFF;
+            this._absoluteGreen = ((this._color >> 8) & 0xFF) / 255;
+            this._colorVertices.rawVertices[1] = this._absoluteGreen;
         }
         set blue(value) {
             if (value < 0) {
@@ -119,7 +139,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             }
             this._color &= (0xFFFFFF00);
             this._color |= (value);
-            this._blue = -1;
+            this._blue = this._color & 0xFF;
+            this._absoluteBlue = (this._color & 0xFF) / 255;
+            this._colorVertices.rawVertices[2] = this._absoluteBlue;
         }
         set absoluteBlue(value) {
             if (value < 0) {
@@ -131,7 +153,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             value = value * 255;
             this._color &= (0xFFFFFF00);
             this._color |= (value);
-            this._absoluteBlue = -1;
+            this._blue = this._color & 0xFF;
+            this._absoluteBlue = (this._color & 0xFF) / 255;
+            this._colorVertices.rawVertices[2] = this._absoluteBlue;
         }
         get color() {
             return this._color;

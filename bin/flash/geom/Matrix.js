@@ -1,10 +1,9 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/geom/Point"], function (require, exports, BaseObject_1, Point_1) {
+define(["require", "exports", "flash/geom/Point", "../webgl/geom/IndexedVertice", "../display3D/Context3DVertexBufferFormat"], function (require, exports, Point_1, IndexedVertice_1, Context3DVertexBufferFormat_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class Matrix extends BaseObject_1.BaseObject {
+    class Matrix extends IndexedVertice_1.IndexedVertice {
         constructor(a = 1, b = 0, c = 0, d = 1, tx = 0, ty = 0) {
-            super();
-            this._matrix = new Float32Array(9);
+            super(9, Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.FLOAT);
             this.identity();
             this.a = a;
             this.b = b;
@@ -14,7 +13,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Point"], fu
             this.ty = ty;
         }
         get rawMatrix() {
-            return this._matrix;
+            return this._vertices;
         }
         concat(m) {
             this.a = (m.a * this.a) + (m.b * this.c);
@@ -43,16 +42,20 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Point"], fu
             this.ty = (this.tx * sin) + (this.ty * cos);
         }
         scale(sx, sy) {
-            this.a *= sx;
-            this.d *= sy;
-            this.c *= sx;
-            this.b *= sy;
-            this.tx *= sx;
-            this.ty *= sy;
+            this._vertices[0] = sx * this._vertices[0];
+            this._vertices[1] = sx * this._vertices[1];
+            this._vertices[2] = sx * this._vertices[2];
+            this._vertices[3] = sy * this._vertices[3];
+            this._vertices[4] = sy * this._vertices[4];
+            this._vertices[5] = sy * this._vertices[5];
+            this._vertices[6] = this._vertices[6];
+            this._vertices[7] = this._vertices[7];
+            this._vertices[8] = this._vertices[8];
         }
         translate(dx, dy) {
-            this.tx += dx;
-            this.ty += dy;
+            this._vertices[6] = dx * this._vertices[0] + dy * this._vertices[3] + this._vertices[6];
+            this._vertices[7] = dx * this._vertices[1] + dy * this._vertices[4] + this._vertices[7];
+            this._vertices[8] = dx * this._vertices[2] + dy * this._vertices[5] + this._vertices[8];
         }
         createBox(scaleX, scaleY, rotation = 0, tx = 0, ty = 0) {
             this.identity();
@@ -100,57 +103,57 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Point"], fu
             return new Matrix();
         }
         set tx(value) {
-            this._matrix[2] = value;
+            this._vertices[2] = value;
             this.hasChanged();
         }
         get tx() {
-            return this._matrix[2];
+            return this._vertices[2];
         }
         set d(value) {
-            this._matrix[4] = value;
+            this._vertices[4] = value;
             this.hasChanged();
         }
         get d() {
-            return this._matrix[4];
+            return this._vertices[4];
         }
         set c(value) {
-            this._matrix[3] = value;
+            this._vertices[3] = value;
             this.hasChanged();
         }
         get c() {
-            return this._matrix[3];
+            return this._vertices[3];
         }
         set b(value) {
-            this._matrix[1] = value;
+            this._vertices[1] = value;
             this.hasChanged();
         }
         get b() {
-            return this._matrix[1];
+            return this._vertices[1];
         }
         set a(value) {
-            this._matrix[0] = value;
+            this._vertices[0] = value;
             this.hasChanged();
         }
         get a() {
-            return this._matrix[0];
+            return this._vertices[0];
         }
         set ty(value) {
-            this._matrix[5] = value;
+            this._vertices[5] = value;
             this.hasChanged();
         }
         get ty() {
-            return this._matrix[5];
+            return this._vertices[5];
         }
         identity() {
-            this._matrix[0] = 1.0; // a
-            this._matrix[1] = 0.0; // b
-            this._matrix[2] = 0.0; // tx
-            this._matrix[3] = 0.0; // c
-            this._matrix[4] = 1.0; // d
-            this._matrix[5] = 0.0; // ty
-            this._matrix[6] = 0.0;
-            this._matrix[7] = 0.0;
-            this._matrix[8] = 1.0;
+            this._vertices[0] = 1.0; // a
+            this._vertices[1] = 0.0; // b
+            this._vertices[2] = 0.0; // tx
+            this._vertices[3] = 0.0; // c
+            this._vertices[4] = 1.0; // d
+            this._vertices[5] = 0.0; // ty
+            this._vertices[6] = 0.0;
+            this._vertices[7] = 0.0;
+            this._vertices[8] = 1.0;
             this.hasChanged();
         }
     }

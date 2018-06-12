@@ -9,12 +9,13 @@ export class Matrix4D extends BaseObject
     constructor()
     {
         super();
-        this._vertices = new Float32Array(16);
+        this._vertices = new Float32Array(9);
         this.identity();        
     }
 
     public translate(vector:Vector3D):void
     {
+        
         var x:number = vector.vertices[0];
         var y:number = vector.vertices[1];
         var z:number = vector.vertices[2];      
@@ -46,24 +47,20 @@ export class Matrix4D extends BaseObject
         this._vertices[7] = a13 * c - a03 * s;
     }
 
+
+
+
     public identity():void 
     {
         this._vertices[0] = 1;
         this._vertices[1] = 0;
         this._vertices[2] = 0;
         this._vertices[3] = 0;
-        this._vertices[4] = 0;
-        this._vertices[5] = 1;
+        this._vertices[4] = 1;
+        this._vertices[5] = 0;
         this._vertices[6] = 0;
         this._vertices[7] = 0;
-        this._vertices[8] = 0;
-        this._vertices[9] = 0;
-        this._vertices[10] = 1;
-        this._vertices[11] = 0;
-        this._vertices[12] = 0;
-        this._vertices[13] = 0;
-        this._vertices[14] = 0;
-        this._vertices[15] = 1;
+        this._vertices[8] = 1;
         this.hasChanged();
     }
 

@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign", "flash/display/StageScaleMode", "flash/display3D/Program3D", "flash/display3D/Context3DVertexBufferFormat", "SpriteTest", "flash/display3D/Context3DDrawTypes", "SpriteTestColor", "SpriteTestTriangle"], function (require, exports, Stage_1, StageAlign_1, StageScaleMode_1, Program3D_1, Context3DVertexBufferFormat_1, SpriteTest_1, Context3DDrawTypes_1, SpriteTestColor_1, SpriteTestTriangle_1) {
+define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign", "flash/display/StageScaleMode", "flash/display3D/Program3D", "flash/display3D/Context3DVertexBufferFormat", "flash/display3D/Context3DDrawTypes", "SpriteProgramTest"], function (require, exports, Stage_1, StageAlign_1, StageScaleMode_1, Program3D_1, Context3DVertexBufferFormat_1, Context3DDrawTypes_1, SpriteProgramTest_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Test extends Stage_1.Stage {
@@ -39,48 +39,80 @@ define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign",
         
                 */
             };
-            this.frameRate = 1;
+            this.frameRate = 60;
             this.align = StageAlign_1.StageAlign.TOP_LEFT;
             this.scaleMode = StageScaleMode_1.StageScaleMode.NO_SCALE;
             this.color = 0xAAFF3333;
             this.createContextById(0);
-            var program = new Program3D_1.Program3D();
-            program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC3);
+            /*var program:Program3D = new Program3D();
+            program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat.VEC3);
             program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
             program.fragmentShader.addToMain("gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);");
-            program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLE_STRIP;
-            program.dataLength = 4; // < define 
+            program.drawType = Context3DDrawTypes.TRIANGLE_STRIP
+            program.dataLength = 4; // < define
             program.name = "simple_square_test";
-            var testsprite = new SpriteTest_1.SpriteTest(-0.5);
+            var testsprite:SpriteTest = new SpriteTest(-0.5);
             this.addChild(testsprite);
-            var testsprite = new SpriteTest_1.SpriteTest(-0.2);
-            this.addChild(testsprite);
-            var program = new Program3D_1.Program3D();
-            program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC2);
-            program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 0.0, 1.0);");
-            program.fragmentShader.addToMain("gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);");
-            program.dataLength = 6;
-            program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLES;
-            program.name = "simple_square_test_triangles";
-            var testtriangles = new SpriteTestTriangle_1.SpriteTestTriangle(-0.3);
-            this.addChild(testtriangles);
-            var testtriangles = new SpriteTestTriangle_1.SpriteTestTriangle(0.1);
-            this.addChild(testtriangles);
-            var program = new Program3D_1.Program3D();
-            program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC2);
-            program.vertexShader.addAttribute("uTriangleColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
-            program.vertexShader.addVarying("uPixelColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
-            program.dataLength = 6; // CALCULATE LENGTH OF DATA
-            program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 0.0, 1.0);");
+            var testsprite:SpriteTest = new SpriteTest(-0.2);
+            this.addChild(testsprite);*/
+            /* var program:Program3D = new Program3D();
+             program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat.VEC2);
+             program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 0.0, 1.0);");
+             program.fragmentShader.addToMain("gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);");
+             program.dataLength = 6;
+             program.drawType = Context3DDrawTypes.TRIANGLES;
+             program.name = "simple_square_test_triangles";
+             var testtriangles:SpriteTestTriangle = new SpriteTestTriangle(-0.3);
+             this.addChild(testtriangles);
+             var testtriangles:SpriteTestTriangle = new SpriteTestTriangle(0.1);
+             this.addChild(testtriangles);*/
+            /*var program:Program3D = new Program3D();
+            program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat.VEC2);
+            program.vertexShader.addAttribute("uTriangleColor", Context3DVertexBufferFormat.VEC4);
+            program.vertexShader.addAttribute("a_translation", Context3DVertexBufferFormat.VEC2);
+            program.vertexShader.addVarying("uPixelColor", Context3DVertexBufferFormat.VEC4);
+            program.vertexShader.addUniform("u_resolution", Context3DVertexBufferFormat.VEC2);
+            program.vertexShader.addToMain("vec2 position = aSquareVertexPosition + u_translation;");
+            program.vertexShader.addToMain("vec2 zeroToOne = position / u_resolution;");
+            program.vertexShader.addToMain("vec2 zeroToTwo = zeroToOne * 2.0;");
+            program.vertexShader.addToMain("vec2 clipSpace = zeroToTwo - 1.0;");
+            program.vertexShader.addToMain("gl_Position = vec4(clipSpace * vec2(1, -1), 0.0, 1.0);");
             program.vertexShader.addToMain("uPixelColor = uTriangleColor;");
-            program.fragmentShader.addVarying("uPixelColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
+            program.dataLength = 6; // CALCULATE LENGTH OF DATA
+            program.fragmentShader.addVarying("uPixelColor", Context3DVertexBufferFormat.VEC4);
             program.fragmentShader.addToMain("gl_FragColor = uPixelColor;");
-            program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLES;
+            program.drawType = Context3DDrawTypes.TRIANGLES;
             program.name = "simple_square_test_color";
-            var testspritecolor = new SpriteTestColor_1.SpriteTestColor(-0.2, [0.0, 1.0, 0.4, 1.0]);
+            var testspritecolor:SpriteTestColor = new SpriteTestColor([Math.random(), Math.random(), Math.random(), 1.0]);
             this.addChild(testspritecolor);
-            var testspritecolor = new SpriteTestColor_1.SpriteTestColor(-0.4, [0.0, 0.6, 1.0, 1.0]);
-            this.addChild(testspritecolor);
+            testspritecolor.x = 0//Math.random() * this.stageWidth;
+            testspritecolor.y = Math.random() * (this.stageHeight - 100);
+            this.show(this.stageHeight);
+            Tween.to(testspritecolor, "x", Linear.easeIn, testspritecolor.x, testspritecolor.x + 600, 3000, false);*/
+            var program = new Program3D_1.Program3D(6, "simple_projection");
+            program.vertexShader.addAttribute("a_vertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC2);
+            program.vertexShader.addUniform("u_G_resolution", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC2);
+            program.vertexShader.addUniform("u_G_projection", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.MAT3);
+            program.vertexShader.addUniform("u_transform", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.MAT3);
+            program.vertexShader.addUniform("u_triangleColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
+            program.vertexShader.addVarying("v_pixelColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
+            program.vertexShader.addToMain("vec2 convertedPosition = a_vertexPosition * u_G_resolution;");
+            program.vertexShader.addToMain("vec3 transformPosition = vec3(convertedPosition, 1) * u_transform;");
+            program.vertexShader.addToMain("v_pixelColor = u_triangleColor;");
+            program.vertexShader.addToMain("gl_Position = vec4( u_G_projection * transformPosition, 1.0);");
+            program.fragmentShader.addVarying("v_pixelColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
+            program.fragmentShader.addToMain("gl_FragColor = v_pixelColor;");
+            program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLES;
+            var sprite = new SpriteProgramTest_1.SpriteProgramTest();
+            this.addChild(sprite);
+            /*
+            var testspritecolor:SpriteTestColor = new SpriteTestColor(200, [0.0, 0.6, 1.0, 1.0]);
+            this.addChild(testspritecolor);*/
+            // points shape in pixel
+            // vec2 = position
+            // vec2 = scale
+            // float = angle
+            // matrix3 = object calculation
             // p: vertex
             // p: fragment
             // p: set vertex values

@@ -46,6 +46,9 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
             if (this._context3D) {
                 this._context3D.render(elapsedTime);
             }
+            for (var i = 0; i < Stage.runnables.length; i++) {
+                Stage.runnables[i].run(elapsedTime);
+            }
         }
         validateContext() {
             this._context3D.validate();
@@ -133,11 +136,11 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
         get fullScreenSourceRect() {
             return this._fullScreenSourceRect;
         }
-        set stageHeight(value) {
-            this._stageHeight = value;
-        }
         get stageHeight() {
-            return this._stageHeight;
+            if (this._context3D) {
+                return this._context3D.canvasHeight;
+            }
+            return 0;
         }
         set textSnapshot(value) {
             this._textSnapshot = value;
@@ -202,11 +205,11 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
         get stageFocusRect() {
             return this._stageFocusRect;
         }
-        set stageWidth(value) {
-            this._stageWidth = value;
-        }
         get stageWidth() {
-            return this._stageWidth;
+            if (this._context3D) {
+                return this._context3D.canvasWidth;
+            }
+            return 0;
         }
         set softKeyboardRect(value) {
             this._softKeyboardRect = value;
@@ -279,7 +282,20 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
         }
         setOrientation(newOrientation) {
         }
+        static registerRunnable(value) {
+            var index = Stage.runnables.indexOf(value);
+            if (index < 0) {
+                Stage.runnables.push(value);
+            }
+        }
+        static unRegisterRunnable(value) {
+            var index = Stage.runnables.indexOf(value);
+            if (index >= 0) {
+                Stage.runnables.splice(index, 1);
+            }
+        }
     }
+    Stage.runnables = [];
     exports.Stage = Stage;
 });
 //# sourceMappingURL=Stage.js.map

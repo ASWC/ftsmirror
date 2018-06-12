@@ -12,15 +12,18 @@ export class SpriteTestColor extends Sprite
 {
     private programName:string;
     private _pos:number;
-    private _uvs:Rectangle;
+    //private _uvs:Rectangle;
     private _colorVertice:IndexedVertice;
 
-    constructor(pos:number, colors:number[])
+    constructor(colors:number[])
     {
         super();
 
-        this._pos = pos;
-        this._uvs = new Rectangle(0.25 + pos, 0.25 + pos, 0.5 + pos, 0.5 + pos);
+        this._bounds.width = 100 + Math.random() * 200;
+        this._bounds.height = 100 + Math.random() * 200;
+
+        //this._pos = pos;
+        //this._uvs = new Rectangle(pos, pos, 150, 100);
         this._colorVertice = new IndexedVertice(24, Context3DVertexBufferFormat.FLOAT)
 
         var concatcolor:number[] = [];
@@ -52,8 +55,12 @@ export class SpriteTestColor extends Sprite
         if(program)
         {   
             context.bind(program)
-            program.vertexShader.updateAttribute("aSquareVertexPosition", this._uvs);  
-            program.vertexShader.updateAttribute("uTriangleColor", this._colorVertice);  
+            program.vertexShader.updateUniform("u_resolution", program.resolution);
+
+            program.vertexShader.updateAttribute("aSquareVertexPosition", this._bounds);  
+            program.vertexShader.updateAttribute("uTriangleColor", this._colorVertice); 
+            program.vertexShader.updateAttribute("a_translation", this._position); 
+            
 
         
         }        

@@ -1,14 +1,13 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { Point } from "flash/geom/Point";
+import { IndexedVertice } from "../webgl/geom/IndexedVertice";
+import { Context3DVertexBufferFormat } from "../display3D/Context3DVertexBufferFormat";
 
-export class Matrix extends BaseObject
+export class Matrix extends IndexedVertice
 {
-    protected _matrix:Float32Array;    
-
     constructor(a:number=1, b:number=0, c:number=0, d:number=1, tx:number=0, ty:number=0)
 	{
-        super();
-        this._matrix = new Float32Array(9);
+        super(9, Context3DVertexBufferFormat.FLOAT);        
         this.identity();
         this.a = a;
         this.b = b;
@@ -18,9 +17,9 @@ export class Matrix extends BaseObject
         this.ty = ty;
     }
 
-    public get rawMatrix():Float32Array
+    public get rawMatrix():Float32Array|Int32Array
     {
-        return this._matrix;
+        return this._vertices;
     }
 		
 	public concat(m:Matrix):void
@@ -57,18 +56,26 @@ export class Matrix extends BaseObject
     
     public scale(sx:number, sy:number):void
 	{
-		this.a *= sx;
-        this.d *= sy;
-        this.c *= sx;
-        this.b *= sy;
-        this.tx *= sx;
-        this.ty *= sy;
+
+
+        this._vertices[0] = sx * this._vertices[0];
+        this._vertices[1] = sx * this._vertices[1];
+        this._vertices[2] = sx * this._vertices[2];
+      
+        this._vertices[3] = sy * this._vertices[3];
+        this._vertices[4] = sy * this._vertices[4];
+        this._vertices[5] = sy * this._vertices[5];
+      
+        this._vertices[6] = this._vertices[6];
+        this._vertices[7] = this._vertices[7];
+        this._vertices[8] = this._vertices[8];
     }
     
     public translate(dx:number, dy:number):void
 	{
-		this.tx += dx;
-        this.ty += dy;
+        this._vertices[6] = dx * this._vertices[0] + dy * this._vertices[3] + this._vertices[6];
+        this._vertices[7] = dx * this._vertices[1] + dy * this._vertices[4] + this._vertices[7];
+        this._vertices[8] = dx * this._vertices[2] + dy * this._vertices[5] + this._vertices[8];		
     }
 		
 	public createBox(scaleX:number, scaleY:number, rotation:number=0, tx:number=0, ty:number=0):void
@@ -134,81 +141,84 @@ export class Matrix extends BaseObject
     
     public set tx(value:number)
     {
-        this._matrix[2] = value;
+        this._vertices[2] = value;
         this.hasChanged();
     }
 
     public get tx():number
     {
-        return this._matrix[2];
+        return this._vertices[2];
     }
 
     public set d(value:number)
     {
-        this._matrix[4] = value;
+        this._vertices[4] = value;
         this.hasChanged();
     }
 
     public get d():number
     {
-        return this._matrix[4];
+        return this._vertices[4];
     }
 
     public set c(value:number)
     {
-        this._matrix[3] = value;
+        this._vertices[3] = value;
         this.hasChanged();
     }
 
     public get c():number
     {
-        return this._matrix[3];
+        return this._vertices[3];
     }
 
     public set b(value:number)
     {
-        this._matrix[1] = value;
+        this._vertices[1] = value;
         this.hasChanged();
     }
 
     public get b():number
     {
-        return this._matrix[1];
+        return this._vertices[1];
     }
 
     public set a(value:number)
     {
-        this._matrix[0] = value;
+        this._vertices[0] = value;
         this.hasChanged();
     }
 
     public get a():number
     {
-        return this._matrix[0];
+        return this._vertices[0];
     }
 
     public set ty(value:number)
     {
-        this._matrix[5] = value;
+        this._vertices[5] = value;
         this.hasChanged();
     }
 
     public get ty():number
     {
-        return this._matrix[5];
+        return this._vertices[5];
     }
+
+
+
 
     public identity():void
 	{
-        this._matrix[0] = 1.0;// a
-        this._matrix[1] = 0.0;// b
-        this._matrix[2] = 0.0;// tx
-        this._matrix[3] = 0.0;// c
-        this._matrix[4] = 1.0;// d
-        this._matrix[5] = 0.0;// ty
-        this._matrix[6] = 0.0;
-        this._matrix[7] = 0.0;
-        this._matrix[8] = 1.0;
+        this._vertices[0] = 1.0;// a
+        this._vertices[1] = 0.0;// b
+        this._vertices[2] = 0.0;// tx
+        this._vertices[3] = 0.0;// c
+        this._vertices[4] = 1.0;// d
+        this._vertices[5] = 0.0;// ty
+        this._vertices[6] = 0.0;
+        this._vertices[7] = 0.0;
+        this._vertices[8] = 1.0;
         this.hasChanged();
 	}
 }

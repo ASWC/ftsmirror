@@ -1,9 +1,13 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/geom/Transform"], function (require, exports, BaseObject_1, Transform_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/geom/Rectangle", "flash/geom/Transform", "../webgl/geom/IndexedVertice", "../display3D/Context3DVertexBufferFormat"], function (require, exports, BaseObject_1, Rectangle_1, Transform_1, IndexedVertice_1, Context3DVertexBufferFormat_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class DisplayObject extends BaseObject_1.BaseObject {
         constructor() {
             super();
+            this._position = new IndexedVertice_1.IndexedVertice(2, Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.FLOAT);
+            this._position.rawVertices[0] = 0;
+            this._position.rawVertices[1] = 0;
+            this._bounds = new Rectangle_1.Rectangle();
             this._stage = null;
             this._root = null;
             this._mask = null;
@@ -21,8 +25,8 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Transform"]
             this._scaleX = 1;
             this._scaleY = 1;
             this._width = 0;
-            this._x = 0;
-            this._y = 0;
+            //this._x = 0;
+            //this._y = 0;
         }
         present(context) {
         }
@@ -33,16 +37,16 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Transform"]
             childtarget._parent = parent;
         }
         set y(value) {
-            this._y = value;
+            this._position.rawVertices[1] = value;
         }
         get y() {
-            return this._y;
+            return this._position.rawVertices[1];
         }
         set x(value) {
-            this._x = value;
+            this._position.rawVertices[0] = value;
         }
         get x() {
-            return this._x;
+            return this._position.rawVertices[0];
         }
         set scaleY(value) {
             this._scaleY = value;

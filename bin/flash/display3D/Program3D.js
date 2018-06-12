@@ -2,9 +2,10 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/d
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Program3D extends BaseObject_1.BaseObject {
-        constructor() {
+        constructor(vertexpacketSize, programName) {
             super();
-            this._dataLength = 0;
+            this._name = programName;
+            this._dataLength = vertexpacketSize;
             this._fragmentProgramShader = new FragmentShader_1.FragmentShader();
             this._vertexProgramShader = new VertexShader_1.VertexShader();
             this.setPrecision("mediump");
@@ -12,13 +13,27 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/d
             this._programBuilt = false;
             this._invalidProgram = false;
             Program3D.UNREGISTERED_PROGRAMS.push(this);
+            Program3D.PROGRAMS[this._name] = this;
+        }
+        get worldProjection() {
+            return this._worldprojection;
+        }
+        set worldProjection(value) {
+            this._worldprojection = value;
+        }
+        get resolution() {
+            return this._resolution;
+        }
+        set resolution(value) {
+            this._resolution = value;
         }
         get dataLength() {
             return this._dataLength;
         }
-        set dataLength(value) {
+        /*public set dataLength(value:number)
+        {
             this._dataLength = value;
-        }
+        }*/
         setPrecision(value) {
             this._fragmentProgramShader.precision = "precision " + value + " float;";
         }
@@ -46,10 +61,11 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/d
             }
             return false;
         }
-        set name(value) {
+        /*public set name(value:string)
+        {
             this._name = value;
             Program3D.PROGRAMS[value] = this;
-        }
+        }*/
         get name() {
             return this._name;
         }

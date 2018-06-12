@@ -1,5 +1,5 @@
-import { BaseObject } from "../../system/BaseObject";
-import { Utils } from "./Utils";
+import { BaseObject } from "flash/system/BaseObject";
+import { Utils } from "flash/webgl/geom/Utils";
 
 
 export class Vector2D extends BaseObject

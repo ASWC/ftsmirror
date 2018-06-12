@@ -8,6 +8,7 @@ import { Context3DDrawTypes } from "flash/display3D/Context3DDrawTypes";
 import { VerticeBuffer } from "flash/webgl/geom/VerticeBuffer";
 import { VertexShader } from "flash/webgl/VertexShader";
 import { FragmentShader } from "flash/webgl/FragmentShader";
+import { IndexedVertice } from "../webgl/geom/IndexedVertice";
 
 export class Program3D extends BaseObject
 {
@@ -22,11 +23,14 @@ export class Program3D extends BaseObject
     protected _vertexProgramShader:VertexShader;
     protected _fragmentProgramShader:FragmentShader;
     protected _dataLength:number;
+    protected _resolution:IndexedVertice;
+    protected _worldprojection:Matrix;
 
-    constructor()
+    constructor(vertexpacketSize:number, programName:string)
     {
         super();
-        this._dataLength = 0;
+        this._name = programName;
+        this._dataLength = vertexpacketSize;
         this._fragmentProgramShader = new FragmentShader();
         this._vertexProgramShader = new VertexShader();
         this.setPrecision("mediump");
@@ -34,6 +38,27 @@ export class Program3D extends BaseObject
         this._programBuilt = false;
         this._invalidProgram = false;       
         Program3D.UNREGISTERED_PROGRAMS.push(this)
+        Program3D.PROGRAMS[this._name] = this;
+    }
+
+    public get worldProjection():Matrix
+    {
+        return this._worldprojection; 
+    }
+
+    public set worldProjection(value:Matrix)
+    {
+        this._worldprojection = value;
+    }
+
+    public get resolution():IndexedVertice
+    {
+        return this._resolution;
+    }
+
+    public set resolution(value:IndexedVertice)
+    {
+        this._resolution = value;
     }
 
     public get dataLength():number
@@ -41,10 +66,10 @@ export class Program3D extends BaseObject
         return this._dataLength;
     }
 
-    public set dataLength(value:number)
+    /*public set dataLength(value:number)
     {
         this._dataLength = value;
-    }
+    }*/
 
     public setPrecision(value:string):void
     {
@@ -88,11 +113,11 @@ export class Program3D extends BaseObject
         return false;
     }
 
-    public set name(value:string)
+    /*public set name(value:string)
     {
         this._name = value;
         Program3D.PROGRAMS[value] = this;
-    }
+    }*/
 
     public get name():string
     {

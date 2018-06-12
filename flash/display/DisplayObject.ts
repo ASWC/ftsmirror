@@ -12,9 +12,12 @@ import { Transform } from "flash/geom/Transform";
 import { Point } from "flash/geom/Point";
 import { Vector3D } from "flash/geom/Vector3D";
 import { Context3D } from "../display3D/Context3D";
+import { IndexedVertice } from "../webgl/geom/IndexedVertice";
+import { Context3DVertexBufferFormat } from "../display3D/Context3DVertexBufferFormat";
 
 export class DisplayObject extends BaseObject implements IDisplayObject
 {
+    protected _programName:string;
     protected _parent:IDisplayObjectContainer;
     protected _blendMode:string;
     protected _cacheAsBitmap:boolean;
@@ -32,12 +35,18 @@ export class DisplayObject extends BaseObject implements IDisplayObject
     protected _scaleX:number; 
     protected _scaleY:number;    
     protected _width:number;
-    protected _x:number;
-    protected _y:number;
+    //protected _x:number;
+    //protected _y:number;
+    protected _bounds:Rectangle;
+    protected _position:IndexedVertice;
 
     constructor()
     {
         super();
+        this._position = new IndexedVertice(2, Context3DVertexBufferFormat.FLOAT);
+        this._position.rawVertices[0] = 0;
+        this._position.rawVertices[1] = 0;
+        this._bounds = new Rectangle();
         this._stage = null;
         this._root = null;
         this._mask = null;
@@ -55,8 +64,8 @@ export class DisplayObject extends BaseObject implements IDisplayObject
         this._scaleX = 1;
         this._scaleY = 1;
         this._width = 0;
-        this._x = 0;
-        this._y = 0;
+        //this._x = 0;
+        //this._y = 0;
     }    
 
     public present(context:Context3D):void
@@ -77,22 +86,22 @@ export class DisplayObject extends BaseObject implements IDisplayObject
 
     public set y(value:number)
     {
-        this._y = value;
+        this._position.rawVertices[1] = value;
     }
 
     public get y():number
     {
-        return this._y;
+        return this._position.rawVertices[1];
     }
 
     public set x(value:number)
     {
-        this._x = value;
+        this._position.rawVertices[0] = value;
     }
 
     public get x():number
     {
-        return this._x;
+        return this._position.rawVertices[0];
     }
 
     public set scaleY(value:number)

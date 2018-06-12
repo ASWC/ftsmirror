@@ -1,4 +1,4 @@
-define(["require", "exports", "../../system/BaseObject", "./Utils"], function (require, exports, BaseObject_1, Utils_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/webgl/geom/Utils"], function (require, exports, BaseObject_1, Utils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Vector2D extends BaseObject_1.BaseObject {
