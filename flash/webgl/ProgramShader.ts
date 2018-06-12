@@ -4,6 +4,7 @@ import { VertexUniform, VertexUniformDictionary } from "flash/webgl/shadertypes/
 import { VertexAttribute, VertexAttributeDictionary } from "flash/webgl/shadertypes/VertexAttribute";
 import { VerticeBuffer } from "flash/webgl/geom/VerticeBuffer";
 import { IVerticeIndex } from "flash/webgl/geom/IVerticeIndex";
+import { Error } from "flash/Error";
 
 export class ProgramShader extends BaseObject
 {
@@ -18,10 +19,12 @@ export class ProgramShader extends BaseObject
     protected _shaderValid:boolean;
     protected _drawingContext:WebGLRenderingContext;
     protected _vertexCount:number;    
+    protected _dataLength:number;
 
     constructor()
     {
         super();        
+        this._dataLength = 0;
         this._vertexCount = 0;
         this._shaderValid = false;
         this._attributes = [];
@@ -31,6 +34,11 @@ export class ProgramShader extends BaseObject
         this._varyingDic = {};
         this._uniform = [];
         this._uniformDic = {};
+    }
+
+    public set dataLength(value:number)
+    {
+        this._dataLength = value;
     }
 
     public get vertexCount():number
@@ -113,6 +121,11 @@ export class ProgramShader extends BaseObject
         if(!this._drawingContext)
         {
             return;
+        }
+        var datacheck:number = data.length % (this._dataLength * variable.size);
+        if(datacheck != 0)
+        {
+            var error:Error = new Error("Variable " + variable.name + " rrequirees packets of data with length of " + (this._dataLength * variable.size));
         }
         variable.setData(data);
         this._vertexCount = variable.length;         

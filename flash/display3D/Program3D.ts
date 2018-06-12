@@ -21,12 +21,12 @@ export class Program3D extends BaseObject
     protected _bindedContext:WebGLRenderingContext;
     protected _vertexProgramShader:VertexShader;
     protected _fragmentProgramShader:FragmentShader;
-    protected _verticeCount:number;
+    protected _dataLength:number;
 
     constructor()
     {
         super();
-        this._verticeCount = 0;
+        this._dataLength = 0;
         this._fragmentProgramShader = new FragmentShader();
         this._vertexProgramShader = new VertexShader();
         this.setPrecision("mediump");
@@ -36,14 +36,14 @@ export class Program3D extends BaseObject
         Program3D.UNREGISTERED_PROGRAMS.push(this)
     }
 
-    public get verticeCount():number
+    public get dataLength():number
     {
-        return this._verticeCount;
+        return this._dataLength;
     }
 
-    public set verticeCount(value:number)
+    public set dataLength(value:number)
     {
-        this._verticeCount = value;
+        this._dataLength = value;
     }
 
     public setPrecision(value:string):void
@@ -71,7 +71,11 @@ export class Program3D extends BaseObject
         while(Program3D.UNREGISTERED_PROGRAMS.length)
         {
             var program:Program3D = Program3D.UNREGISTERED_PROGRAMS.shift();
-            program.buildProgram(gl);
+            var programBuilt:boolean = program.buildProgram(gl);
+            if(!programBuilt)
+            {
+                Program3D.UNREGISTERED_PROGRAMS.push(program);
+            }
         }
     }
 
@@ -95,23 +99,45 @@ export class Program3D extends BaseObject
         return this._name;
     }
 
-    public buildProgram(context:WebGLRenderingContext):void
+    public buildProgram(context:WebGLRenderingContext):boolean
     {
-        this.vertexShader.buildShader(context);
-        this.fragmentShader.buildShader(context);
-        if(!this.vertexShader.shaderValid || !this.fragmentShader.shaderValid)
-        {            
-            this._invalidProgram = true;
-            return;
+        var error:Error;
+        if(!this._name)
+        {
+            error = new Error("Program3D does not have a valid name set.")
+            return false;
         }
+        if(this._dataLength <= 0)
+        {
+            error = new Error("Program3D does not have a vertice count set.")
+            return false;
+        }
+        this.vertexShader.buildShader(context);        
+        this.fragmentShader.buildShader(context);       
+        if(!this.vertexShader.shaderValid)
+        {            
+            error = new Error("Program3D " + this.name + " could not build its vertex shader")
+            this._invalidProgram = true;
+            return false;
+        }
+        if(!this.fragmentShader.shaderValid)
+        {            
+            error = new Error("Program3D " + this.name + " could not build its fragment shader")
+            this._invalidProgram = true;
+            return false;
+        }        
         this._program = Program3D.createProgram(context, this.vertexShader.shader, this.fragmentShader.shader);
         if(!this._program)
         {
+            error = new Error("Program3D " + this.name + " could not create a valid program")
             this._invalidProgram = true;
-            return;
+            return false;
         }
         this.vertexShader.getLocations(context, this._program);
         this.fragmentShader.getLocations(context, this._program);
+        this.vertexShader.dataLength = this._dataLength;
+        this.fragmentShader.dataLength = this._dataLength;
+        return true;
     }
 
     protected static createProgram(context:WebGLRenderingContext, vertexShader:WebGLShader, fragmentShader:WebGLShader):WebGLProgram
@@ -157,7 +183,7 @@ export class Program3D extends BaseObject
         this.vertexShader.prepareForDraw();
         this.fragmentShader.prepareForDraw();
         var offset = 0;
-        this._bindedContext.drawArrays(this._drawType, offset, this._verticeCount * this.vertexShader.vertexCount);           
+        this._bindedContext.drawArrays(this._drawType, offset, this._dataLength * this.vertexShader.vertexCount);           
         this._bindedContext = null;
         this.vertexShader.drawingContext = null;
         this.fragmentShader.drawingContext = null;

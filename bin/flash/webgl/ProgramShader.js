@@ -1,9 +1,10 @@
-define(["require", "exports", "flash/system/BaseObject"], function (require, exports, BaseObject_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/Error"], function (require, exports, BaseObject_1, Error_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class ProgramShader extends BaseObject_1.BaseObject {
         constructor() {
             super();
+            this._dataLength = 0;
             this._vertexCount = 0;
             this._shaderValid = false;
             this._attributes = [];
@@ -13,6 +14,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             this._varyingDic = {};
             this._uniform = [];
             this._uniformDic = {};
+        }
+        set dataLength(value) {
+            this._dataLength = value;
         }
         get vertexCount() {
             return this._vertexCount;
@@ -70,6 +74,10 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             }
             if (!this._drawingContext) {
                 return;
+            }
+            var datacheck = data.length % (this._dataLength * variable.size);
+            if (datacheck != 0) {
+                var error = new Error_1.Error("Variable " + variable.name + " rrequirees packets of data with length of " + (this._dataLength * variable.size));
             }
             variable.setData(data);
             this._vertexCount = variable.length;

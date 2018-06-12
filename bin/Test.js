@@ -49,7 +49,7 @@ define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign",
             program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
             program.fragmentShader.addToMain("gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);");
             program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLE_STRIP;
-            program.verticeCount = 4; // < define 
+            program.dataLength = 4; // < define 
             program.name = "simple_square_test";
             var testsprite = new SpriteTest_1.SpriteTest(-0.5);
             this.addChild(testsprite);
@@ -59,7 +59,7 @@ define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign",
             program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC2);
             program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 0.0, 1.0);");
             program.fragmentShader.addToMain("gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);");
-            program.verticeCount = 6;
+            program.dataLength = 6;
             program.drawType = Context3DDrawTypes_1.Context3DDrawTypes.TRIANGLES;
             program.name = "simple_square_test_triangles";
             var testtriangles = new SpriteTestTriangle_1.SpriteTestTriangle(-0.3);
@@ -70,7 +70,7 @@ define(["require", "exports", "flash/display/Stage", "flash/display/StageAlign",
             program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC2);
             program.vertexShader.addAttribute("uTriangleColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
             program.vertexShader.addVarying("uPixelColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);
-            program.verticeCount = 6; // CALCULATE LENGTH OF DATA
+            program.dataLength = 6; // CALCULATE LENGTH OF DATA
             program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 0.0, 1.0);");
             program.vertexShader.addToMain("uPixelColor = uTriangleColor;");
             program.fragmentShader.addVarying("uPixelColor", Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.VEC4);

@@ -38,7 +38,7 @@ export class Test extends Stage
         program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 1.0);");
         program.fragmentShader.addToMain("gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);");
         program.drawType = Context3DDrawTypes.TRIANGLE_STRIP
-        program.verticeCount = 4; // < define 
+        program.dataLength = 4; // < define 
         program.name = "simple_square_test";
         var testsprite:SpriteTest = new SpriteTest(-0.5);
         this.addChild(testsprite);
@@ -50,7 +50,7 @@ export class Test extends Stage
         program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat.VEC2);
         program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 0.0, 1.0);");
         program.fragmentShader.addToMain("gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);");
-        program.verticeCount = 6;
+        program.dataLength = 6;
         program.drawType = Context3DDrawTypes.TRIANGLES;
         program.name = "simple_square_test_triangles";
         var testtriangles:SpriteTestTriangle = new SpriteTestTriangle(-0.3);
@@ -63,13 +63,16 @@ export class Test extends Stage
         program.vertexShader.addAttribute("aSquareVertexPosition", Context3DVertexBufferFormat.VEC2);
         program.vertexShader.addAttribute("uTriangleColor", Context3DVertexBufferFormat.VEC4);
         program.vertexShader.addVarying("uPixelColor", Context3DVertexBufferFormat.VEC4);
-        program.verticeCount = 6; // CALCULATE LENGTH OF DATA
+        program.dataLength = 6; // CALCULATE LENGTH OF DATA
         program.vertexShader.addToMain("gl_Position = vec4(aSquareVertexPosition, 0.0, 1.0);");
         program.vertexShader.addToMain("uPixelColor = uTriangleColor;");
         program.fragmentShader.addVarying("uPixelColor", Context3DVertexBufferFormat.VEC4);
         program.fragmentShader.addToMain("gl_FragColor = uPixelColor;");        
         program.drawType = Context3DDrawTypes.TRIANGLES;
         program.name = "simple_square_test_color";
+
+
+
         var testspritecolor:SpriteTestColor = new SpriteTestColor(-0.2, [0.0, 1.0, 0.4, 1.0]);
         this.addChild(testspritecolor);
         var testspritecolor:SpriteTestColor = new SpriteTestColor(-0.4, [0.0, 0.6, 1.0, 1.0]);
