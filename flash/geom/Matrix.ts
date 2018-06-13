@@ -5,22 +5,150 @@ import { Context3DVertexBufferFormat } from "../display3D/Context3DVertexBufferF
 
 export class Matrix extends IndexedVertice
 {
+    private static identitymatrix:Matrix = new Matrix();
+
     constructor(a:number=1, b:number=0, c:number=0, d:number=1, tx:number=0, ty:number=0)
 	{
         super(9, Context3DVertexBufferFormat.FLOAT);        
         this.identity();
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-        this.tx = tx;
-        this.ty = ty;
     }
+
+    public static multiply(a:Matrix, b:Matrix):Matrix
+    {
+        var matrix:Matrix = new Matrix();
+
+        var a00 = a._vertices[0 * 3 + 0];
+
+        //matrix.show(a00);
+
+
+
+        var a01 = a._vertices[0 * 3 + 1];
+        var a02 = a._vertices[0 * 3 + 2];
+        var a10 = a._vertices[1 * 3 + 0];
+        var a11 = a._vertices[1 * 3 + 1];
+        var a12 = a._vertices[1 * 3 + 2];
+        var a20 = a._vertices[2 * 3 + 0];
+        var a21 = a._vertices[2 * 3 + 1];
+        var a22 = a._vertices[2 * 3 + 2];
+
+
+        var b00 = b._vertices[0 * 3 + 0];
+        var b01 = b._vertices[0 * 3 + 1];
+        var b02 = b._vertices[0 * 3 + 2];
+        var b10 = b._vertices[1 * 3 + 0];
+        var b11 = b._vertices[1 * 3 + 1];
+        var b12 = b._vertices[1 * 3 + 2];
+        var b20 = b._vertices[2 * 3 + 0];
+        var b21 = b._vertices[2 * 3 + 1];
+        var b22 = b._vertices[2 * 3 + 2];
+        matrix._vertices[0] = b00 * a00 + b01 * a10 + b02 * a20;
+        matrix._vertices[1] = b00 * a01 + b01 * a11 + b02 * a21
+        matrix._vertices[2] = b00 * a02 + b01 * a12 + b02 * a22
+        matrix._vertices[3] = b10 * a00 + b11 * a10 + b12 * a20
+        matrix._vertices[4] = b10 * a01 + b11 * a11 + b12 * a21
+        matrix._vertices[5] = b10 * a02 + b11 * a12 + b12 * a22
+        matrix._vertices[6] = b20 * a00 + b21 * a10 + b22 * a20
+        matrix._vertices[7] = b20 * a01 + b21 * a11 + b22 * a21
+        matrix._vertices[8] = b20 * a02 + b21 * a12 + b22 * a22
+
+        
+
+        return matrix;
+    }
+
+    public setProjection(width:number, height:number):void
+    {
+        this.identity();
+        this._vertices[0] = 2 / width;
+        this._vertices[1] = 0;
+        this._vertices[2] = 0;  
+        this._vertices[3] = 0;
+        this._vertices[4] = -2 / height;
+        this._vertices[5] = 0;
+        this._vertices[6] = -1;
+        this._vertices[7] = 1;
+        this._vertices[8] = 1;
+    }
+
+    public rotate(angle:number):void
+	{
+        const sin:number = Math.sin(angle);
+        const cos:number = Math.cos(angle);  
+        this._vertices[0] = cos;
+        this._vertices[1] = -sin;
+        this._vertices[2] = 0
+        this._vertices[3] = sin;
+        this._vertices[4] = cos;
+        this._vertices[5] = 0
+        this._vertices[6] = 0
+        this._vertices[7] = 0
+        this._vertices[8] = 1
+    }
+
+    public translate(dx:number, dy:number):void
+	{        
+        this._vertices[0] = 1;
+        this._vertices[1] = 0;
+        this._vertices[2] = 0
+        this._vertices[3] = 0
+        this._vertices[4] = 1
+        this._vertices[5] = 0
+        this._vertices[6] = dx;
+        this._vertices[7] = dy;
+        this._vertices[8] = 1
+    }
+
+    public scale(sx:number, sy:number):void
+	{
+        this._vertices[0] = sx * this._vertices[0];
+        this._vertices[1] = sx * this._vertices[1];
+        this._vertices[2] = sx * this._vertices[2];
+        this._vertices[3] = sy * this._vertices[3];
+        this._vertices[4] = sy * this._vertices[4];
+        this._vertices[5] = sy * this._vertices[5];
+        this._vertices[6] = this._vertices[6];
+        this._vertices[7] = this._vertices[7];
+        this._vertices[8] = this._vertices[8];
+    }
+
+    public identity():void
+	{
+        this._vertices[0] = 1;
+        this._vertices[1] = 0;
+        this._vertices[2] = 0;
+        this._vertices[3] = 0;
+        this._vertices[4] = 1;
+        this._vertices[5] = 0;
+        this._vertices[6] = 0;
+        this._vertices[7] = 0;
+        this._vertices[8] = 1;
+    }
+
+
+
+
+
+
+    public clone():Matrix
+	{
+		return new Matrix(this.a, this.b, this.c, this.d, this.tx, this.ty);
+	} 
+
+
 
     public get rawMatrix():Float32Array|Int32Array
     {
         return this._vertices;
     }
+
+
+
+
+
+
+
+
 		
 	public concat(m:Matrix):void
 	{
@@ -40,42 +168,6 @@ export class Matrix extends IndexedVertice
         this.d = sourceMatrix.d
         this.tx = sourceMatrix.tx;
         this.ty = sourceMatrix.ty;
-    }
-    
-    public rotate(angle:number):void
-	{
-		const cos:number = Math.cos(angle);
-        const sin:number = Math.sin(angle);
-        this.a = (this.a * cos) - (this.b * sin);
-        this.b = (this.a * sin) + (this.b * cos);
-        this.c = (this.c * cos) - (this.d * sin);
-        this.d = (this.c * sin) + (this.d * cos);
-        this.tx = (this.tx * cos) - (this.ty * sin);
-        this.ty = (this.tx * sin) + (this.ty * cos);
-    }
-    
-    public scale(sx:number, sy:number):void
-	{
-
-
-        this._vertices[0] = sx * this._vertices[0];
-        this._vertices[1] = sx * this._vertices[1];
-        this._vertices[2] = sx * this._vertices[2];
-      
-        this._vertices[3] = sy * this._vertices[3];
-        this._vertices[4] = sy * this._vertices[4];
-        this._vertices[5] = sy * this._vertices[5];
-      
-        this._vertices[6] = this._vertices[6];
-        this._vertices[7] = this._vertices[7];
-        this._vertices[8] = this._vertices[8];
-    }
-    
-    public translate(dx:number, dy:number):void
-	{
-        this._vertices[6] = dx * this._vertices[0] + dy * this._vertices[3] + this._vertices[6];
-        this._vertices[7] = dx * this._vertices[1] + dy * this._vertices[4] + this._vertices[7];
-        this._vertices[8] = dx * this._vertices[2] + dy * this._vertices[5] + this._vertices[8];		
     }
 		
 	public createBox(scaleX:number, scaleY:number, rotation:number=0, tx:number=0, ty:number=0):void
@@ -114,8 +206,7 @@ export class Matrix extends IndexedVertice
         this.d = da;
         this.tx = txa;
         this.ty = tya;
-    }
-    
+    }    
 		
 	public transformPoint(point:Point):Point
 	{
@@ -132,23 +223,10 @@ export class Matrix extends IndexedVertice
         newpos.y = (this.b * point.x) + (this.d * point.y);
 		return newpos;
     }
+
     
 
-    public clone():Matrix
-	{
-		return new Matrix();
-	}
-    
-    public set tx(value:number)
-    {
-        this._vertices[2] = value;
-        this.hasChanged();
-    }
 
-    public get tx():number
-    {
-        return this._vertices[2];
-    }
 
     public set d(value:number)
     {
@@ -196,29 +274,28 @@ export class Matrix extends IndexedVertice
 
     public set ty(value:number)
     {
-        this._vertices[5] = value;
+        this._vertices[7] = value;
         this.hasChanged();
     }
 
     public get ty():number
     {
-        return this._vertices[5];
+        return this._vertices[7];
+    }
+
+    public set tx(value:number)
+    {
+        this._vertices[6] = value;
+        this.hasChanged();
+    }
+
+    public get tx():number
+    {
+        return this._vertices[6];
     }
 
 
 
 
-    public identity():void
-	{
-        this._vertices[0] = 1.0;// a
-        this._vertices[1] = 0.0;// b
-        this._vertices[2] = 0.0;// tx
-        this._vertices[3] = 0.0;// c
-        this._vertices[4] = 1.0;// d
-        this._vertices[5] = 0.0;// ty
-        this._vertices[6] = 0.0;
-        this._vertices[7] = 0.0;
-        this._vertices[8] = 1.0;
-        this.hasChanged();
-	}
+
 }

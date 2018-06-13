@@ -40,8 +40,8 @@ export class Context3D extends BaseObject
     {
         super();
         this._worldprojection = new Matrix();
-        this._worldprojection.translate(-1, 1);
-        this._worldprojection.scale(1, -1);
+        //this._worldprojection.translate(-1, 1);
+        //this._worldprojection.scale(1, -1);
         this._resolution = new IndexedVertice(2, Context3DVertexBufferFormat.FLOAT);
     }
 
@@ -69,8 +69,11 @@ export class Context3D extends BaseObject
     {
         this._canvasWidth  = this._canvas.clientWidth;
         this._canvasHeight = this._canvas.clientHeight;
-        this._resolution.rawVertices[0] = 1 / (this._canvasWidth / 2);
-        this._resolution.rawVertices[1] = 1 / (this._canvasWidth / 2);    
+
+        this._worldprojection.setProjection(this._canvas.width, this._canvas.height);
+
+        this._resolution.rawVertices[0] = this._canvas.width;
+        this._resolution.rawVertices[1] = this._canvas.height;    
         if(!this._gl)
         {
             return;
@@ -82,7 +85,8 @@ export class Context3D extends BaseObject
             this._gl.viewport(0, 0, this._gl.canvas.width, this._gl.canvas.height);
         }           
         this._gl.clearColor(this._color.absoluteRed, this._color.absoluteGreen, this._color.absoluteBlue, this._color.absoluteAlpha);
-        this._gl.clear(this._gl.COLOR_BUFFER_BIT);        
+        this._gl.clear(this._gl.COLOR_BUFFER_BIT);       
+        //this._gl.enable(this._gl.DEPTH_TEST); 
     }
 
     public set color(value:Color)
