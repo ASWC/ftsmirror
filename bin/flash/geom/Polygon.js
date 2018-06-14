@@ -5,6 +5,9 @@ define(["require", "exports"], function (require, exports) {
         constructor() {
             this._needUpdate = true;
         }
+        get collumns() {
+            return null;
+        }
         set delegate(value) {
             this._delegate = value;
         }

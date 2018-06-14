@@ -20,6 +20,8 @@ import { SpriteTestTriangle } from "SpriteTestTriangle";
 import { Tween } from "fl/transitions/Tween";
 import { Linear } from "fl/transitions/easing/Linear";
 import { SpriteProgramTest } from "SpriteProgramTest";
+import { IndexedVertice } from "flash/webgl/geom/IndexedVertice";
+import { ArrayTypes } from "flash/webgl/data/ArrayTypes";
 
 export class Test extends Stage
 {
@@ -28,11 +30,28 @@ export class Test extends Stage
     constructor()
     {
         super();
-        this.frameRate = 60;
+        this.frameRate = 1;
         this.align = StageAlign.TOP_LEFT;
         this.scaleMode = StageScaleMode.NO_SCALE;
         this.color = 0xAAFF3333;
         this.createContextById(0);
+
+
+        /*
+        var indexeddata:IndexedVertice = new IndexedVertice(9, ArrayTypes.FLOAT64ARRAY, 3, 10);
+        indexeddata.setData(0, 78.543);
+        indexeddata.setData(1, 12.0);
+        indexeddata.setData(2, 15.0);
+        indexeddata.setData(3, 6.0);
+        indexeddata.setData(4, 6.0);
+        indexeddata.setData(5, 6.0);
+        indexeddata.setData(6, 6.0);
+        indexeddata.setData(7, 3.0);
+        indexeddata.setData(8, 6.0);*/
+
+
+      
+        
 
 
         /*var program:Program3D = new Program3D();
@@ -85,40 +104,28 @@ export class Test extends Stage
         this.show(this.stageHeight);
         Tween.to(testspritecolor, "x", Linear.easeIn, testspritecolor.x, testspritecolor.x + 600, 3000, false);*/
 
+        
         var program:Program3D = new Program3D(18, "simple_projection");
+        
+        program.vertexShader.addAttribute("a_position", Context3DVertexBufferFormat.VEC2); 
 
-        program.vertexShader.addAttribute("a_position", Context3DVertexBufferFormat.VEC2);  
-        program.vertexShader.addAttribute("a_color", Context3DVertexBufferFormat.VEC4);
-
+        
+        program.vertexShader.addUniform("a_color", Context3DVertexBufferFormat.VEC4);          
         program.vertexShader.addUniform("a_scale", Context3DVertexBufferFormat.MAT3);
         program.vertexShader.addUniform("u_projection", Context3DVertexBufferFormat.MAT3);
         program.vertexShader.addUniform("u_translation", Context3DVertexBufferFormat.MAT3);
-        program.vertexShader.addUniform("u_rotation", Context3DVertexBufferFormat.MAT3);
-        
-
-        
+        program.vertexShader.addUniform("u_rotation", Context3DVertexBufferFormat.MAT3);         
         program.vertexShader.addVarying("v_color", Context3DVertexBufferFormat.VEC4);
-
-        //program.vertexShader.addUniform("u_scale", Context3DVertexBufferFormat.VEC2);
-        //program.vertexShader.addUniform("u_translation", Context3DVertexBufferFormat.VEC2);
-        //program.vertexShader.addUniform("u_rotation", Context3DVertexBufferFormat.VEC2);
-        //program.vertexShader.addToMain("vec2 scaledPosition = a_position * u_scale;");
-        //program.vertexShader.addToMain("vec2 rotatedPosition = vec2(scaledPosition.x * u_rotation.y + scaledPosition.y * u_rotation.x, scaledPosition.y * u_rotation.y - scaledPosition.x * u_rotation.x);");
-        //program.vertexShader.addToMain("vec2 position = (u_matrix * vec3(a_position, 1)).xy;");
-        //program.vertexShader.addToMain("vec2 zeroToOne = position / u_resolution;");
-        //program.vertexShader.addToMain("vec2 zeroToTwo = zeroToOne * 2.0;");
-
         program.vertexShader.addToMain("v_color = a_color;");
         program.vertexShader.addToMain("mat3 concatedMatrix = u_projection * u_translation * u_rotation * a_scale;");
-        program.vertexShader.addToMain("gl_Position = vec4((concatedMatrix * vec3(a_position, 1)).xy, 0, 1);");        
-
-
+        program.vertexShader.addToMain("gl_Position = vec4((concatedMatrix * vec3(a_position, 1)).xy, 0, 1);");      
         program.fragmentShader.addVarying("v_color", Context3DVertexBufferFormat.VEC4);
         program.fragmentShader.addToMain("gl_FragColor = v_color;");
         program.drawType = Context3DDrawTypes.TRIANGLES;
-
         var sprite:SpriteProgramTest = new SpriteProgramTest();
         this.addChild(sprite);
+
+
 
         
 

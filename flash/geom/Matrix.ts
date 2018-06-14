@@ -128,7 +128,7 @@ export class Matrix extends IndexedVertice
 
     public get rawMatrix():Float32Array|Int32Array
     {
-        return this._vertices;
+        return null//this._vertices;
     }
 
 

@@ -1,4 +1,4 @@
-define(["require", "exports", "../../system/BaseObject"], function (require, exports, BaseObject_1) {
+define(["require", "exports", "flash/system/BaseObject"], function (require, exports, BaseObject_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class VerticeBuffer extends BaseObject_1.BaseObject {
@@ -9,43 +9,34 @@ define(["require", "exports", "../../system/BaseObject"], function (require, exp
             this._changedVertices = [];
             this._needUpdate = true;
         }
+        getCollumnAt(index = 0) {
+            var columndata;
+            var collumns = [];
+            var datalength = 0;
+            for (var i = 0; i < this._verticeIndexes.length; i++) {
+                var dataCollumn = this._verticeIndexes[i].collumns[index];
+                collumns.push(dataCollumn);
+                datalength += dataCollumn.length;
+            }
+            while (collumns) {
+            }
+            return columndata;
+        }
         onVerticeChanged(value) {
             this._needUpdate = true;
             this._changedVertices.push(value);
-            this._duplicatedVertices = null;
         }
         addVertices(value) {
             this._verticeIndexes.push(value);
             this._verticeLength += value.length;
-            value.delegate = this;
-        }
-        get indexedVertices() {
-            return this._verticeIndexes.length;
-        }
-        get vertices() {
-            if (!this._vertices) {
-                this._vertices = new Float32Array(this._verticeLength);
-                var index = 0;
-                for (var i = 0; i < this._verticeIndexes.length; i++) {
-                    this._vertices.set(this._verticeIndexes[i].rawVertices, index);
-                    this._verticeIndexes[i].index = index;
-                    index += this._verticeIndexes[i].rawVertices.length;
-                }
-            }
-            if (this._changedVertices.length) {
-                while (this._changedVertices.length) {
-                    var vertice = this._changedVertices.shift();
-                    this._vertices.set(vertice.rawVertices, vertice.index);
-                }
-            }
-            this._needUpdate = false;
-            return this._vertices;
         }
         get needUpdate() {
             return this._needUpdate;
         }
         get length() {
-            return this.vertices.length;
+            return this._verticeLength;
+        }
+        reset() {
         }
     }
     exports.VerticeBuffer = VerticeBuffer;

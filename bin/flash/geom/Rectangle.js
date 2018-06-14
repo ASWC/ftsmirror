@@ -1,7 +1,8 @@
 define(["require", "exports", "flash/system/BaseObject", "flash/geom/Point"], function (require, exports, BaseObject_1, Point_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class Rectangle extends BaseObject_1.BaseObject {
+    class Rectangle extends BaseObject_1.BaseObject //implements IVerticeIndex
+     {
         constructor(x = 0, y = 0, width = 0, height = 0) {
             super();
             this._rectangle = new Float32Array(4);
@@ -10,6 +11,9 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Point"], fu
             this._rectangle[2] = width;
             this._rectangle[3] = height;
             this._needUpdate = true;
+        }
+        get collumns() {
+            return null;
         }
         hasChanged() {
             this._needUpdate = true;

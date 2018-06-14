@@ -99,7 +99,7 @@ define(["require", "exports", "flash/geom/Point", "../webgl/geom/IndexedVertice"
             return new Matrix(this.a, this.b, this.c, this.d, this.tx, this.ty);
         }
         get rawMatrix() {
-            return this._vertices;
+            return null; //this._vertices;
         }
         concat(m) {
             this.a = (m.a * this.a) + (m.b * this.c);

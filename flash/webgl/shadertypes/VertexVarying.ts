@@ -4,8 +4,6 @@ export class VertexVarying extends BaseObject
 {
     public dataType:string;
     public varyingLocation:number;
-    //public uniformLocation:WebGLUniformLocation;
-    //public buffer:WebGLBuffer;
     public size:number = 0;
 
     constructor(name:string, type:string)

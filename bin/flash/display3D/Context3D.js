@@ -25,8 +25,8 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
             this._canvasWidth = this._canvas.clientWidth;
             this._canvasHeight = this._canvas.clientHeight;
             this._worldprojection.setProjection(this._canvas.width, this._canvas.height);
-            this._resolution.rawVertices[0] = this._canvas.width;
-            this._resolution.rawVertices[1] = this._canvas.height;
+            this._resolution.setData(0, this._canvas.width);
+            this._resolution.setData(1, this._canvas.height);
             if (!this._gl) {
                 return;
             }

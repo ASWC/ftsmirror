@@ -46,19 +46,24 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
         prepareAttributes() {
             for (var i = 0; i < this._attributes.length; i++) {
                 var vertextAttribute = this._attributes[i];
-                this._drawingContext.enableVertexAttribArray(vertextAttribute.attributeLocation);
-                this._drawingContext.bindBuffer(this._drawingContext.ARRAY_BUFFER, vertextAttribute.buffer);
-                //this.show(vertextAttribute.name + ' total vertex ' + vertextAttribute.vertices.length)
-                this._drawingContext.bufferData(this._drawingContext.ARRAY_BUFFER, vertextAttribute.vertices, this._drawingContext.STATIC_DRAW);
-                var type = this._drawingContext.FLOAT;
-                var normalize = false;
-                var stride = 0;
-                var offset = 0;
-                this._drawingContext.vertexAttribPointer(vertextAttribute.attributeLocation, vertextAttribute.size, type, normalize, stride, offset);
+                for (var j = 0; j < vertextAttribute.locations.length; j++) {
+                    var location = vertextAttribute.locations[j];
+                    var buffer = vertextAttribute.collumnBuffers[j];
+                    var bufferdata = vertextAttribute.dataCollumns[j];
+                    this._drawingContext.enableVertexAttribArray(location);
+                    this._drawingContext.bindBuffer(this._drawingContext.ARRAY_BUFFER, buffer);
+                    // this must be splitted
+                    this._drawingContext.bufferData(this._drawingContext.ARRAY_BUFFER, vertextAttribute.vertices, this._drawingContext.STATIC_DRAW);
+                    var type = this._drawingContext.FLOAT;
+                    var normalize = false;
+                    var stride = 0;
+                    var offset = 0;
+                    this._drawingContext.vertexAttribPointer(location, vertextAttribute.size, type, normalize, stride, offset);
+                }
                 vertextAttribute.reset();
             }
         }
-        updateUniform(name, data, repeat = NaN) {
+        updateUniform(name, data) {
             if (!this._drawingContext) {
                 return;
             }
@@ -76,13 +81,6 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             if (!this._drawingContext) {
                 return;
             }
-            var datalength = (this._dataLength * variable.size);
-            var datacheck = datalength / data.length;
-            if (datacheck != 1) {
-                if (datacheck % 1 === 0) {
-                    data.duplicate(this._dataLength * variable.size);
-                }
-            }
             variable.setData(data);
             this._vertexCount = variable.length;
         }
@@ -90,7 +88,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             for (var i = 0; i < this._attributes.length; i++) {
                 var vertextAttribute = this._attributes[i];
                 vertextAttribute.attributeLocation = context.getAttribLocation(program, vertextAttribute.name);
-                vertextAttribute.buffer = context.createBuffer();
+                for (var j = 0; j < vertextAttribute.totalBuffer; j++) {
+                    vertextAttribute.collumnBuffers.push(context.createBuffer());
+                }
             }
             for (var i = 0; i < this._uniform.length; i++) {
                 var vertextUniform = this._uniform[i];

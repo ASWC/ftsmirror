@@ -2,6 +2,12 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Context3DVertexBufferFormat {
+        static getTotalBuffers(type) {
+            if (type == "mat3") {
+                return 3;
+            }
+            return 1;
+        }
         static getSize(type) {
             if (type == "vec3" || type == "vec3_a") {
                 return 3;
@@ -13,7 +19,7 @@ define(["require", "exports"], function (require, exports) {
                 return 2;
             }
             if (type == "mat3") {
-                return 9;
+                return 3;
             }
             /*
                 public static MAT3:string = "mat3";

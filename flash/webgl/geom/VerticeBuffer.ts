@@ -1,16 +1,16 @@
-import { BaseObject } from "../../system/BaseObject";
-import { IVerticeIndex } from "./IVerticeIndex";
-import { IVerticeBufferDelegate } from "./IVerticeBufferDelegate";
+import { BaseObject } from "flash/system/BaseObject";
+import { IVerticeIndex } from "flash/webgl/geom/IVerticeIndex";
+import { IVerticeBufferDelegate } from "flash/webgl/geom/IVerticeBufferDelegate";
 
+declare type TypedArray = Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array;
 
 export class VerticeBuffer extends BaseObject implements IVerticeBufferDelegate
 {
-    protected _vertices:Float32Array;
+    protected _vertices:TypedArray;
     protected _needUpdate:boolean;
     protected _verticeIndexes:IVerticeIndex[];
     protected _changedVertices:IVerticeIndex[];
     protected _verticeLength:number;
-    protected _duplicatedVertices:Float32Array;
 
     constructor()
     {
@@ -21,48 +21,36 @@ export class VerticeBuffer extends BaseObject implements IVerticeBufferDelegate
         this._needUpdate = true;
     }
 
+
+
+    public getCollumnAt(index:number = 0):TypedArray
+    {
+        var columndata:TypedArray;
+        var collumns:TypedArray[] = [];
+        var datalength:number = 0;
+        for(var i:number = 0; i < this._verticeIndexes.length; i++)
+        {
+            var dataCollumn:TypedArray = this._verticeIndexes[i].collumns[index];
+            collumns.push(dataCollumn);
+            datalength += dataCollumn.length;
+        }
+        while(collumns)
+        {
+
+        }
+        return columndata;
+    }
+
     public onVerticeChanged(value:IVerticeIndex):void
     {
         this._needUpdate = true;
-        this._changedVertices.push(value);        
-        this._duplicatedVertices = null;
+        this._changedVertices.push(value);   
     }
 
     public addVertices(value:IVerticeIndex):void
     {
-        this._verticeIndexes.push(value);
-        this._verticeLength += value.length;             
-        value.delegate = this;
-    }
-
-    public get indexedVertices():number
-    {
-        return this._verticeIndexes.length;
-    }
-
-    public get vertices():Float32Array
-    {
-        if(!this._vertices)
-        {
-            this._vertices = new Float32Array(this._verticeLength);
-            var index:number = 0;
-            for(var i:number = 0; i < this._verticeIndexes.length; i++)
-            {
-                this._vertices.set(this._verticeIndexes[i].rawVertices, index);
-                this._verticeIndexes[i].index = index;
-                index += this._verticeIndexes[i].rawVertices.length;
-            }
-        }
-        if(this._changedVertices.length)
-        {
-            while(this._changedVertices.length)
-            {
-                var vertice:IVerticeIndex = this._changedVertices.shift();
-                this._vertices.set(vertice.rawVertices, vertice.index);
-            }
-        }
-        this._needUpdate = false;
-        return this._vertices;
+        this._verticeIndexes.push(value);        
+        this._verticeLength += value.length; 
     }
 
     public get needUpdate():boolean
@@ -72,6 +60,11 @@ export class VerticeBuffer extends BaseObject implements IVerticeBufferDelegate
 
     public get length():number
     {
-        return this.vertices.length;
+        return this._verticeLength;
+    }
+
+    public reset():void
+    {
+
     }
 }

@@ -43,7 +43,7 @@ export class DisplayObject extends BaseObject implements IDisplayObject
     constructor()
     {
         super();
-        this._position = new IndexedVertice(2, Context3DVertexBufferFormat.FLOAT);
+        /*this._position = new IndexedVertice(2, Context3DVertexBufferFormat.FLOAT);
         this._position.rawVertices[0] = 0;
         this._position.rawVertices[1] = 0;
         this._bounds = new Rectangle();
@@ -65,7 +65,7 @@ export class DisplayObject extends BaseObject implements IDisplayObject
         this._scaleY = 1;
         this._width = 0;
         //this._x = 0;
-        //this._y = 0;
+        //this._y = 0;*/
     }    
 
     public present(context:Context3D):void
@@ -86,22 +86,22 @@ export class DisplayObject extends BaseObject implements IDisplayObject
 
     public set y(value:number)
     {
-        this._position.rawVertices[1] = value;
+        //this._position.rawVertices[1] = value;
     }
 
     public get y():number
     {
-        return this._position.rawVertices[1];
+        return null//this._position.rawVertices[1];
     }
 
     public set x(value:number)
     {
-        this._position.rawVertices[0] = value;
+        //this._position.rawVertices[0] = value;
     }
 
     public get x():number
     {
-        return this._position.rawVertices[0];
+        return null//this._position.rawVertices[0];
     }
 
     public set scaleY(value:number)

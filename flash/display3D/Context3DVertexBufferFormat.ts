@@ -29,6 +29,15 @@ export class Context3DVertexBufferFormat
     public static SAMPLERCUBE:string = "samplerCube";
     public static SAMPLERCUBE_A:string = "samplerCube_a";
 
+    public static getTotalBuffers(type:string):number
+    {
+        if(type == "mat3")
+        {
+            return 3;
+        }
+        return 1;
+    }
+
     public static getSize(type:string):number
     {
         if(type == "vec3" || type == "vec3_a")
@@ -45,7 +54,7 @@ export class Context3DVertexBufferFormat
         }
         if(type == "mat3")
         {
-            return 9;
+            return 3;
         }     
         
 /*

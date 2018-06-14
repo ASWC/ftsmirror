@@ -15,6 +15,11 @@ export class Polygon implements IVerticeIndex
         this._needUpdate = true;
     }
 
+    public get collumns():Float32Array[]
+    {
+        return null;
+    }
+
     public set delegate(value:IVerticeBufferDelegate)
     {
         this._delegate = value;

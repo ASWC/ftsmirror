@@ -85,20 +85,30 @@ export class ProgramShader extends BaseObject
         for(var i:number = 0; i < this._attributes.length; i++)
         {
             var vertextAttribute:VertexAttribute = this._attributes[i];
-            this._drawingContext.enableVertexAttribArray(vertextAttribute.attributeLocation);
-            this._drawingContext.bindBuffer(this._drawingContext.ARRAY_BUFFER, vertextAttribute.buffer);  
-            //this.show(vertextAttribute.name + ' total vertex ' + vertextAttribute.vertices.length)
-            this._drawingContext.bufferData(this._drawingContext.ARRAY_BUFFER, vertextAttribute.vertices, this._drawingContext.STATIC_DRAW);   
-            var type = this._drawingContext.FLOAT;
-            var normalize = false;
-            var stride = 0;
-            var offset = 0;
-            this._drawingContext.vertexAttribPointer(vertextAttribute.attributeLocation, vertextAttribute.size, type, normalize, stride, offset);
-            vertextAttribute.reset();
+
+
+            for(var j:number = 0; j < vertextAttribute.locations.length; j++)
+            {
+                var location:number = vertextAttribute.locations[j];
+                var buffer:WebGLBuffer = vertextAttribute.collumnBuffers[j];
+                var bufferdata:Float32Array = vertextAttribute.dataCollumns[j];
+                this._drawingContext.enableVertexAttribArray(location);
+                this._drawingContext.bindBuffer(this._drawingContext.ARRAY_BUFFER, buffer);  
+
+                // this must be splitted
+                this._drawingContext.bufferData(this._drawingContext.ARRAY_BUFFER, vertextAttribute.vertices, this._drawingContext.STATIC_DRAW); 
+
+                var type = this._drawingContext.FLOAT;
+                var normalize = false;
+                var stride = 0;
+                var offset = 0;
+                this._drawingContext.vertexAttribPointer(location, vertextAttribute.size, type, normalize, stride, offset);
+            }
+            vertextAttribute.reset();            
         }
     }
 
-    public updateUniform(name:string, data:IVerticeIndex, repeat:number = NaN):void
+    public updateUniform(name:string, data:IVerticeIndex):void
     {      
         if(!this._drawingContext)
         {
@@ -123,15 +133,6 @@ export class ProgramShader extends BaseObject
         {
             return;
         }
-        var datalength:number = (this._dataLength * variable.size)
-        var datacheck:number = datalength / data.length;
-        if(datacheck != 1)
-        {            
-            if (datacheck % 1 === 0)
-            {
-                data.duplicate(this._dataLength * variable.size);
-            }
-        }
         variable.setData(data);
         this._vertexCount = variable.length;         
     }
@@ -142,7 +143,10 @@ export class ProgramShader extends BaseObject
         {
             var vertextAttribute:VertexAttribute = this._attributes[i];
             vertextAttribute.attributeLocation = context.getAttribLocation(program, vertextAttribute.name);
-            vertextAttribute.buffer = context.createBuffer();
+            for(var j:number = 0; j < vertextAttribute.totalBuffer; j++)
+            {
+                vertextAttribute.collumnBuffers.push(context.createBuffer());
+            }            
         }
         for(var i:number = 0; i < this._uniform.length; i++)
         {

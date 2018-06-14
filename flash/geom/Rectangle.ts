@@ -3,7 +3,7 @@ import { Point } from "flash/geom/Point";
 import { IVerticeIndex } from "../webgl/geom/IVerticeIndex";
 import { IVerticeBufferDelegate } from "../webgl/geom/IVerticeBufferDelegate";
 
-export class Rectangle extends BaseObject implements IVerticeIndex
+export class Rectangle extends BaseObject //implements IVerticeIndex
 {
     protected _rectangle:Float32Array;
     protected _bottomRight:Point;
@@ -22,6 +22,11 @@ export class Rectangle extends BaseObject implements IVerticeIndex
         this._rectangle[2] = width;
         this._rectangle[3] = height;
         this._needUpdate = true;
+    }
+
+    public get collumns():Float32Array[]
+    {
+        return null;
     }
 
     public hasChanged():void

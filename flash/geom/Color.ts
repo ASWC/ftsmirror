@@ -1,6 +1,4 @@
 import { BaseObject } from "flash/system/BaseObject";
-import { IndexedVertice } from "../webgl/geom/IndexedVertice";
-import { Context3DVertexBufferFormat } from "../display3D/Context3DVertexBufferFormat";
 
 export class Color extends BaseObject
 {
@@ -13,12 +11,10 @@ export class Color extends BaseObject
 	protected _absoluteGreen:number;
 	protected _absoluteBlue:number;
 	protected _absoluteAlpha:number;	
-	protected _colorVertices:IndexedVertice;
 
 	constructor(color:number = 0xFFFFFFFF)
 	{
 		super();		
-		this._colorVertices = new IndexedVertice(4, Context3DVertexBufferFormat.FLOAT);
 		this.color = color;          
 	}
 
@@ -33,15 +29,10 @@ export class Color extends BaseObject
 		this._absoluteRed = ((this._color >> 16) & 0xFF) / 255;
 		this._absoluteGreen = ((this._color >> 8) & 0xFF) / 255;
 		this._absoluteBlue = (this._color & 0xFF) / 255;
-		this._colorVertices.rawVertices[0] = this._absoluteRed;
-		this._colorVertices.rawVertices[1] = this._absoluteGreen;
-		this._colorVertices.rawVertices[2] = this._absoluteBlue;
-		this._colorVertices.rawVertices[3] = this._absoluteAlpha;
-	}
-
-	public get vertices():IndexedVertice
-	{
-		return this._colorVertices;
+		//this._colorVertices.rawVertices[0] = this._absoluteRed;
+		//this._colorVertices.rawVertices[1] = this._absoluteGreen;
+		//this._colorVertices.rawVertices[2] = this._absoluteBlue;
+		//this._colorVertices.rawVertices[3] = this._absoluteAlpha;
 	}
 
 	public get alpha():number
@@ -98,7 +89,7 @@ export class Color extends BaseObject
 		this._color |= (value<<24);
 		this._alpha = (this._color >> 24) & 0xFF;
 		this._absoluteAlpha = ((this._color >> 24) & 0xFF) / 255;
-		this._colorVertices.rawVertices[3] = this._absoluteAlpha;
+		//this._colorVertices.rawVertices[3] = this._absoluteAlpha;
 	}
 
 	public set absoluteAlpha(value:number)
@@ -116,7 +107,7 @@ export class Color extends BaseObject
 		this._color |= (value<<24);
 		this._alpha = (this._color >> 24) & 0xFF;
 		this._absoluteAlpha = ((this._color >> 24) & 0xFF) / 255;
-		this._colorVertices.rawVertices[3] = this._absoluteAlpha;
+		//this._colorVertices.rawVertices[3] = this._absoluteAlpha;
 	}
 
 	public set red(value:number)
@@ -133,7 +124,7 @@ export class Color extends BaseObject
 		this._color |= (value<<16);
 		this._red = (this._color >> 16) & 0xFF;
 		this._absoluteRed = ((this._color >> 16) & 0xFF) / 255;
-		this._colorVertices.rawVertices[0] = this._absoluteRed;
+		//this._colorVertices.rawVertices[0] = this._absoluteRed;
 	}
 
 	public set absoluteRed(value:number)
@@ -151,7 +142,7 @@ export class Color extends BaseObject
 		this._color |= (value<<16);
 		this._red = (this._color >> 16) & 0xFF;
 		this._absoluteRed = ((this._color >> 16) & 0xFF) / 255;
-		this._colorVertices.rawVertices[0] = this._absoluteRed;
+		//this._colorVertices.rawVertices[0] = this._absoluteRed;
 	}
 
 	public set green(value:number)
@@ -168,7 +159,7 @@ export class Color extends BaseObject
 		this._color |= (value<<8);
 		this._green = (this._color >> 8) & 0xFF;
 		this._absoluteGreen = ((this._color >> 8) & 0xFF) / 255;
-		this._colorVertices.rawVertices[1] = this._absoluteGreen;
+		//this._colorVertices.rawVertices[1] = this._absoluteGreen;
 	}
 
 	public set absoluteGreen(value:number)
@@ -186,7 +177,7 @@ export class Color extends BaseObject
 		this._color |= (value<<8);
 		this._green = (this._color >> 8) & 0xFF;
 		this._absoluteGreen = ((this._color >> 8) & 0xFF) / 255;
-		this._colorVertices.rawVertices[1] = this._absoluteGreen;
+		//this._colorVertices.rawVertices[1] = this._absoluteGreen;
 	}
 
 	public set blue(value:number)
@@ -203,7 +194,7 @@ export class Color extends BaseObject
 		this._color |= (value);
 		this._blue = this._color & 0xFF;
 		this._absoluteBlue = (this._color & 0xFF) / 255;
-		this._colorVertices.rawVertices[2] = this._absoluteBlue;
+		//this._colorVertices.rawVertices[2] = this._absoluteBlue;
 	}
 
 	public set absoluteBlue(value:number)
@@ -221,7 +212,7 @@ export class Color extends BaseObject
 		this._color |= (value);
 		this._blue = this._color & 0xFF;
 		this._absoluteBlue = (this._color & 0xFF) / 255;
-		this._colorVertices.rawVertices[2] = this._absoluteBlue;
+		//this._colorVertices.rawVertices[2] = this._absoluteBlue;
 	}
 
 	public get color():number
