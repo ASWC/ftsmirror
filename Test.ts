@@ -1,6 +1,5 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { Stage } from "flash/display/Stage";
-
 import { Stage3D } from "flash/display3D/Stage3D";
 import { Context3D } from "flash/display3D/Context3D";
 import { StageAlign } from "flash/display/StageAlign";
@@ -29,7 +28,7 @@ export class Test extends Stage
     constructor()
     {
         super();
-        this.frameRate = 10;
+        this.frameRate = 60;
         this.align = StageAlign.TOP_LEFT;
         this.scaleMode = StageScaleMode.NO_SCALE;
         this.color = 0xAAFF3333;
@@ -88,30 +87,34 @@ export class Test extends Stage
 
         var program:Program3D = new Program3D(18, "simple_projection");
 
-        program.vertexShader.addAttribute("a_position", Context3DVertexBufferFormat.VEC2);   
+        program.vertexShader.addAttribute("a_position", Context3DVertexBufferFormat.VEC2);  
+        program.vertexShader.addAttribute("a_color", Context3DVertexBufferFormat.VEC4);
 
-        program.vertexShader.addUniform("u_resolution", Context3DVertexBufferFormat.VEC2);
+        program.vertexShader.addUniform("a_scale", Context3DVertexBufferFormat.MAT3);
+        program.vertexShader.addUniform("u_projection", Context3DVertexBufferFormat.MAT3);
+        program.vertexShader.addUniform("u_translation", Context3DVertexBufferFormat.MAT3);
+        program.vertexShader.addUniform("u_rotation", Context3DVertexBufferFormat.MAT3);
+        
 
-        program.vertexShader.addUniform("u_matrix", Context3DVertexBufferFormat.MAT3);
+        
+        program.vertexShader.addVarying("v_color", Context3DVertexBufferFormat.VEC4);
 
         //program.vertexShader.addUniform("u_scale", Context3DVertexBufferFormat.VEC2);
         //program.vertexShader.addUniform("u_translation", Context3DVertexBufferFormat.VEC2);
         //program.vertexShader.addUniform("u_rotation", Context3DVertexBufferFormat.VEC2);
-
         //program.vertexShader.addToMain("vec2 scaledPosition = a_position * u_scale;");
-
         //program.vertexShader.addToMain("vec2 rotatedPosition = vec2(scaledPosition.x * u_rotation.y + scaledPosition.y * u_rotation.x, scaledPosition.y * u_rotation.y - scaledPosition.x * u_rotation.x);");
-        program.vertexShader.addToMain("vec2 position = (u_matrix * vec3(a_position, 1)).xy;");
-        program.vertexShader.addToMain("vec2 zeroToOne = position / u_resolution;");
-        program.vertexShader.addToMain("vec2 zeroToTwo = zeroToOne * 2.0;");
-        program.vertexShader.addToMain("vec2 clipSpace = zeroToTwo - 1.0;");
-        program.vertexShader.addToMain("gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);");
+        //program.vertexShader.addToMain("vec2 position = (u_matrix * vec3(a_position, 1)).xy;");
+        //program.vertexShader.addToMain("vec2 zeroToOne = position / u_resolution;");
+        //program.vertexShader.addToMain("vec2 zeroToTwo = zeroToOne * 2.0;");
 
-        
+        program.vertexShader.addToMain("v_color = a_color;");
+        program.vertexShader.addToMain("mat3 concatedMatrix = u_projection * u_translation * u_rotation * a_scale;");
+        program.vertexShader.addToMain("gl_Position = vec4((concatedMatrix * vec3(a_position, 1)).xy, 0, 1);");        
 
 
-        program.fragmentShader.addUniform("u_color", Context3DVertexBufferFormat.VEC4);
-        program.fragmentShader.addToMain("gl_FragColor = u_color;");
+        program.fragmentShader.addVarying("v_color", Context3DVertexBufferFormat.VEC4);
+        program.fragmentShader.addToMain("gl_FragColor = v_color;");
         program.drawType = Context3DDrawTypes.TRIANGLES;
 
         var sprite:SpriteProgramTest = new SpriteProgramTest();

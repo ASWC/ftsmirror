@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/Error"], function (require, exports, BaseObject_1, Error_1) {
+define(["require", "exports", "flash/system/BaseObject"], function (require, exports, BaseObject_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class ProgramShader extends BaseObject_1.BaseObject {
@@ -48,6 +48,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error"], functio
                 var vertextAttribute = this._attributes[i];
                 this._drawingContext.enableVertexAttribArray(vertextAttribute.attributeLocation);
                 this._drawingContext.bindBuffer(this._drawingContext.ARRAY_BUFFER, vertextAttribute.buffer);
+                //this.show(vertextAttribute.name + ' total vertex ' + vertextAttribute.vertices.length)
                 this._drawingContext.bufferData(this._drawingContext.ARRAY_BUFFER, vertextAttribute.vertices, this._drawingContext.STATIC_DRAW);
                 var type = this._drawingContext.FLOAT;
                 var normalize = false;
@@ -57,7 +58,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error"], functio
                 vertextAttribute.reset();
             }
         }
-        updateUniform(name, data) {
+        updateUniform(name, data, repeat = NaN) {
             if (!this._drawingContext) {
                 return;
             }
@@ -75,9 +76,12 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error"], functio
             if (!this._drawingContext) {
                 return;
             }
-            var datacheck = data.length % (this._dataLength * variable.size);
-            if (datacheck != 0) {
-                var error = new Error_1.Error("Variable " + variable.name + " rrequirees packets of data with length of " + (this._dataLength * variable.size));
+            var datalength = (this._dataLength * variable.size);
+            var datacheck = datalength / data.length;
+            if (datacheck != 1) {
+                if (datacheck % 1 === 0) {
+                    data.duplicate(this._dataLength * variable.size);
+                }
             }
             variable.setData(data);
             this._vertexCount = variable.length;
@@ -109,7 +113,8 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error"], functio
             if (success) {
                 return shader;
             }
-            this.show(success);
+            var compilationLog = context.getShaderInfoLog(shader);
+            this.show("shader " + compilationLog);
             context.deleteShader(shader);
             return null;
         }

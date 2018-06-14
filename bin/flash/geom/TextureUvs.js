@@ -11,6 +11,8 @@ define(["require", "exports", "flash/geom/Rectangle"], function (require, export
             }
             return this._vertices;
         }
+        duplicate(totalDuplicates) {
+        }
         setUv(index, value) {
             if (!this._vertices) {
                 this._vertices = new Float32Array(12);

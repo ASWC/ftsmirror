@@ -12,6 +12,7 @@ define(["require", "exports", "../../system/BaseObject"], function (require, exp
         onVerticeChanged(value) {
             this._needUpdate = true;
             this._changedVertices.push(value);
+            this._duplicatedVertices = null;
         }
         addVertices(value) {
             this._verticeIndexes.push(value);

@@ -10,6 +10,7 @@ export class VerticeBuffer extends BaseObject implements IVerticeBufferDelegate
     protected _verticeIndexes:IVerticeIndex[];
     protected _changedVertices:IVerticeIndex[];
     protected _verticeLength:number;
+    protected _duplicatedVertices:Float32Array;
 
     constructor()
     {
@@ -24,12 +25,13 @@ export class VerticeBuffer extends BaseObject implements IVerticeBufferDelegate
     {
         this._needUpdate = true;
         this._changedVertices.push(value);        
+        this._duplicatedVertices = null;
     }
 
     public addVertices(value:IVerticeIndex):void
     {
         this._verticeIndexes.push(value);
-        this._verticeLength += value.length;
+        this._verticeLength += value.length;             
         value.delegate = this;
     }
 

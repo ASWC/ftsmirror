@@ -17,7 +17,6 @@ export class VertexShader extends ProgramShader
     public buildShader(context:WebGLRenderingContext):void
     {
         var vertexcode:string = this.buildSource();
-        this.show(vertexcode)
         this._programShader = this.createShader(context, context.VERTEX_SHADER, vertexcode);
         if(!this._programShader)
         {

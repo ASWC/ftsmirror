@@ -11,6 +11,8 @@ define(["require", "exports"], function (require, exports) {
         get rawVertices() {
             return this.vertices;
         }
+        duplicate(totalDuplicates) {
+        }
         set index(value) {
             this._index = value;
         }

@@ -17,6 +17,11 @@ export class TextureUvs extends Rectangle
         return this._vertices;
     }
 
+    public duplicate(totalDuplicates:number):void
+    {
+
+    }
+
     public setUv(index:number, value:number):void
     {
         if(!this._vertices)

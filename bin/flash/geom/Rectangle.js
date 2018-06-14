@@ -17,6 +17,8 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Point"], fu
                 this._delegate.onVerticeChanged(this);
             }
         }
+        duplicate(totalDuplicates) {
+        }
         set delegate(value) {
             this._delegate = value;
         }

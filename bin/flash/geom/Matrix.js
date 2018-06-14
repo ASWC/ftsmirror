@@ -9,7 +9,6 @@ define(["require", "exports", "flash/geom/Point", "../webgl/geom/IndexedVertice"
         static multiply(a, b) {
             var matrix = new Matrix();
             var a00 = a._vertices[0 * 3 + 0];
-            //matrix.show(a00);
             var a01 = a._vertices[0 * 3 + 1];
             var a02 = a._vertices[0 * 3 + 2];
             var a10 = a._vertices[1 * 3 + 0];

@@ -11,6 +11,20 @@ define(["require", "exports", "flash/system/BaseObject", "../../display3D/Contex
                 this._vertices = new Float32Array(length);
             }
         }
+        duplicate(totalDuplicates) {
+            var currentVertices = this._vertices;
+            this._vertices = new Float32Array(totalDuplicates);
+            var count = 0;
+            while (count < totalDuplicates) {
+                for (var i = 0; i < currentVertices.length; i++) {
+                    if (count >= totalDuplicates) {
+                        return;
+                    }
+                    this._vertices[count] = currentVertices[i];
+                    count++;
+                }
+            }
+        }
         fromArray(values, offset = -1) {
             var start = 0;
             if (offset >= 0) {

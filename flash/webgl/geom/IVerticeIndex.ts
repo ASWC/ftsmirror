@@ -8,4 +8,5 @@ export interface IVerticeIndex
     index:number;
     rawVertices:Float32Array|Int32Array;
     delegate:IVerticeBufferDelegate;
+    duplicate(totalDuplicates:number):void;
 }

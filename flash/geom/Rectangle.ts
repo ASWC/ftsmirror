@@ -33,6 +33,11 @@ export class Rectangle extends BaseObject implements IVerticeIndex
         }
     }
 
+    public duplicate(totalDuplicates:number):void
+    {
+
+    }
+
     public set delegate(value:IVerticeBufferDelegate)
     {
         this._delegate = value;

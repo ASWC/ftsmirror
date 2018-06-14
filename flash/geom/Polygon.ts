@@ -25,6 +25,11 @@ export class Polygon implements IVerticeIndex
         return this.vertices;
     }
 
+    public duplicate(totalDuplicates:number):void
+    {
+
+    }
+
     public set index(value:number)
     {
         this._index = value;

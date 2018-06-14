@@ -9,11 +9,11 @@ define(["require", "exports"], function (require, exports) {
             if (type == "vec4" || type == "vec4_a") {
                 return 4;
             }
-            if (type == "vec2" || type == "vec2_a" || type == "MAT2" || type == "MAT2_A") {
+            if (type == "vec2" || type == "vec2_a") {
                 return 2;
             }
-            if (type == "FLOAT" || type == "FLOAT_A") {
-                return 1;
+            if (type == "mat3") {
+                return 9;
             }
             /*
                 public static MAT3:string = "mat3";

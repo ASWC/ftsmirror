@@ -16,13 +16,7 @@ export class Matrix extends IndexedVertice
     public static multiply(a:Matrix, b:Matrix):Matrix
     {
         var matrix:Matrix = new Matrix();
-
         var a00 = a._vertices[0 * 3 + 0];
-
-        //matrix.show(a00);
-
-
-
         var a01 = a._vertices[0 * 3 + 1];
         var a02 = a._vertices[0 * 3 + 2];
         var a10 = a._vertices[1 * 3 + 0];
@@ -31,8 +25,6 @@ export class Matrix extends IndexedVertice
         var a20 = a._vertices[2 * 3 + 0];
         var a21 = a._vertices[2 * 3 + 1];
         var a22 = a._vertices[2 * 3 + 2];
-
-
         var b00 = b._vertices[0 * 3 + 0];
         var b01 = b._vertices[0 * 3 + 1];
         var b02 = b._vertices[0 * 3 + 2];
@@ -51,9 +43,6 @@ export class Matrix extends IndexedVertice
         matrix._vertices[6] = b20 * a00 + b21 * a10 + b22 * a20
         matrix._vertices[7] = b20 * a01 + b21 * a11 + b22 * a21
         matrix._vertices[8] = b20 * a02 + b21 * a12 + b22 * a22
-
-        
-
         return matrix;
     }
 

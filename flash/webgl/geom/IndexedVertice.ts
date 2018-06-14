@@ -22,6 +22,25 @@ export class IndexedVertice extends BaseObject implements IVerticeIndex
         }
     }
 
+    public duplicate(totalDuplicates:number):void
+    {
+        var currentVertices:Float32Array|Int32Array = this._vertices;
+        this._vertices = new Float32Array(totalDuplicates);
+        var count:number = 0;
+        while(count < totalDuplicates)
+        {
+            for(var i:number = 0; i < currentVertices.length; i++)
+            {
+                if(count >= totalDuplicates)
+                {
+                    return;
+                }
+                this._vertices[count] = currentVertices[i];
+                count++;
+            }            
+        }
+    }
+
     public fromArray(values:number[], offset:number = -1):void
     {
         var start:number = 0;
