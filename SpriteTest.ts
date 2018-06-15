@@ -41,12 +41,12 @@ export class SpriteTest extends Sprite
 
     public present(context:Context3D):void
     {
-        var program:Program3D = Program3D.getProgram(this.programName);
+       /* var program:Program3D = Program3D.getProgram(this.programName);
         if(program)
         {    
             context.bind(program)
             program.vertexShader.updateAttribute("aSquareVertexPosition", this._uvs);         
-        }        
+        }       */ 
     }
     
     protected render(elapsedTime:number):void

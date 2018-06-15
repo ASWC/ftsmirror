@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/display/Sprite", "flash/display3D/Program3D", "flash/geom/TextureUvs"], function (require, exports, Sprite_1, Program3D_1, TextureUvs_1) {
+define(["require", "exports", "flash/display/Sprite", "flash/geom/TextureUvs"], function (require, exports, Sprite_1, TextureUvs_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class SpriteTest extends Sprite_1.Sprite {
@@ -21,11 +21,12 @@ define(["require", "exports", "flash/display/Sprite", "flash/display3D/Program3D
             this.programName = "simple_square_test";
         }
         present(context) {
-            var program = Program3D_1.Program3D.getProgram(this.programName);
-            if (program) {
-                context.bind(program);
-                program.vertexShader.updateAttribute("aSquareVertexPosition", this._uvs);
-            }
+            /* var program:Program3D = Program3D.getProgram(this.programName);
+             if(program)
+             {
+                 context.bind(program)
+                 program.vertexShader.updateAttribute("aSquareVertexPosition", this._uvs);
+             }       */
         }
         render(elapsedTime) {
         }

@@ -10,10 +10,11 @@ export interface IVerticeIndex
     index:number;
     type:string;
     collumns:TypedArray[];
+    rawData:TypedArray;
     addDelegate(value:IVerticeBufferDelegate):void;
     removeDelegate(value:IVerticeBufferDelegate):void;
     removeDelegates():void;    
     setData(index:number, data:number):void;
     getData(index:number):number;
-    notifyDelegates():void;
+    notifyDelegates():void;    
 }

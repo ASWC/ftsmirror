@@ -63,30 +63,30 @@ export class SpriteProgramTest extends Sprite
         this.shape.setData(34, 67);
         this.shape.setData(35, 90);
         this.color = new ColorVertices(Math.random() * 0xFFFFFFFF, 1, 18); 
-        this.trasnlation = new IndexedMatrix(1, 0, 0, 1, 0, 0);
+        this.trasnlation = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
         this.trasnlation.translate(200, 200);
-        this.rotationMatrix = new IndexedMatrix(1, 0, 0, 1, 0, 0);
-        this.projection = new IndexedMatrix(1, 0, 0, 1, 0, 0);
-        this.scale = new IndexedMatrix(1, 0, 0, 1, 0, 0);
+        this.rotationMatrix = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
+        this.projection = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
+        this.scale = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
         this.scale.scale(1.5, 1.5);
     }
 
     public present(context:Context3D):void
-    {
+    {        
         var program:Program3D = Program3D.getProgram(this._programName);
         if(program)
         {   
-            context.bind(program);    
-            this.angle++;
+            context.bind(program); 
+            this.angle++;            
             var angle:number = this.angle  * Math.PI / 180;
             this.projection.setProjection(program.resolution.getData(0), program.resolution.getData(1));    
             this.rotationMatrix.rotate(angle);
             program.vertexShader.updateAttribute("a_position", this.shape);
-            program.vertexShader.updateUniform("a_color", this.color);  
-            program.vertexShader.updateUniform("a_scale", this.scale);
-            program.vertexShader.updateUniform("u_projection", this.projection);
-            program.vertexShader.updateUniform("u_translation", this.trasnlation);
-            program.vertexShader.updateUniform("u_rotation", this.rotationMatrix);
+            program.vertexShader.updateAttribute("a_color", this.color);  
+            program.vertexShader.updateAttribute("a_scale", this.scale);
+            program.vertexShader.updateAttribute("u_projection", this.projection);
+            program.vertexShader.updateAttribute("u_translation", this.trasnlation);
+            program.vertexShader.updateAttribute("u_rotation", this.rotationMatrix);
         }
     }
 }

@@ -26,7 +26,7 @@ export class SpriteTestColor extends Sprite
         //this._uvs = new Rectangle(pos, pos, 150, 100);
         this._colorVertice = new IndexedVertice(24, Context3DVertexBufferFormat.FLOAT)
 
-        var concatcolor:number[] = [];
+        /*var concatcolor:number[] = [];
         for(var i:number = 0; i < 6; i++)
         {
             concatcolor.push(colors[0]);
@@ -35,7 +35,7 @@ export class SpriteTestColor extends Sprite
             concatcolor.push(colors[3]);
         }
 
-        this._colorVertice.fromArray(concatcolor);
+        this._colorVertice.fromArray(concatcolor);*/
 
 
 
@@ -51,7 +51,7 @@ export class SpriteTestColor extends Sprite
 
     public present(context:Context3D):void
     {
-        var program:Program3D = Program3D.getProgram(this.programName);
+       /* var program:Program3D = Program3D.getProgram(this.programName);
         if(program)
         {   
             context.bind(program)
@@ -63,7 +63,7 @@ export class SpriteTestColor extends Sprite
             
 
         
-        }        
+        }      */  
     }
     
     protected render(elapsedTime:number):void

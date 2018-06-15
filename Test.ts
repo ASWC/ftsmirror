@@ -22,6 +22,8 @@ import { Linear } from "fl/transitions/easing/Linear";
 import { SpriteProgramTest } from "SpriteProgramTest";
 import { IndexedVertice } from "flash/webgl/geom/IndexedVertice";
 import { ArrayTypes } from "flash/webgl/data/ArrayTypes";
+import { ColorVertices } from "flash/webgl/geom/ColorVertices";
+import { IndexedMatrix } from "flash/webgl/data/IndexedMatrix";
 
 export class Test extends Stage
 {
@@ -30,11 +32,74 @@ export class Test extends Stage
     constructor()
     {
         super();
-        this.frameRate = 1;
+        this.frameRate = 60;
         this.align = StageAlign.TOP_LEFT;
         this.scaleMode = StageScaleMode.NO_SCALE;
         this.color = 0xAAFF3333;
         this.createContextById(0);
+
+
+        /*var shape = new IndexedVertice(36, Context3DVertexBufferFormat.FLOAT);
+        shape.setData(0, 0);
+        shape.setData(1, 0);
+        shape.setData(2, 30);
+        shape.setData(3, 0);
+        shape.setData(4, 0);
+        shape.setData(5, 150);
+        shape.setData(6, 0);
+        shape.setData(7, 150);
+        shape.setData(8, 30);
+        shape.setData(9, 0);
+        shape.setData(10, 30);
+        shape.setData(11, 150);
+        shape.setData(12, 30);
+        shape.setData(13, 0);
+        shape.setData(14, 100);
+        shape.setData(15, 0);               
+        shape.setData(16, 30);
+        shape.setData(17, 30);
+        shape.setData(18, 30);
+        shape.setData(19, 30);
+        shape.setData(20, 100);
+        shape.setData(21, 0);                
+        shape.setData(22, 100);
+        shape.setData(23, 30);             
+        shape.setData(24, 30);
+        shape.setData(25, 60);
+        shape.setData(26, 67);
+        shape.setData(27, 60);              
+        shape.setData(28, 30);
+        shape.setData(29, 90);
+        shape.setData(30, 30);
+        shape.setData(31, 90);              
+        shape.setData(32, 67);
+        shape.setData(33, 60); 
+        shape.setData(34, 67);
+        shape.setData(35, 90);
+        this.show(shape.collumns[0])*/
+
+        //var color = new ColorVertices(Math.random() * 0xFFFFFFFF, 1, 18); 
+        //this.show(color.collumns[0]);
+
+        //var trasnlation = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
+       // trasnlation.translate(200, 200);
+
+        
+
+       // var rotationMatrix = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
+       // this.show(rotationMatrix.collumns[0]);
+       // this.show(rotationMatrix.collumns[1]);
+        //this.show(rotationMatrix.collumns[2]);
+
+        /*
+        
+        
+        
+        this.projection = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
+        this.scale = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
+        this.scale.scale(1.5, 1.5);*/
+
+
 
 
         /*
@@ -105,16 +170,15 @@ export class Test extends Stage
         Tween.to(testspritecolor, "x", Linear.easeIn, testspritecolor.x, testspritecolor.x + 600, 3000, false);*/
 
         
-        var program:Program3D = new Program3D(18, "simple_projection");
-        
-        program.vertexShader.addAttribute("a_position", Context3DVertexBufferFormat.VEC2); 
+        var program:Program3D = new Program3D(18, "simple_projection");        
+        program.vertexShader.addAttribute("a_position", Context3DVertexBufferFormat.VEC2);  
+        program.vertexShader.addAttribute("a_color", Context3DVertexBufferFormat.VEC4);     
 
-        
-        program.vertexShader.addUniform("a_color", Context3DVertexBufferFormat.VEC4);          
-        program.vertexShader.addUniform("a_scale", Context3DVertexBufferFormat.MAT3);
-        program.vertexShader.addUniform("u_projection", Context3DVertexBufferFormat.MAT3);
-        program.vertexShader.addUniform("u_translation", Context3DVertexBufferFormat.MAT3);
-        program.vertexShader.addUniform("u_rotation", Context3DVertexBufferFormat.MAT3);         
+        program.vertexShader.addAttribute("a_scale", Context3DVertexBufferFormat.MAT3);
+        program.vertexShader.addAttribute("u_projection", Context3DVertexBufferFormat.MAT3);
+        program.vertexShader.addAttribute("u_translation", Context3DVertexBufferFormat.MAT3);
+        program.vertexShader.addAttribute("u_rotation", Context3DVertexBufferFormat.MAT3);    
+             
         program.vertexShader.addVarying("v_color", Context3DVertexBufferFormat.VEC4);
         program.vertexShader.addToMain("v_color = a_color;");
         program.vertexShader.addToMain("mat3 concatedMatrix = u_projection * u_translation * u_rotation * a_scale;");
@@ -122,6 +186,7 @@ export class Test extends Stage
         program.fragmentShader.addVarying("v_color", Context3DVertexBufferFormat.VEC4);
         program.fragmentShader.addToMain("gl_FragColor = v_color;");
         program.drawType = Context3DDrawTypes.TRIANGLES;
+
         var sprite:SpriteProgramTest = new SpriteProgramTest();
         this.addChild(sprite);
 

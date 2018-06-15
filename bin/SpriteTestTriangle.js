@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/display/Sprite", "flash/display3D/Program3D", "flash/geom/Rectangle"], function (require, exports, Sprite_1, Program3D_1, Rectangle_1) {
+define(["require", "exports", "flash/display/Sprite", "flash/geom/Rectangle"], function (require, exports, Sprite_1, Rectangle_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class SpriteTestTriangle extends Sprite_1.Sprite {
@@ -22,11 +22,12 @@ define(["require", "exports", "flash/display/Sprite", "flash/display3D/Program3D
             this.programName = "simple_square_test_triangles";
         }
         present(context) {
-            var program = Program3D_1.Program3D.getProgram(this.programName);
-            if (program) {
-                context.bind(program);
+            /*var program:Program3D = Program3D.getProgram(this.programName);
+            if(program)
+            {
+                context.bind(program)
                 program.vertexShader.updateAttribute("aSquareVertexPosition", this._uvs);
-            }
+            }   */
         }
     }
     exports.SpriteTestTriangle = SpriteTestTriangle;

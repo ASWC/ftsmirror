@@ -24,13 +24,16 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/data/Array
             }
             this.hasChanged();
         }
+        get rawData() {
+            return this._vertices;
+        }
         get type() {
             return this._type;
         }
         updateIndex(index, data) {
             var column = this.getColumnByIndex(index);
-            var columnLength = this._fixedlength / this._totalCollumns;
             var collumnIndex = index;
+            var columnLength = this._fixedlength / this._totalCollumns;
             if (collumnIndex >= columnLength) {
                 while (collumnIndex >= columnLength) {
                     collumnIndex -= columnLength;
@@ -43,6 +46,9 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/data/Array
             }
         }
         getColumnByIndex(index) {
+            if (this._totalCollumns == 1) {
+                return this._collumns[0];
+            }
             var currentindex = Math.floor((index) / this._totalCollumns);
             if (currentindex >= this._collumns.length) {
                 currentindex--;

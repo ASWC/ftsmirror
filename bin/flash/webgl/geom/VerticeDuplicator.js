@@ -1,13 +1,14 @@
 define(["require", "exports", "flash/system/BaseObject"], function (require, exports, BaseObject_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class VerticeDuplicator extends BaseObject_1.BaseObject {
+    class VerticeDuplicator extends BaseObject_1.BaseObject // implements IVerticeIndex, IVerticeBufferDelegate
+     {
         constructor(indexedVertice, totalDuplication, splits = 1) {
             super();
             this._splits = splits;
             this._verticeTarget = indexedVertice;
             this._totalDuplication = totalDuplication;
-            this._verticeTarget.delegate = this;
+            //this._verticeTarget.delegate = this;
             //this._duplicateLength = totalDuplication * this._verticeTarget.rawVertices.length;
             this.onVerticeChanged(indexedVertice);
         }

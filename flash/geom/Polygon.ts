@@ -3,7 +3,7 @@ import { IVerticeBufferDelegate } from "../webgl/geom/IVerticeBufferDelegate";
 
 
 
-export class Polygon implements IVerticeIndex
+export class Polygon //implements IVerticeIndex
 {
     protected _delegate:IVerticeBufferDelegate;
     protected _vertices:Float32Array;

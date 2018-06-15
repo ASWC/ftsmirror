@@ -32,8 +32,8 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
                 return;
             }
             this.prepareAttributes();
-            this.prepareVaryings();
-            this.prepareUniforms();
+            //this.prepareVaryings();
+            //this.prepareUniforms();
         }
         prepareVaryings() {
         }
@@ -49,11 +49,10 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
                 for (var j = 0; j < vertextAttribute.locations.length; j++) {
                     var location = vertextAttribute.locations[j];
                     var buffer = vertextAttribute.collumnBuffers[j];
-                    var bufferdata = vertextAttribute.dataCollumns[j];
+                    var bufferdata = vertextAttribute.getVerticeAt(j);
                     this._drawingContext.enableVertexAttribArray(location);
                     this._drawingContext.bindBuffer(this._drawingContext.ARRAY_BUFFER, buffer);
-                    // this must be splitted
-                    this._drawingContext.bufferData(this._drawingContext.ARRAY_BUFFER, vertextAttribute.vertices, this._drawingContext.STATIC_DRAW);
+                    this._drawingContext.bufferData(this._drawingContext.ARRAY_BUFFER, bufferdata, this._drawingContext.STATIC_DRAW);
                     var type = this._drawingContext.FLOAT;
                     var normalize = false;
                     var stride = 0;
@@ -69,8 +68,9 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
             }
             var vertextUniform = this._uniformDic[name];
             if (vertextUniform != undefined) {
+                var rawdata = data.rawData;
                 vertextUniform.setData(data);
-                vertextUniform.bind(this._drawingContext, vertextUniform.vertices);
+                vertextUniform.bind(this._drawingContext, rawdata);
             }
         }
         updateAttribute(name, data) {

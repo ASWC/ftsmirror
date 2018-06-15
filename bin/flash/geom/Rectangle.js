@@ -18,7 +18,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/geom/Point"], fu
         hasChanged() {
             this._needUpdate = true;
             if (this._delegate) {
-                this._delegate.onVerticeChanged(this);
+                //this._delegate.onVerticeChanged(this);
             }
         }
         duplicate(totalDuplicates) {

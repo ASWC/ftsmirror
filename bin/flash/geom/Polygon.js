@@ -1,7 +1,8 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class Polygon {
+    class Polygon //implements IVerticeIndex
+     {
         constructor() {
             this._needUpdate = true;
         }

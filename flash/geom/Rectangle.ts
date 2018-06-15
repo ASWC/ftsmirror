@@ -34,7 +34,7 @@ export class Rectangle extends BaseObject //implements IVerticeIndex
         this._needUpdate = true;
         if(this._delegate)
         {
-            this._delegate.onVerticeChanged(this);
+            //this._delegate.onVerticeChanged(this);
         }
     }
 

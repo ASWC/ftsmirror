@@ -205,12 +205,10 @@ export class Program3D extends BaseObject
         {
             return;
         }
-        this.vertexShader.prepareForDraw();
+        this.vertexShader.prepareForDraw();        
         this.fragmentShader.prepareForDraw();
         var offset = 0;
-        this._bindedContext.drawArrays(this._drawType, offset, this._dataLength * this.vertexShader.vertexCount);   
-        //this.show('datalength: ' + this._dataLength)    
-        //this.show('vertexCount: ' + this.vertexShader.vertexCount)    
+        this._bindedContext.drawArrays(this._drawType, offset, this._dataLength * this.vertexShader.vertexCount);           
         this._bindedContext = null;
         this.vertexShader.drawingContext = null;
         this.fragmentShader.drawingContext = null;

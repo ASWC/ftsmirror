@@ -6,6 +6,9 @@ export class IndexedMatrix extends IndexedVertice
     constructor(a:number=1, b:number=0, c:number=0, d:number=1, tx:number=0, ty:number=0, totalDuplicate:number = 1)
     {
         super(9, ArrayTypes.FLOAT32ARRAY, 3, totalDuplicate);
+        this.identity();
+        //this.setData(6, tx);
+        //this.setData(7, ty);
     }
 
     public setProjection(width:number, height:number):void

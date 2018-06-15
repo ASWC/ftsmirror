@@ -2,7 +2,7 @@ import { BaseObject } from "flash/system/BaseObject";
 import { IVerticeIndex } from "flash/webgl/geom/IVerticeIndex";
 import { IVerticeBufferDelegate } from "flash/webgl/geom/IVerticeBufferDelegate";
 
-export class VerticeDuplicator extends BaseObject implements IVerticeIndex, IVerticeBufferDelegate
+export class VerticeDuplicator extends BaseObject// implements IVerticeIndex, IVerticeBufferDelegate
 {
     protected _vertices:Float32Array|Int32Array;
     protected _index:number;
@@ -19,7 +19,7 @@ export class VerticeDuplicator extends BaseObject implements IVerticeIndex, IVer
         this._splits = splits;
         this._verticeTarget = indexedVertice;
         this._totalDuplication = totalDuplication;
-        this._verticeTarget.delegate = this;
+        //this._verticeTarget.delegate = this;
         //this._duplicateLength = totalDuplication * this._verticeTarget.rawVertices.length;
         this.onVerticeChanged(indexedVertice);
     }

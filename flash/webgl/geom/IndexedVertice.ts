@@ -43,6 +43,11 @@ export class IndexedVertice extends BaseObject implements IVerticeIndex
         this.hasChanged();
     }
 
+    public get rawData():TypedArray
+    {
+        return this._vertices;
+    }
+
     public get type():string
     {
         return this._type;
@@ -50,9 +55,9 @@ export class IndexedVertice extends BaseObject implements IVerticeIndex
 
     protected updateIndex(index:number, data:number):void
     {        
-        var column:TypedArray = this.getColumnByIndex(index);
+        var column:TypedArray = this.getColumnByIndex(index);      
+        var collumnIndex:number = index; 
         var columnLength:number = this._fixedlength / this._totalCollumns;
-        var collumnIndex:number = index;
         if(collumnIndex >= columnLength)
         {
             while(collumnIndex >= columnLength)
@@ -65,11 +70,15 @@ export class IndexedVertice extends BaseObject implements IVerticeIndex
         {
             column[startindex] = data;
             startindex += columnLength;
-        }
+        }    
     }
 
     protected getColumnByIndex(index:number):TypedArray
     {
+        if(this._totalCollumns == 1)
+        {
+            return this._collumns[0];
+        }
         var currentindex:number = Math.floor((index) / this._totalCollumns);
         if(currentindex >= this._collumns.length)
         {

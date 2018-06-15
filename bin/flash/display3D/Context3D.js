@@ -37,7 +37,6 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
             }
             this._gl.clearColor(this._color.absoluteRed, this._color.absoluteGreen, this._color.absoluteBlue, this._color.absoluteAlpha);
             this._gl.clear(this._gl.COLOR_BUFFER_BIT);
-            //this._gl.enable(this._gl.DEPTH_TEST); 
         }
         set color(value) {
             this._color = value;

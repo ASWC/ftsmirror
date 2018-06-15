@@ -6,6 +6,8 @@ import { VerticeBuffer } from "flash/webgl/geom/VerticeBuffer";
 import { IVerticeIndex } from "flash/webgl/geom/IVerticeIndex";
 import { Error } from "flash/Error";
 
+declare type TypedArray = Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array;
+
 export class ProgramShader extends BaseObject
 {
     protected _programShader:WebGLShader;
@@ -62,8 +64,8 @@ export class ProgramShader extends BaseObject
             return;
         }
         this.prepareAttributes();
-        this.prepareVaryings();
-        this.prepareUniforms();
+        //this.prepareVaryings();
+        //this.prepareUniforms();
     }
 
     public prepareVaryings():void
@@ -85,19 +87,14 @@ export class ProgramShader extends BaseObject
         for(var i:number = 0; i < this._attributes.length; i++)
         {
             var vertextAttribute:VertexAttribute = this._attributes[i];
-
-
             for(var j:number = 0; j < vertextAttribute.locations.length; j++)
             {
                 var location:number = vertextAttribute.locations[j];
                 var buffer:WebGLBuffer = vertextAttribute.collumnBuffers[j];
-                var bufferdata:Float32Array = vertextAttribute.dataCollumns[j];
+                var bufferdata:TypedArray = vertextAttribute.getVerticeAt(j);
                 this._drawingContext.enableVertexAttribArray(location);
                 this._drawingContext.bindBuffer(this._drawingContext.ARRAY_BUFFER, buffer);  
-
-                // this must be splitted
-                this._drawingContext.bufferData(this._drawingContext.ARRAY_BUFFER, vertextAttribute.vertices, this._drawingContext.STATIC_DRAW); 
-
+                this._drawingContext.bufferData(this._drawingContext.ARRAY_BUFFER, bufferdata, this._drawingContext.STATIC_DRAW); 
                 var type = this._drawingContext.FLOAT;
                 var normalize = false;
                 var stride = 0;
@@ -117,8 +114,9 @@ export class ProgramShader extends BaseObject
         var vertextUniform:VertexUniform = this._uniformDic[name];
         if(vertextUniform != undefined)
         {     
+            var rawdata:Float32Array|Int32Array = <Float32Array|Int32Array> data.rawData;
             vertextUniform.setData(data);       
-            vertextUniform.bind(this._drawingContext, vertextUniform.vertices);
+            vertextUniform.bind(this._drawingContext, rawdata);
         }           
     }
 

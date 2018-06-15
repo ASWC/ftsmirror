@@ -5,6 +5,7 @@ define(["require", "exports", "flash/webgl/geom/IndexedVertice", "flash/webgl/da
         constructor(color, collumns = 1, totalDuplicate = 0) {
             super(4, ArrayTypes_1.ArrayTypes.FLOAT32ARRAY, collumns, totalDuplicate);
             this._color = new Color_1.Color(color);
+            this.color = color;
         }
         set color(value) {
             this._color.color = value;

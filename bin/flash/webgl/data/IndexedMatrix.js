@@ -4,6 +4,9 @@ define(["require", "exports", "flash/webgl/geom/IndexedVertice", "flash/webgl/da
     class IndexedMatrix extends IndexedVertice_1.IndexedVertice {
         constructor(a = 1, b = 0, c = 0, d = 1, tx = 0, ty = 0, totalDuplicate = 1) {
             super(9, ArrayTypes_1.ArrayTypes.FLOAT32ARRAY, 3, totalDuplicate);
+            this.identity();
+            //this.setData(6, tx);
+            //this.setData(7, ty);
         }
         setProjection(width, height) {
             this.identity();

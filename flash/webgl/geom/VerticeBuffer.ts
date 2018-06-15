@@ -1,6 +1,8 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { IVerticeIndex } from "flash/webgl/geom/IVerticeIndex";
 import { IVerticeBufferDelegate } from "flash/webgl/geom/IVerticeBufferDelegate";
+import { ArrayTypes } from "../data/ArrayTypes";
+import { IndexedVertice } from "./IndexedVertice";
 
 declare type TypedArray = Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array;
 
@@ -11,34 +13,44 @@ export class VerticeBuffer extends BaseObject implements IVerticeBufferDelegate
     protected _verticeIndexes:IVerticeIndex[];
     protected _changedVertices:IVerticeIndex[];
     protected _verticeLength:number;
+    protected _columns:TypedArray[];
+    protected _dataLength:number;
+    protected _type:string;
 
     constructor()
     {
         super();
+        this._dataLength = 0;
         this._verticeLength = 0;
         this._verticeIndexes = [];
         this._changedVertices = [];
         this._needUpdate = true;
     }
 
-
+    public reset():void
+    {
+        this._dataLength = 0;
+        this._verticeLength = 0;
+        this._verticeIndexes = [];
+        this._changedVertices = [];
+        this._columns = [];
+    }
 
     public getCollumnAt(index:number = 0):TypedArray
     {
-        var columndata:TypedArray;
-        var collumns:TypedArray[] = [];
-        var datalength:number = 0;
-        for(var i:number = 0; i < this._verticeIndexes.length; i++)
+        var column:TypedArray = this._columns[index];
+        if(column == undefined || !column)
         {
-            var dataCollumn:TypedArray = this._verticeIndexes[i].collumns[index];
-            collumns.push(dataCollumn);
-            datalength += dataCollumn.length;
+            column = ArrayTypes.getTypedArray(this._type, this._dataLength * this._verticeIndexes.length); 
+            this._columns[index] = column;                    
+            for(var i:number = 0; i < this._verticeIndexes.length; i++)
+            {
+                var indexedv:IVerticeIndex = this._verticeIndexes[i];
+                var start:number = this._dataLength * i;
+                column.set(indexedv.collumns[index], start);
+            }
         }
-        while(collumns)
-        {
-
-        }
-        return columndata;
+        return column;
     }
 
     public onVerticeChanged(value:IVerticeIndex):void
@@ -50,7 +62,13 @@ export class VerticeBuffer extends BaseObject implements IVerticeBufferDelegate
     public addVertices(value:IVerticeIndex):void
     {
         this._verticeIndexes.push(value);        
-        this._verticeLength += value.length; 
+        this._dataLength = value.collumns[0].length; 
+        this._verticeLength += this._dataLength; 
+        this._type = value.type;        
+        if(!this._columns)
+        {
+            this._columns = [];
+        }
     }
 
     public get needUpdate():boolean
@@ -60,11 +78,8 @@ export class VerticeBuffer extends BaseObject implements IVerticeBufferDelegate
 
     public get length():number
     {
-        return this._verticeLength;
+        return this._verticeIndexes.length;
     }
 
-    public reset():void
-    {
-
-    }
+    
 }

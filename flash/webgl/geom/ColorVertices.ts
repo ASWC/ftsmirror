@@ -10,7 +10,8 @@ export class ColorVertices extends IndexedVertice
     constructor(color:number, collumns:number = 1, totalDuplicate:number = 0)
     {
         super(4, ArrayTypes.FLOAT32ARRAY, collumns, totalDuplicate);
-        this._color = new Color(color);
+		this._color = new Color(color);
+		this.color = color;
     }
 
     public set color(value:number)

@@ -42,6 +42,7 @@ export class SpriteMatrixtest extends Sprite
 
     public present(context:Context3D):void
     {
+        /*
         var program:Program3D = Program3D.getProgram(this.programName);
         if(program)
         {            
@@ -82,6 +83,6 @@ export class SpriteMatrixtest extends Sprite
                 
                 //program.flush();
             }
-        }        
+        }        */
     }
 }
