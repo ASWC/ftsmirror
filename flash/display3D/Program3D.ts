@@ -44,6 +44,7 @@ export class Program3D extends BaseObject
 
     public useTexture(texture:Texture):number
     {
+        this.show('using texture')
         if(!this._bindedContext)
         {
             return;

@@ -1,4 +1,4 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/display3D/textures/Texture"], function (require, exports, BaseObject_1, Texture_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/display3D/textures/Texture", "../display3D/textures/AtlasManager"], function (require, exports, BaseObject_1, Texture_1, AtlasManager_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class BitmapData extends BaseObject_1.BaseObject {
@@ -22,6 +22,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/display3D/textur
             this._texture.source = image;
         }
         static setTexture(image) {
+            AtlasManager_1.AtlasManager.addImage(image);
             var bitmapData = new BitmapData(image.naturalWidth, image.naturalHeight, true, 0xFFFFFFFF);
             bitmapData.setImage(image);
             return bitmapData;

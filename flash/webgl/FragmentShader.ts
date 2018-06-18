@@ -16,6 +16,7 @@ export class FragmentShader extends ProgramShader
     public buildShader(context:WebGLRenderingContext):void
     {
         var vertexcode:string = this.buildSource();
+        this.show(vertexcode)
         this._programShader = this.createShader(context, context.FRAGMENT_SHADER, vertexcode);
         if(!this._programShader)
         {

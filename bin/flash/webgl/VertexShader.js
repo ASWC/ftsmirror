@@ -7,6 +7,7 @@ define(["require", "exports", "flash/webgl/shadertypes/VertexAttribute", "flash/
         }
         buildShader(context) {
             var vertexcode = this.buildSource();
+            this.show(vertexcode);
             this._programShader = this.createShader(context, context.VERTEX_SHADER, vertexcode);
             if (!this._programShader) {
                 var error = new Error_1.Error(context.getShaderInfoLog(this._programShader));

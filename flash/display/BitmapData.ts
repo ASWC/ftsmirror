@@ -1,5 +1,6 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { Texture } from "flash/display3D/textures/Texture";
+import { AtlasManager } from "../display3D/textures/AtlasManager";
 
 export class BitmapData extends BaseObject
 {
@@ -37,6 +38,10 @@ export class BitmapData extends BaseObject
 
     public static setTexture(image:HTMLImageElement):BitmapData
     {
+
+        AtlasManager.addImage(image);
+
+
         var bitmapData:BitmapData = new BitmapData(image.naturalWidth, image.naturalHeight, true, 0xFFFFFFFF);        
         bitmapData.setImage(image);
         return bitmapData;

@@ -7,6 +7,7 @@ define(["require", "exports", "flash/webgl/shadertypes/VertexUniform", "flash/we
         }
         buildShader(context) {
             var vertexcode = this.buildSource();
+            this.show(vertexcode);
             this._programShader = this.createShader(context, context.FRAGMENT_SHADER, vertexcode);
             if (!this._programShader) {
                 var error = new Error(context.getShaderInfoLog(this._programShader));

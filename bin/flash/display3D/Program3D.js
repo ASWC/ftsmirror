@@ -16,6 +16,7 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/d
             Program3D.PROGRAMS[this._name] = this;
         }
         useTexture(texture) {
+            this.show('using texture');
             if (!this._bindedContext) {
                 return;
             }

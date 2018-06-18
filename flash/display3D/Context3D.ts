@@ -1,22 +1,15 @@
 import { BaseObject } from "flash/system/BaseObject";
 import { ObjectUtils } from "flash/webgl/ObjectUtils";
 import { Color } from "flash/geom/Color";
-import { DisplayObjectContainer } from "flash/display/DisplayObjectContainer";
 import { Program3D } from "./Program3D";
 import { Rectangle } from "flash/geom/Rectangle";
 import { Context3DVertexBufferFormat } from "flash/display3D/Context3DVertexBufferFormat";
-import { IDisplayObjectContainer } from "../display/types/IDisplayObjectContainer";
 import { IDisplayObject } from "../display/types/IDisplayObject";
-import { Bitmap } from "../display/Bitmap";
-import { TextureUvs } from "../geom/TextureUvs";
-import { Polygon } from "../geom/Polygon";
 import { Stage } from "../display/Stage";
 import { DisplayObject } from "../display/DisplayObject";
 import { VerticeBuffer } from "../webgl/geom/VerticeBuffer";
-import { Vector2D } from "../webgl/geom/Vector2D";
 import { IndexedVertice } from "../webgl/geom/IndexedVertice";
 import { Matrix } from "../geom/Matrix";
-import { TextureBase } from "./textures/TextureBase";
 import { AtlasManager } from "./textures/AtlasManager";
 
 export class Context3D extends BaseObject
