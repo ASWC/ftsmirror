@@ -23,8 +23,7 @@ export class Loader extends DisplayObjectContainer
     }
 
     protected assetLoaded(image:HTMLImageElement):void
-    {
-        this.show('asset loaded');
+    {		
         this._bitmapData = BitmapData.setTexture(image);
         this._bitmap = new Bitmap(this._bitmapData);
     }

@@ -8,7 +8,8 @@ import { Context3DDrawTypes } from "flash/display3D/Context3DDrawTypes";
 import { VerticeBuffer } from "flash/webgl/geom/VerticeBuffer";
 import { VertexShader } from "flash/webgl/VertexShader";
 import { FragmentShader } from "flash/webgl/FragmentShader";
-import { IndexedVertice } from "../webgl/geom/IndexedVertice";
+import { IndexedVertice } from "flash/webgl/geom/IndexedVertice";
+import { Texture } from "flash/display3D/textures/Texture";
 
 export class Program3D extends BaseObject
 {
@@ -39,6 +40,26 @@ export class Program3D extends BaseObject
         this._invalidProgram = false;       
         Program3D.UNREGISTERED_PROGRAMS.push(this)
         Program3D.PROGRAMS[this._name] = this;
+    }
+
+    public useTexture(texture:Texture):number
+    {
+        if(!this._bindedContext)
+        {
+            return;
+        }
+        var textureid:number = 0;
+        if(!texture.uploaded)
+        {
+            var gltexture:WebGLTexture = this._bindedContext.createTexture();
+            texture.setData(gltexture);
+            this._bindedContext.bindTexture(this._bindedContext.TEXTURE_2D, gltexture);
+            this._bindedContext.texImage2D(this._bindedContext.TEXTURE_2D, 0, this._bindedContext.RGBA, this._bindedContext.RGBA, this._bindedContext.UNSIGNED_BYTE, texture.source);
+            this._bindedContext.generateMipmap(this._bindedContext.TEXTURE_2D);
+        }
+
+
+        return textureid;
     }
 
     public get worldProjection():Matrix

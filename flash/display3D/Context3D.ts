@@ -16,6 +16,8 @@ import { VerticeBuffer } from "../webgl/geom/VerticeBuffer";
 import { Vector2D } from "../webgl/geom/Vector2D";
 import { IndexedVertice } from "../webgl/geom/IndexedVertice";
 import { Matrix } from "../geom/Matrix";
+import { TextureBase } from "./textures/TextureBase";
+import { AtlasManager } from "./textures/AtlasManager";
 
 export class Context3D extends BaseObject
 {
@@ -40,8 +42,6 @@ export class Context3D extends BaseObject
     {
         super();
         this._worldprojection = new Matrix();
-        //this._worldprojection.translate(-1, 1);
-        //this._worldprojection.scale(1, -1);
         this._resolution = new IndexedVertice(2, Context3DVertexBufferFormat.FLOAT);
     }
 
@@ -107,7 +107,24 @@ export class Context3D extends BaseObject
 
     public validate():void
     {        
-        this._gl = this._canvas.getContext("webgl") || this._canvas.getContext("experimental-webgl");    
+        this._gl = this._canvas.getContext("webgl") || this._canvas.getContext("experimental-webgl");  
+        var maxtextures:number = this._gl.getParameter(this._gl.MAX_TEXTURE_IMAGE_UNITS);
+        var maxsize:number = this._gl.getParameter(this._gl.MAX_TEXTURE_SIZE);
+        AtlasManager.init(maxtextures, maxsize, this._gl);
+
+        // max atlases
+        // max atlas size
+        // create first atlas > dive by rectangles
+
+
+        //this.show("max textures: " + maxtextures);
+        //this.show("max size: " + this._gl.getParameter(this._gl.MAX_TEXTURE_SIZE));
+
+        
+
+
+
+
         this._canvas.style.backgroundColor = "transparent"; 
     }
 

@@ -64,8 +64,8 @@ export class ProgramShader extends BaseObject
             return;
         }
         this.prepareAttributes();
-        //this.prepareVaryings();
-        //this.prepareUniforms();
+        this.prepareVaryings();
+        this.prepareUniforms();
     }
 
     public prepareVaryings():void
@@ -114,7 +114,7 @@ export class ProgramShader extends BaseObject
         var vertextUniform:VertexUniform = this._uniformDic[name];
         if(vertextUniform != undefined)
         {     
-            var rawdata:Float32Array|Int32Array = <Float32Array|Int32Array> data.rawData;
+            var rawdata:TypedArray = data.rawData;
             vertextUniform.setData(data);       
             vertextUniform.bind(this._drawingContext, rawdata);
         }           

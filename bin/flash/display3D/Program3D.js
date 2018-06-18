@@ -15,6 +15,20 @@ define(["require", "exports", "flash/system/BaseObject", "flash/Error", "flash/d
             Program3D.UNREGISTERED_PROGRAMS.push(this);
             Program3D.PROGRAMS[this._name] = this;
         }
+        useTexture(texture) {
+            if (!this._bindedContext) {
+                return;
+            }
+            var textureid = 0;
+            if (!texture.uploaded) {
+                var gltexture = this._bindedContext.createTexture();
+                texture.setData(gltexture);
+                this._bindedContext.bindTexture(this._bindedContext.TEXTURE_2D, gltexture);
+                this._bindedContext.texImage2D(this._bindedContext.TEXTURE_2D, 0, this._bindedContext.RGBA, this._bindedContext.RGBA, this._bindedContext.UNSIGNED_BYTE, texture.source);
+                this._bindedContext.generateMipmap(this._bindedContext.TEXTURE_2D);
+            }
+            return textureid;
+        }
         get worldProjection() {
             return this._worldprojection;
         }

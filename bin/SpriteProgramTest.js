@@ -2,8 +2,9 @@ define(["require", "exports", "flash/display/Sprite", "flash/display3D/Program3D
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class SpriteProgramTest extends Sprite_1.Sprite {
-        constructor() {
+        constructor(w, h, rrs) {
             super();
+            this.speed = rrs;
             this._programName = "simple_projection";
             this.angle = 0;
             this.shape = new IndexedVertice_1.IndexedVertice(36, Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.FLOAT);
@@ -45,7 +46,7 @@ define(["require", "exports", "flash/display/Sprite", "flash/display3D/Program3D
             this.shape.setData(35, 90);
             this.color = new ColorVertices_1.ColorVertices(Math.random() * 0xFFFFFFFF, 1, 18);
             this.trasnlation = new IndexedMatrix_1.IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
-            this.trasnlation.translate(200, 200);
+            this.trasnlation.translate(w, h);
             this.rotationMatrix = new IndexedMatrix_1.IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
             this.projection = new IndexedMatrix_1.IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
             this.scale = new IndexedMatrix_1.IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
@@ -55,7 +56,7 @@ define(["require", "exports", "flash/display/Sprite", "flash/display3D/Program3D
             var program = Program3D_1.Program3D.getProgram(this._programName);
             if (program) {
                 context.bind(program);
-                this.angle++;
+                this.angle += this.speed;
                 var angle = this.angle * Math.PI / 180;
                 this.projection.setProjection(program.resolution.getData(0), program.resolution.getData(1));
                 this.rotationMatrix.rotate(angle);

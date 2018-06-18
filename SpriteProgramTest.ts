@@ -19,10 +19,12 @@ export class SpriteProgramTest extends Sprite
     protected projection:IndexedMatrix;
     protected trasnlation:IndexedMatrix;
     protected rotationMatrix:IndexedMatrix;
+    protected speed:number;
 
-    constructor()
+    constructor(w:number, h:number, rrs:number)
     {
         super();
+        this.speed = rrs
         this._programName = "simple_projection";
         this.angle = 0;
         this.shape = new IndexedVertice(36, Context3DVertexBufferFormat.FLOAT);
@@ -64,7 +66,7 @@ export class SpriteProgramTest extends Sprite
         this.shape.setData(35, 90);
         this.color = new ColorVertices(Math.random() * 0xFFFFFFFF, 1, 18); 
         this.trasnlation = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
-        this.trasnlation.translate(200, 200);
+        this.trasnlation.translate(w, h);
         this.rotationMatrix = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
         this.projection = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
         this.scale = new IndexedMatrix(1, 0, 0, 1, 0, 0, 18);
@@ -77,7 +79,7 @@ export class SpriteProgramTest extends Sprite
         if(program)
         {   
             context.bind(program); 
-            this.angle++;            
+            this.angle += this.speed;            
             var angle:number = this.angle  * Math.PI / 180;
             this.projection.setProjection(program.resolution.getData(0), program.resolution.getData(1));    
             this.rotationMatrix.rotate(angle);

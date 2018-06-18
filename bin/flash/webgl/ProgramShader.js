@@ -32,8 +32,8 @@ define(["require", "exports", "flash/system/BaseObject"], function (require, exp
                 return;
             }
             this.prepareAttributes();
-            //this.prepareVaryings();
-            //this.prepareUniforms();
+            this.prepareVaryings();
+            this.prepareUniforms();
         }
         prepareVaryings() {
         }

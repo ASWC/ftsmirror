@@ -1,12 +1,10 @@
-define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtils", "flash/geom/Color", "./Program3D", "flash/display3D/Context3DVertexBufferFormat", "../webgl/geom/IndexedVertice", "../geom/Matrix"], function (require, exports, BaseObject_1, ObjectUtils_1, Color_1, Program3D_1, Context3DVertexBufferFormat_1, IndexedVertice_1, Matrix_1) {
+define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtils", "flash/geom/Color", "./Program3D", "flash/display3D/Context3DVertexBufferFormat", "../webgl/geom/IndexedVertice", "../geom/Matrix", "./textures/AtlasManager"], function (require, exports, BaseObject_1, ObjectUtils_1, Color_1, Program3D_1, Context3DVertexBufferFormat_1, IndexedVertice_1, Matrix_1, AtlasManager_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Context3D extends BaseObject_1.BaseObject {
         constructor() {
             super();
             this._worldprojection = new Matrix_1.Matrix();
-            //this._worldprojection.translate(-1, 1);
-            //this._worldprojection.scale(1, -1);
             this._resolution = new IndexedVertice_1.IndexedVertice(2, Context3DVertexBufferFormat_1.Context3DVertexBufferFormat.FLOAT);
         }
         get resolution() {
@@ -52,6 +50,14 @@ define(["require", "exports", "flash/system/BaseObject", "flash/webgl/ObjectUtil
         }
         validate() {
             this._gl = this._canvas.getContext("webgl") || this._canvas.getContext("experimental-webgl");
+            var maxtextures = this._gl.getParameter(this._gl.MAX_TEXTURE_IMAGE_UNITS);
+            var maxsize = this._gl.getParameter(this._gl.MAX_TEXTURE_SIZE);
+            AtlasManager_1.AtlasManager.init(maxtextures, maxsize, this._gl);
+            // max atlases
+            // max atlas size
+            // create first atlas > dive by rectangles
+            //this.show("max textures: " + maxtextures);
+            //this.show("max size: " + this._gl.getParameter(this._gl.MAX_TEXTURE_SIZE));
             this._canvas.style.backgroundColor = "transparent";
         }
         set canvas(value) {

@@ -7,7 +7,6 @@ define(["require", "exports", "flash/display/DisplayObjectContainer", "flash/dis
             this._loaderInfo = new LoaderInfo_1.LoaderInfo();
         }
         assetLoaded(image) {
-            this.show('asset loaded');
             this._bitmapData = BitmapData_1.BitmapData.setTexture(image);
             this._bitmap = new Bitmap_1.Bitmap(this._bitmapData);
         }
